@@ -851,4 +851,193 @@
             gameState.showHeader = !gameState.showHeader;
             
             if (elements.headerToggle) {
-                elements.headerToggle.textContent =
+                elements.headerToggle.textContent = gameState.showHeader ? '▲' : '▼';
+            }
+            if (elements.header) {
+                elements.header.classList.toggle('hidden', !gameState.showHeader);
+            }
+            if (elements.gameArea) {
+                elements.gameArea.className = `game-area ${gameState.showHeader ? 'header-visible' : 'header-hidden'}`;
+            }
+            if (elements.miniControls) {
+                elements.miniControls.style.display = gameState.showHeader ? 'none' : 'flex';
+            }
+            if (elements.miniStop) {
+                elements.miniStop.style.display = (gameState.isRunning && !gameState.showHeader) ? 'flex' : 'none';
+            }
+        }
+
+        // 設定切り替え
+        function toggleSettings() {
+            if (elements.settingsPanel) {
+                elements.settingsPanel.classList.toggle('show');
+            }
+        }
+
+        // モード変更
+        function changeBrainMode(mode) {
+            gameState.brainMode = mode;
+            
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            
+            if (elements.leftIndicator) {
+                elements.leftIndicator.style.display = mode === 'left' ? 'block' : 'none';
+            }
+            if (elements.rightIndicator) {
+                elements.rightIndicator.style.display = mode === 'right' ? 'block' : 'none';
+            }
+        }
+
+        // 時間変更
+        function changeDuration(newDuration) {
+            gameState.duration = parseInt(newDuration);
+            if (!gameState.isRunning) {
+                gameState.timeLeft = gameState.duration;
+                updateTimerDisplay();
+            }
+            
+            document.querySelectorAll('[data-duration]').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.duration) === gameState.duration);
+            });
+        }
+
+        // スピード変更
+        function changeSpeed(speed) {
+            gameState.pointSpeed = parseFloat(speed);
+            
+            if (elements.speedBadge) {
+                elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
+            }
+            if (elements.speedDescription) {
+                elements.speedDescription.innerHTML = `${gameState.pointSpeed}秒間隔で新しい点が出現します${gameState.pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
+            }
+            
+            document.querySelectorAll('[data-speed]').forEach(btn => {
+                btn.classList.toggle('active', parseFloat(btn.dataset.speed) === gameState.pointSpeed);
+            });
+
+            updateInstructionsText();
+        }
+
+        // カラー変更
+        function changeColor(color) {
+            gameState.colorMode = color;
+            
+            if (elements.colorBadge) {
+                if (color === 'random') {
+                    elements.colorBadge.innerHTML = `
+                        <div class="color-dot" style="background-color: #ef4444;"></div>
+                        <div class="color-dot" style="background-color: #3b82f6;"></div>
+                        <div class="color-dot" style="background-color: #10b981;"></div>
+                        ランダム
+                    `;
+                } else {
+                    elements.colorBadge.innerHTML = `
+                        <div class="color-dot" style="background-color: #fbbf24;"></div>
+                        固定
+                    `;
+                }
+            }
+            
+            if (elements.colorDescription) {
+                elements.colorDescription.textContent = color === 'random' 
+                    ? '10種類の色からランダムに選択されます' 
+                    : '統一された黄色で表示されます';
+            }
+            
+            document.querySelectorAll('[data-color]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.color === gameState.colorMode);
+            });
+        }
+
+        // 説明文更新
+        function updateInstructionsText() {
+            if (elements.instructions && !gameState.isRunning && gameState.timeLeft === gameState.duration) {
+                const instructionsText = elements.instructions.querySelector('.instructions-text');
+                if (instructionsText) {
+                    instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br /><span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: ${gameState.pointSpeed}秒間隔でポイント出現</span>`;
+                }
+            }
+        }
+
+        // イベントリスナー設定
+        function setupEventListeners() {
+            // ヘッダー切り替え
+            if (elements.headerToggle) {
+                elements.headerToggle.addEventListener('click', toggleHeader);
+            }
+
+            // 設定切り替え
+            if (elements.settingsBtn) {
+                elements.settingsBtn.addEventListener('click', toggleSettings);
+            }
+
+            // 再生/停止ボタン
+            if (elements.playBtn) {
+                elements.playBtn.addEventListener('click', () => {
+                    if (gameState.isRunning) {
+                        stopTimer();
+                    } else if (gameState.timeLeft > 0) {
+                        startTimer();
+                    }
+                });
+            }
+
+            // リセットボタン
+            if (elements.resetBtn) {
+                elements.resetBtn.addEventListener('click', resetTimer);
+            }
+
+            // ミニ停止ボタン
+            if (elements.miniStop) {
+                elements.miniStop.addEventListener('click', stopTimer);
+            }
+
+            // 設定ボタン群
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.addEventListener('click', () => changeBrainMode(btn.dataset.mode));
+            });
+
+            document.querySelectorAll('[data-duration]').forEach(btn => {
+                btn.addEventListener('click', () => changeDuration(btn.dataset.duration));
+            });
+
+            document.querySelectorAll('[data-speed]').forEach(btn => {
+                btn.addEventListener('click', () => changeSpeed(btn.dataset.speed));
+            });
+
+            document.querySelectorAll('[data-color]').forEach(btn => {
+                btn.addEventListener('click', () => changeColor(btn.dataset.color));
+            });
+        }
+
+        // 初期化関数
+        function initialize() {
+            console.log('ランダムサッカード初期化中...');
+            
+            // タイマー表示を初期化
+            updateTimerDisplay();
+            
+            // イベントリスナーを設定
+            setupEventListeners();
+            
+            console.log('初期化完了！');
+        }
+
+        // ページ読み込み完了後に初期化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
+        }
+
+        // ページ離脱時のクリーンアップ
+        window.addEventListener('beforeunload', () => {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            if (gameState.pointInterval) clearInterval(gameState.pointInterval);
+        });
+    </script>
+</body>
+</html>
