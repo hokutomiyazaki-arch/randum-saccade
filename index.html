@@ -192,15 +192,16 @@
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(15px);
             border-radius: 16px;
-            padding: 0;
             display: none;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         .settings-panel.show {
-            display: block;
+            display: flex;
             animation: slideIn 0.3s ease;
         }
         
@@ -215,11 +216,27 @@
             }
         }
         
+        .settings-header {
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px 16px 0 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            margin: 0;
+        }
+        
         .settings-content {
-            height: 100%;
+            flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 0;
+            padding: 20px 0;
             -webkit-overflow-scrolling: touch;
         }
         
@@ -259,8 +276,13 @@
             padding: 0 30px;
         }
         
+        .setting-section:first-child {
+            margin-top: 0;
+        }
+        
         .setting-section:last-child {
-            padding-bottom: 30px;
+            padding-bottom: 20px;
+            margin-bottom: 0;
         }
         
         .section-title {
@@ -634,9 +656,10 @@
 
                 <!-- 設定パネル -->
                 <div class="settings-panel" id="settingsPanel">
-                    <div class="settings-content">
+                    <div class="settings-header">
                         <h3 class="settings-title">設定</h3>
-                        
+                    </div>
+                    <div class="settings-content">
                         <!-- 脳トレーニングモード -->
                         <div class="setting-section">
                             <h4 class="section-title">脳トレーニングモード</h4>
