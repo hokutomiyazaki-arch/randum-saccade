@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ランダムサッカード</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,95 +14,306 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a4b3a, #2d7a5f, #48cc6c);
-            min-height: 100vh;
-            color: white;
             overflow: hidden;
         }
         
-        .container {
+        .app-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a4b3a, #2d7a5f, #48cc6c);
             position: relative;
-            width: 100vw;
-            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 20;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .header-toggle:hover {
+            background: rgba(0, 0, 0, 0.7);
         }
         
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            position: relative;
             z-index: 10;
+            padding: 24px;
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(8px);
-            padding: 20px;
-            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .header.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .header-content {
+            max-width: 1024px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         
         .title {
             font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            color: white;
         }
         
-        .controls {
+        .header-info {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .timer-display {
+            font-size: 2rem;
+            font-family: monospace;
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        
+        .info-badge {
+            font-size: 0.875rem;
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .color-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 8px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 8px;
-            color: white;
             cursor: pointer;
-            font-size: 16px;
             transition: all 0.3s;
+            color: white;
         }
         
         .btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
         
-        .btn:disabled {
+        .controls {
+            max-width: 1024px;
+            margin: 16px auto 0;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .control-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .control-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         
-        .timer {
-            font-size: 1.5rem;
-            font-family: monospace;
-            margin: 10px 0;
+        .settings-panel {
+            max-width: 640px;
+            margin: 24px auto 0;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .settings-panel.show {
+            display: block;
+        }
+        
+        .settings-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+        
+        .button-grid {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .grid-7 {
+            grid-template-columns: repeat(7, 1fr);
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .option-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .option-btn.active {
+            background: white;
+            color: #1a4b3a;
+            font-weight: bold;
+        }
+        
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .option-btn.active:hover {
+            background: white;
+        }
+        
+        .description {
+            color: white;
+            font-size: 0.875rem;
+            margin-top: 8px;
+            opacity: 0.8;
         }
         
         .game-area {
             position: absolute;
-            top: 150px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transition: all 0.3s;
+        }
+        
+        .game-area.header-visible {
+            top: 240px;
+        }
+        
+        .game-area.header-hidden {
+            top: 0;
+        }
+        
+        .field {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            bottom: 16px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
+            border-radius: 8px;
+        }
+        
+        .field-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%);
+        }
+        
+        .center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .mode-indicator {
+            position: absolute;
+            top: 8px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .mode-left {
+            right: 8px;
+            background: rgba(59, 130, 246, 0.8);
+        }
+        
+        .mode-right {
+            left: 8px;
+            background: rgba(220, 38, 38, 0.8);
         }
         
         .point {
             position: absolute;
-            width: 16px;
-            height: 16px;
-            background: #fbbf24;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
-            animation: pulse 2s infinite;
             transform: translate(-50%, -50%);
+            animation: pulse 2s infinite;
         }
         
-        .star {
-            position: absolute;
-            font-size: 24px;
-            transform: translate(-50%, -50%);
-            animation: pulse 2s infinite;
+        .point-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .point-star {
+            font-size: 1.5rem;
         }
         
         @keyframes pulse {
@@ -109,129 +321,257 @@
             50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
         }
         
-        .completion {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 20;
+        .completion-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
         }
         
-        .settings {
+        .completion-message {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .mini-controls {
+            position: absolute;
+            top: 64px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .mini-timer {
+            font-size: 1.25rem;
+            font-family: monospace;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 12px;
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+        }
+        
+        .mini-stop {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            background: rgba(239, 68, 68, 0.8);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            text-align: center;
+        }
+        
+        .instructions-text {
+            color: white;
+            font-size: 1.125rem;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .setting-group {
-            margin-bottom: 20px;
-        }
-        
-        .setting-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .setting-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .setting-btn {
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .setting-btn.active {
-            background: white;
-            color: #1a4b3a;
-            font-weight: bold;
-        }
-        
-        .setting-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .hide {
-            display: none;
+            padding: 16px;
+            border-radius: 8px;
+            max-width: 512px;
+            margin: 0 auto;
         }
         
         @media (max-width: 768px) {
-            .title { font-size: 1.5rem; }
-            .timer { font-size: 1.2rem; }
-            .btn { padding: 8px 16px; font-size: 14px; }
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .timer-display {
+                font-size: 1.5rem;
+            }
+            
+            .grid-7 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .grid-3 {
+                grid-template-columns: repeat(1, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">⚽ ランダムサッカード</h1>
-            <div class="timer" id="timer">1:00</div>
-            <div class="controls">
-                <button class="btn" id="startBtn">開始</button>
-                <button class="btn" id="resetBtn">リセット</button>
-                <button class="btn" id="settingsBtn">設定</button>
+    <div class="app-container">
+        <!-- ヘッダー表示切り替えボタン -->
+        <button class="header-toggle" id="headerToggle" title="ヘッダーを切り替え">
+            ▲
+        </button>
+
+        <!-- ヘッダー -->
+        <div class="header" id="header">
+            <div class="header-content">
+                <h1 class="title">⚽ ランダムサッカード</h1>
+                <div class="header-info">
+                    <div class="timer-display" id="timerDisplay">1:00</div>
+                    <div class="info-badge" id="speedBadge">1秒間隔</div>
+                    <div class="info-badge" id="colorBadge">
+                        <div class="color-dot" style="background-color: #fbbf24;"></div>
+                        固定
+                    </div>
+                    <button class="btn" id="settingsBtn">
+                        <i data-lucide="settings"></i>
+                    </button>
+                </div>
             </div>
             
-            <div class="settings hide" id="settingsPanel">
-                <div class="setting-group">
-                    <div class="setting-title">時間設定</div>
-                    <div class="setting-buttons">
-                        <button class="setting-btn" data-duration="30">0:30</button>
-                        <button class="setting-btn active" data-duration="60">1:00</button>
-                        <button class="setting-btn" data-duration="90">1:30</button>
-                        <button class="setting-btn" data-duration="120">2:00</button>
-                        <button class="setting-btn" data-duration="180">3:00</button>
+            <!-- コントロールボタン -->
+            <div class="controls">
+                <button class="control-btn" id="playBtn">
+                    <i data-lucide="play"></i>
+                    <span>開始</span>
+                </button>
+                <button class="control-btn" id="resetBtn">
+                    <i data-lucide="rotate-ccw"></i>
+                    <span>リセット</span>
+                </button>
+            </div>
+
+            <!-- 設定パネル -->
+            <div class="settings-panel" id="settingsPanel">
+                <h3 class="settings-title">設定</h3>
+                
+                <!-- 脳トレーニングモード -->
+                <div class="section">
+                    <h4 class="section-title">脳トレーニングモード</h4>
+                    <div class="button-grid grid-3">
+                        <button class="option-btn active" data-mode="normal">
+                            <div style="font-weight: 600;">通常</div>
+                            <div style="font-size: 0.875rem; opacity: 0.8;">全体にランダム</div>
+                        </button>
+                        <button class="option-btn" data-mode="left">
+                            <div style="font-weight: 600;">左皮質</div>
+                            <div style="font-size: 0.875rem; opacity: 0.8;">右側8割</div>
+                        </button>
+                        <button class="option-btn" data-mode="right">
+                            <div style="font-weight: 600;">右皮質</div>
+                            <div style="font-size: 0.875rem; opacity: 0.8;">左側8割</div>
+                        </button>
                     </div>
                 </div>
-                
-                <div class="setting-group">
-                    <div class="setting-title">出現間隔</div>
-                    <div class="setting-buttons">
-                        <button class="setting-btn" data-speed="0.3">0.3秒</button>
-                        <button class="setting-btn" data-speed="0.5">0.5秒</button>
-                        <button class="setting-btn active" data-speed="1">1秒</button>
-                        <button class="setting-btn" data-speed="2">2秒</button>
-                        <button class="setting-btn" data-speed="3">3秒</button>
+
+                <!-- 時間設定 -->
+                <div class="section">
+                    <h4 class="section-title">時間設定</h4>
+                    <div class="button-grid grid-3">
+                        <button class="option-btn" data-duration="30">0:30</button>
+                        <button class="option-btn active" data-duration="60">1:00</button>
+                        <button class="option-btn" data-duration="90">1:30</button>
+                        <button class="option-btn" data-duration="120">2:00</button>
+                        <button class="option-btn" data-duration="150">2:30</button>
+                        <button class="option-btn" data-duration="180">3:00</button>
                     </div>
                 </div>
-                
-                <div class="setting-group">
-                    <div class="setting-title">脳トレーニングモード</div>
-                    <div class="setting-buttons">
-                        <button class="setting-btn active" data-mode="normal">通常</button>
-                        <button class="setting-btn" data-mode="left">左皮質</button>
-                        <button class="setting-btn" data-mode="right">右皮質</button>
+
+                <!-- ポイントスピード設定 -->
+                <div class="section">
+                    <h4 class="section-title">ポイント出現間隔</h4>
+                    <div class="button-grid grid-7">
+                        <button class="option-btn" data-speed="0.3">0.3秒</button>
+                        <button class="option-btn" data-speed="0.5">0.5秒</button>
+                        <button class="option-btn active" data-speed="1">1秒</button>
+                        <button class="option-btn" data-speed="2">2秒</button>
+                        <button class="option-btn" data-speed="3">3秒</button>
+                        <button class="option-btn" data-speed="4">4秒</button>
+                        <button class="option-btn" data-speed="5">5秒</button>
                     </div>
+                    <p class="description" id="speedDescription">
+                        1秒間隔で新しい点が出現します
+                    </p>
+                </div>
+
+                <!-- カラーモード設定 -->
+                <div class="section">
+                    <h4 class="section-title">点の色設定</h4>
+                    <div class="button-grid grid-2">
+                        <button class="option-btn active" data-color="yellow">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <div style="width: 12px; height: 12px; background-color: #fbbf24; border-radius: 50%;"></div>
+                                <span style="font-weight: 600;">固定色</span>
+                            </div>
+                            <div style="font-size: 0.875rem; opacity: 0.8;">黄色のみ</div>
+                        </button>
+                        <button class="option-btn" data-color="random">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background-color: #3b82f6; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background-color: #10b981; border-radius: 50%;"></div>
+                                <span style="font-weight: 600; margin-left: 4px;">ランダム</span>
+                            </div>
+                            <div style="font-size: 0.875rem; opacity: 0.8;">カラフル</div>
+                        </button>
+                    </div>
+                    <p class="description" id="colorDescription">
+                        統一された黄色で表示されます
+                    </p>
                 </div>
             </div>
         </div>
-        
-        <div class="game-area" id="gameArea"></div>
-        
-        <div class="completion hide" id="completion">
-            <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
-            <h2 style="font-size: 2rem; margin-bottom: 10px;">完了！</h2>
-            <p style="font-size: 1.2rem;">お疲れさまでした！</p>
+
+        <!-- ゲームエリア -->
+        <div class="game-area header-visible" id="gameArea">
+            <!-- フィールド -->
+            <div class="field">
+                <div class="field-line"></div>
+                <div class="center-circle"></div>
+                <div class="mode-indicator mode-left" id="leftIndicator" style="display: none;">
+                    左皮質モード (右側重点)
+                </div>
+                <div class="mode-indicator mode-right" id="rightIndicator" style="display: none;">
+                    右皮質モード (左側重点)
+                </div>
+            </div>
+
+            <!-- ポイント表示エリア -->
+            <div id="pointsContainer"></div>
+
+            <!-- 完了メッセージ -->
+            <div class="completion-overlay" id="completionOverlay" style="display: none;">
+                <div class="completion-message">
+                    <div style="font-size: 4rem; margin-bottom: 16px;">🎉</div>
+                    <h2 style="font-size: 2rem; font-weight: bold; color: white; margin-bottom: 8px;">完了！</h2>
+                    <p style="color: white; font-size: 1.125rem;">お疲れさまでした！</p>
+                </div>
+            </div>
+
+            <!-- 説明 -->
+            <div class="instructions" id="instructions">
+                <p class="instructions-text">
+                    画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br />
+                    <span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
+                </p>
+            </div>
+
+            <!-- ヘッダー非表示時の簡易コントロール -->
+            <div class="mini-controls" id="miniControls" style="display: none;">
+                <div class="mini-timer" id="miniTimer">1:00</div>
+                <button class="mini-stop" id="miniStop" style="display: none;">
+                    <div style="width: 12px; height: 12px; background: white; border-radius: 2px;"></div>
+                    停止
+                </button>
+            </div>
         </div>
     </div>
 
@@ -242,18 +582,38 @@
         let timeLeft = 60;
         let brainMode = 'normal';
         let pointSpeed = 1;
+        let colorMode = 'yellow';
+        let showHeader = true;
         let points = [];
         let timerInterval = null;
         let pointInterval = null;
 
         // DOM要素
-        const timerDisplay = document.getElementById('timer');
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsPanel = document.getElementById('settingsPanel');
-        const gameArea = document.getElementById('gameArea');
-        const completion = document.getElementById('completion');
+        const elements = {
+            headerToggle: document.getElementById('headerToggle'),
+            header: document.getElementById('header'),
+            gameArea: document.getElementById('gameArea'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            miniTimer: document.getElementById('miniTimer'),
+            playBtn: document.getElementById('playBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsPanel: document.getElementById('settingsPanel'),
+            pointsContainer: document.getElementById('pointsContainer'),
+            completionOverlay: document.getElementById('completionOverlay'),
+            instructions: document.getElementById('instructions'),
+            miniControls: document.getElementById('miniControls'),
+            miniStop: document.getElementById('miniStop'),
+            leftIndicator: document.getElementById('leftIndicator'),
+            rightIndicator: document.getElementById('rightIndicator'),
+            speedBadge: document.getElementById('speedBadge'),
+            colorBadge: document.getElementById('colorBadge'),
+            speedDescription: document.getElementById('speedDescription'),
+            colorDescription: document.getElementById('colorDescription')
+        };
+
+        // Lucide icons初期化
+        lucide.createIcons();
 
         // 時間フォーマット
         function formatTime(seconds) {
@@ -262,139 +622,201 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
+        // タイマー表示更新
+        function updateTimerDisplay() {
+            const timeStr = formatTime(timeLeft);
+            elements.timerDisplay.textContent = timeStr;
+            elements.miniTimer.textContent = timeStr;
+        }
+
         // ランダム位置生成
         function generateRandomPosition() {
-            const rect = gameArea.getBoundingClientRect();
             let x, y;
             
             if (brainMode === 'left') {
-                x = Math.random() < 0.8 ? 
-                    Math.random() * (rect.width * 0.5) + (rect.width * 0.5) : 
-                    Math.random() * (rect.width * 0.5);
+                if (Math.random() < 0.8) {
+                    x = Math.random() * 45 + 50;
+                } else {
+                    x = Math.random() * 45 + 5;
+                }
             } else if (brainMode === 'right') {
-                x = Math.random() < 0.8 ? 
-                    Math.random() * (rect.width * 0.5) : 
-                    Math.random() * (rect.width * 0.5) + (rect.width * 0.5);
+                if (Math.random() < 0.8) {
+                    x = Math.random() * 45 + 5;
+                } else {
+                    x = Math.random() * 45 + 50;
+                }
             } else {
-                x = Math.random() * rect.width;
+                x = Math.random() * 90 + 5;
             }
             
-            y = Math.random() * rect.height;
+            const topMargin = showHeader ? 15 : 5;
+            const bottomMargin = showHeader ? 85 : 95;
+            y = Math.random() * (bottomMargin - topMargin) + topMargin;
+            
+            const colors = [
+                '#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
+                '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
+            ];
+            
+            const pointColor = colorMode === 'random' 
+                ? colors[Math.floor(Math.random() * colors.length)]
+                : '#fbbf24';
             
             return {
-                x: x,
-                y: y,
+                x, y,
                 id: Date.now() + Math.random(),
-                isStar: Math.random() < 0.15
+                isStar: Math.random() < 0.15,
+                color: pointColor
             };
         }
 
         // ポイント表示
         function showPoint(point) {
-            const element = document.createElement('div');
-            element.className = point.isStar ? 'star' : 'point';
-            element.style.left = `${point.x}px`;
-            element.style.top = `${point.y}px`;
-            element.dataset.id = point.id;
-            
+            const pointElement = document.createElement('div');
+            pointElement.className = 'point';
+            pointElement.style.left = `${point.x}%`;
+            pointElement.style.top = `${point.y}%`;
+            pointElement.dataset.id = point.id;
+
             if (point.isStar) {
-                element.textContent = '⭐';
+                pointElement.innerHTML = '<div class="point-star">⭐</div>';
+            } else {
+                const dot = document.createElement('div');
+                dot.className = 'point-dot';
+                dot.style.backgroundColor = point.color;
+                pointElement.appendChild(dot);
             }
-            
-            gameArea.appendChild(element);
-            
+
+            elements.pointsContainer.appendChild(pointElement);
+
             setTimeout(() => {
-                const el = gameArea.querySelector(`[data-id="${point.id}"]`);
-                if (el) el.remove();
+                const element = document.querySelector(`[data-id="${point.id}"]`);
+                if (element) element.remove();
             }, 2000);
         }
 
         // タイマー開始
         function startTimer() {
             isRunning = true;
-            startBtn.textContent = '停止';
-            completion.classList.add('hide');
+            elements.playBtn.innerHTML = '<i data-lucide="pause"></i><span>停止</span>';
+            elements.instructions.style.display = 'none';
+            elements.miniStop.style.display = showHeader ? 'none' : 'flex';
             
             timerInterval = setInterval(() => {
                 timeLeft--;
-                timerDisplay.textContent = formatTime(timeLeft);
+                updateTimerDisplay();
                 
                 if (timeLeft <= 0) {
                     stopTimer();
-                    completion.classList.remove('hide');
+                    showCompletion();
                 }
             }, 1000);
-            
+
             pointInterval = setInterval(() => {
-                const point = generateRandomPosition();
-                showPoint(point);
+                showPoint(generateRandomPosition());
             }, pointSpeed * 1000);
+
+            lucide.createIcons();
         }
 
         // タイマー停止
         function stopTimer() {
             isRunning = false;
-            startBtn.textContent = '開始';
+            elements.playBtn.innerHTML = '<i data-lucide="play"></i><span>開始</span>';
+            elements.miniStop.style.display = 'none';
             
             if (timerInterval) clearInterval(timerInterval);
             if (pointInterval) clearInterval(pointInterval);
+            
+            lucide.createIcons();
         }
 
         // リセット
         function resetTimer() {
             stopTimer();
             timeLeft = duration;
-            timerDisplay.textContent = formatTime(timeLeft);
-            gameArea.innerHTML = '';
-            completion.classList.add('hide');
+            updateTimerDisplay();
+            elements.pointsContainer.innerHTML = '';
+            elements.completionOverlay.style.display = 'none';
+            elements.instructions.style.display = 'block';
         }
 
-        // イベントリスナー
-        startBtn.addEventListener('click', () => {
-            if (isRunning) {
-                stopTimer();
-            } else if (timeLeft > 0) {
-                startTimer();
+        // 完了表示
+        function showCompletion() {
+            elements.completionOverlay.style.display = 'flex';
+            elements.pointsContainer.innerHTML = '';
+        }
+
+        // ヘッダー切り替え
+        function toggleHeader() {
+            showHeader = !showHeader;
+            elements.headerToggle.textContent = showHeader ? '▲' : '▼';
+            elements.header.classList.toggle('hidden', !showHeader);
+            elements.gameArea.className = `game-area ${showHeader ? 'header-visible' : 'header-hidden'}`;
+            elements.miniControls.style.display = showHeader ? 'none' : 'flex';
+            elements.miniStop.style.display = (isRunning && !showHeader) ? 'flex' : 'none';
+        }
+
+        // 設定切り替え
+        function toggleSettings() {
+            elements.settingsPanel.classList.toggle('show');
+        }
+
+        // モード変更
+        function changeBrainMode(mode) {
+            brainMode = mode;
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            
+            elements.leftIndicator.style.display = mode === 'left' ? 'block' : 'none';
+            elements.rightIndicator.style.display = mode === 'right' ? 'block' : 'none';
+        }
+
+        // 時間変更
+        function changeDuration(newDuration) {
+            duration = parseInt(newDuration);
+            if (!isRunning) {
+                timeLeft = duration;
+                updateTimerDisplay();
             }
-        });
-
-        resetBtn.addEventListener('click', resetTimer);
-
-        settingsBtn.addEventListener('click', () => {
-            settingsPanel.classList.toggle('hide');
-        });
-
-        // 設定ボタン
-        document.querySelectorAll('[data-duration]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('[data-duration]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                duration = parseInt(btn.dataset.duration);
-                if (!isRunning) {
-                    timeLeft = duration;
-                    timerDisplay.textContent = formatTime(timeLeft);
-                }
+            
+            document.querySelectorAll('[data-duration]').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.duration) === duration);
             });
-        });
+        }
 
-        document.querySelectorAll('[data-speed]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('[data-speed]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                pointSpeed = parseFloat(btn.dataset.speed);
+        // スピード変更
+        function changeSpeed(speed) {
+            pointSpeed = parseFloat(speed);
+            elements.speedBadge.textContent = `${pointSpeed}秒間隔`;
+            elements.speedDescription.innerHTML = `${pointSpeed}秒間隔で新しい点が出現します${pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
+            
+            document.querySelectorAll('[data-speed]').forEach(btn => {
+                btn.classList.toggle('active', parseFloat(btn.dataset.speed) === pointSpeed);
             });
-        });
 
-        document.querySelectorAll('[data-mode]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                brainMode = btn.dataset.mode;
-            });
-        });
+            // 説明文更新
+            const instructionsText = elements.instructions.querySelector('.instructions-text');
+            if (instructionsText && !isRunning && timeLeft === duration) {
+                instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br /><span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: ${pointSpeed}秒間隔でポイント出現</span>`;
+            }
+        }
 
-        // 初期化
-        timerDisplay.textContent = formatTime(timeLeft);
-    </script>
-</body>
-</html>
+        // カラー変更
+        function changeColor(color) {
+            colorMode = color;
+            const badge = elements.colorBadge;
+            
+            if (color === 'random') {
+                badge.innerHTML = `
+                    <div class="color-dot" style="background-color: #ef4444;"></div>
+                    <div class="color-dot" style="background-color: #3b82f6;"></div>
+                    <div class="color-dot" style="background-color: #10b981;"></div>
+                    ランダム
+                `;
+                elements.colorDescription.textContent = '10種類の色からランダムに選択されます';
+            } else {
+                badge.innerHTML = `
+                    <div class="color-dot" style="background-color: #fbbf24;"></div>
+                    固定
