@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ランダムサッカード</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { Play, Pause, RotateCcw, Settings } = lucide;
+
+        const RandomSoccerApp = () => {
+          const [isRunning, setIsRunning] = useState(false);
+          const [duration, setDuration] = useState(60);
+          const [timeLeft, setTimeLeft] = useState(60);
+          const [points, setPoints] = useState([]);
+          const [showSettings, setShowSettings] = useState(false);
+          const [brainMode, setBrainMode] = useState('normal');
+          const [pointSpeed, setPointSpeed] = useState(1);
+          const [colorMode, setColorMode] = useState('yellow');
+          const [showHeader, setShowHeader] = useState(true);
+          const intervalRef = useRef(null);
+          const pointIntervalRef = useRef(null);
+
+          // ランダムな位置を生成
+          const generateRandomPosition = () => {
+            let x, y;
+            
+            if (brainMode === 'left') {
+              if (Math.random() < 0.8) {
+                x = Math.random() * 45 + 50;
+              } else {
+                x = Math.random() * 45 + 5;
+              }
+            } else if (brainMode === 'right') {
+              if (Math.random() < 0.8) {
+                x = Math.random() * 45 + 5;
+              } else {
+                x = Math.random() * 45 + 50;
+              }
+            } else {
+              x = Math.random() * 90 + 5;
+            }
+            
+            const topMargin = showHeader ? 15 : 5;
+            const bottomMargin = showHeader ? 85 : 95;
+            y = Math.random() * (bottomMargin - topMargin) + topMargin;
+            
+            const colors = [
+              '#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
+              '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
+            ];
+            
+            const pointColor = colorMode === 'random' 
+              ? colors[Math.floor(Math.random() * colors.length)]
+              : '#fbbf24';
+            
+            return {
+              x,
+              y,
+              id: Date.now() + Math.random(),
+              isStar: Math.random() < 0.15,
+              color: pointColor
+            };
+          };
+
+          // タイマー開始
+          const startTimer = () => {
+            setIsRunning(true);
+            
+            intervalRef.current = setInterval(() => {
+              setTimeLeft(prev => {
+                if (prev <= 1) {
+                  setIsRunning(false);
+                  setPoints([]);
+                  return 0;
+                }
+                return prev - 1;
+              });
+            }, 1000);
+
+            pointIntervalRef.current = setInterval(() => {
+              const newPoint = generateRandomPosition();
+              setPoints(prev => [...prev, newPoint]);
+              
+              setTimeout(() => {
+                setPoints(prev => prev.filter(point => point.id !== newPoint.id));
+              }, 2000);
+            }, pointSpeed * 1000);
+          };
+
+          // タイマー停止
+          const stopTimer = () => {
+            setIsRunning(false);
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (pointIntervalRef.current) clearInterval(pointIntervalRef.current);
+          };
+
+          // リセット
+          const resetTimer = () => {
+            stopTimer();
+            setTimeLeft(duration);
+            setPoints([]);
+          };
+
+          // 時間設定
+          const handleDurationChange = (newDuration) => {
+            setDuration(newDuration);
+            if (!isRunning) {
+              setTimeLeft(newDuration);
+            }
+          };
+
+          // 時間フォーマット
+          const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+          };
+
+          // クリーンアップ
+          useEffect(() => {
+            return () => {
+              if (intervalRef.current) clearInterval(intervalRef.current);
+              if (pointIntervalRef.current) clearInterval(pointIntervalRef.current);
+            };
+          }, []);
+
+          return React.createElement('div', {
+            className: "min-h-screen bg-gradient-to-br from-green-900 via-green-700 to-green-500 relative overflow-hidden"
+          },
+            // ヘッダー表示切り替えボタン
+            React.createElement('button', {
+              onClick: () => setShowHeader(!showHeader),
+              className: "fixed top-4 right-4 z-20 p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-lg transition-all",
+              title: showHeader ? "ヘッダーを非表示" : "ヘッダーを表示"
+            },
+              React.createElement('div', {
+                className: "w-6 h-6 text-white"
+              }, showHeader ? "▲" : "▼")
+            ),
+
+            // ヘッダー
+            React.createElement('div', {
+              className: `relative z-10 transition-all duration-300 ${showHeader ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`
+            },
+              React.createElement('div', {
+                className: "p-6 bg-black bg-opacity-20 backdrop-blur-sm"
+              },
+                React.createElement('div', {
+                  className: "max-w-4xl mx-auto flex items-center justify-between"
+                },
+                  React.createElement('h1', {
+                    className: "text-3xl font-bold text-white"
+                  }, "⚽ ランダムサッカード"),
+                  React.createElement('div', {
+                    className: "flex items-center gap-4"
+                  },
+                    React.createElement('div', {
+                      className: "text-2xl font-mono text-white bg-black bg-opacity-30 px-4 py-2 rounded-lg"
+                    }, formatTime(timeLeft)),
+                    React.createElement('div', {
+                      className: "text-sm text-white bg-black bg-opacity-30 px-3 py-1 rounded-lg"
+                    }, `${pointSpeed}秒間隔`),
+                    React.createElement('div', {
+                      className: "flex items-center gap-1 text-sm text-white bg-black bg-opacity-30 px-3 py-1 rounded-lg"
+                    },
+                      colorMode === 'random' ?
+                        [
+                          React.createElement('div', { key: '1', className: "w-2 h-2 bg-red-500 rounded-full" }),
+                          React.createElement('div', { key: '2', className: "w-2 h-2 bg-blue-500 rounded-full" }),
+                          React.createElement('div', { key: '3', className: "w-2 h-2 bg-green-500 rounded-full" }),
+                          React.createElement('span', { key: '4', className: "ml-1" }, "ランダム")
+                        ] :
+                        [
+                          React.createElement('div', { key: '1', className: "w-2 h-2 bg-yellow-400 rounded-full" }),
+                          React.createElement('span', { key: '2', className: "ml-1" }, "固定")
+                        ]
+                    ),
+                    React.createElement('button', {
+                      onClick: () => setShowSettings(!showSettings),
+                      className: "p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all"
+                    },
+                      React.createElement(Settings, { className: "w-6 h-6 text-white" })
+                    )
+                  )
+                ),
+                
+                // コントロールボタン
+                React.createElement('div', {
+                  className: "max-w-4xl mx-auto mt-4 flex justify-center gap-4"
+                },
+                  React.createElement('button', {
+                    onClick: isRunning ? stopTimer : startTimer,
+                    disabled: timeLeft === 0,
+                    className: "flex items-center gap-2 px-6 py-3 bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all"
+                  },
+                    isRunning ?
+                      [
+                        React.createElement(Pause, { key: '1', className: "w-5 h-5 text-white" }),
+                        React.createElement('span', { key: '2', className: "text-white font-medium" }, "停止")
+                      ] :
+                      [
+                        React.createElement(Play, { key: '1', className: "w-5 h-5 text-white" }),
+                        React.createElement('span', { key: '2', className: "text-white font-medium" }, "開始")
+                      ]
+                  ),
+                  
+                  React.createElement('button', {
+                    onClick: resetTimer,
+                    className: "flex items-center gap-2 px-6 py-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all"
+                  },
+                    React.createElement(RotateCcw, { className: "w-5 h-5 text-white" }),
+                    React.createElement('span', { className: "text-white font-medium" }, "リセット")
+                  )
+                ),
+
+                // 設定パネル
+                showSettings && React.createElement('div', {
+                  className: "max-w-2xl mx-auto mt-6 p-6 bg-black bg-opacity-30 backdrop-blur-sm rounded-lg"
+                },
+                  React.createElement('h3', {
+                    className: "text-xl font-bold text-white mb-4"
+                  }, "設定"),
+                  
+                  // 脳トレーニングモード
+                  React.createElement('div', {
+                    className: "mb-6"
+                  },
+                    React.createElement('h4', {
+                      className: "text-lg font-semibold text-white mb-3"
+                    }, "脳トレーニングモード"),
+                    React.createElement('div', {
+                      className: "grid grid-cols-1 md:grid-cols-3 gap-3"
+                    },
+                      ['normal', 'left', 'right'].map(mode => 
+                        React.createElement('button', {
+                          key: mode,
+                          onClick: () => setBrainMode(mode),
+                          className: `px-4 py-3 rounded-lg transition-all text-center ${
+                            brainMode === mode
+                              ? 'bg-white text-green-900 font-bold'
+                              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                          }`
+                        },
+                          React.createElement('div', { className: "font-medium" }, 
+                            mode === 'normal' ? '通常' : mode === 'left' ? '左皮質' : '右皮質'
+                          ),
+                          React.createElement('div', { className: "text-sm opacity-80" }, 
+                            mode === 'normal' ? '全体にランダム' : mode === 'left' ? '右側8割' : '左側8割'
+                          )
+                        )
+                      )
+                    )
+                  ),
+
+                  // 時間設定
+                  React.createElement('div', {
+                    className: "mb-6"
+                  },
+                    React.createElement('h4', {
+                      className: "text-lg font-semibold text-white mb-3"
+                    }, "時間設定"),
+                    React.createElement('div', {
+                      className: "grid grid-cols-2 md:grid-cols-3 gap-3"
+                    },
+                      [30, 60, 90, 120, 150, 180].map(seconds =>
+                        React.createElement('button', {
+                          key: seconds,
+                          onClick: () => handleDurationChange(seconds),
+                          className: `px-4 py-2 rounded-lg transition-all ${
+                            duration === seconds
+                              ? 'bg-white text-green-900 font-bold'
+                              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                          }`
+                        }, formatTime(seconds))
+                      )
+                    )
+                  ),
+
+                  // ポイントスピード設定
+                  React.createElement('div', {
+                    className: "mb-6"
+                  },
+                    React.createElement('h4', {
+                      className: "text-lg font-semibold text-white mb-3"
+                    }, "ポイント出現間隔"),
+                    React.createElement('div', {
+                      className: "grid grid-cols-4 md:grid-cols-7 gap-2"
+                    },
+                      [0.3, 0.5, 1, 2, 3, 4, 5].map(speed =>
+                        React.createElement('button', {
+                          key: speed,
+                          onClick: () => setPointSpeed(speed),
+                          className: `px-3 py-2 rounded-lg transition-all text-sm ${
+                            pointSpeed === speed
+                              ? 'bg-white text-green-900 font-bold'
+                              : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                          }`
+                        }, `${speed}秒`)
+                      )
+                    ),
+                    React.createElement('p', {
+                      className: "text-white text-sm mt-2 opacity-80"
+                    }, 
+                      `${pointSpeed}秒間隔で新しい点が出現します`,
+                      pointSpeed < 1 && React.createElement('span', {
+                        className: "text-yellow-300"
+                      }, " (超高速モード)")
+                    )
+                  ),
+
+                  // カラーモード設定
+                  React.createElement('div', {},
+                    React.createElement('h4', {
+                      className: "text-lg font-semibold text-white mb-3"
+                    }, "点の色設定"),
+                    React.createElement('div', {
+                      className: "grid grid-cols-2 gap-3"
+                    },
+                      React.createElement('button', {
+                        onClick: () => setColorMode('yellow'),
+                        className: `px-4 py-3 rounded-lg transition-all text-center ${
+                          colorMode === 'yellow'
+                            ? 'bg-white text-green-900 font-bold'
+                            : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                        }`
+                      },
+                        React.createElement('div', {
+                          className: "flex items-center justify-center gap-2"
+                        },
+                          React.createElement('div', { className: "w-3 h-3 bg-yellow-400 rounded-full" }),
+                          React.createElement('span', { className: "font-medium" }, "固定色")
+                        ),
+                        React.createElement('div', { className: "text-sm opacity-80" }, "黄色のみ")
+                      ),
+                      React.createElement('button', {
+                        onClick: () => setColorMode('random'),
+                        className: `px-4 py-3 rounded-lg transition-all text-center ${
+                          colorMode === 'random'
+                            ? 'bg-white text-green-900 font-bold'
+                            : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                        }`
+                      },
+                        React.createElement('div', {
+                          className: "flex items-center justify-center gap-1"
+                        },
+                          React.createElement('div', { className: "w-2 h-2 bg-red-500 rounded-full" }),
+                          React.createElement('div', { className: "w-2 h-2 bg-blue-500 rounded-full" }),
+                          React.createElement('div', { className: "w-2 h-2 bg-green-500 rounded-full" }),
+                          React.createElement('span', { className: "font-medium ml-1" }, "ランダム")
+                        ),
+                        React.createElement('div', { className: "text-sm opacity-80" }, "カラフル")
+                      )
+                    ),
+                    React.createElement('p', {
+                      className: "text-white text-sm mt-2 opacity-80"
+                    }, 
+                      colorMode === 'random' 
+                        ? '10種類の色からランダムに選択されます' 
+                        : '統一された黄色で表示されます'
+                    )
+                  )
+                )
+              )
+            ),
+
+            // ゲームエリア
+            React.createElement('div', {
+              className: `absolute transition-all duration-300 ${showHeader ? 'top-32' : 'top-0'} left-0 right-0 bottom-0`
+            },
+              // フィールド
+              React.createElement('div', {
+                className: "absolute inset-4 border-2 border-white border-opacity-30 rounded-lg"
+              },
+                React.createElement('div', {
+                  className: "absolute left-1/2 top-0 bottom-0 w-0.5 bg-white bg-opacity-30"
+                }),
+                React.createElement('div', {
+                  className: "absolute left-1/2 top-1/2 w-20 h-20 border-2 border-white border-opacity-30 rounded-full transform -translate-x-1/2 -translate-y-1/2"
+                }),
+                
+                // 脳トレーニングモード表示
+                brainMode !== 'normal' && [
+                  brainMode === 'left' && React.createElement('div', {
+                    key: 'left',
+                    className: "absolute right-2 top-2 bg-blue-600 bg-opacity-80 text-white px-3 py-1 rounded-lg text-sm font-medium"
+                  }, "左皮質モード (右側重点)"),
+                  brainMode === 'right' && React.createElement('div', {
+                    key: 'right',
+                    className: "absolute left-2 top-2 bg-red-600 bg-opacity-80 text-white px-3 py-1 rounded-lg text-sm font-medium"
+                  }, "右皮質モード (左側重点)")
+                ]
+              ),
+
+              // ランダムポイント
+              ...points.map(point =>
+                React.createElement('div', {
+                  key: point.id,
+                  className: "absolute transform -translate-x-1/2 -translate-y-1/2 animate-pulse",
+                  style: { 
+                    left: `${point.x}%`, 
+                    top: `${point.y}%`,
+                    animationDuration: '2s'
+                  }
+                },
+                  point.isStar ?
+                    React.createElement('div', { className: "text-3xl" }, "⭐") :
+                    React.createElement('div', { 
+                      className: "w-4 h-4 rounded-full shadow-lg",
+                      style: { backgroundColor: point.color }
+                    })
+                )
+              ),
+
+              // 完了メッセージ
+              timeLeft === 0 && React.createElement('div', {
+                className: "absolute inset-0 flex items-center justify-center"
+              },
+                React.createElement('div', {
+                  className: "bg-black bg-opacity-50 backdrop-blur-sm p-8 rounded-2xl text-center"
+                },
+                  React.createElement('div', { className: "text-6xl mb-4" }, "🎉"),
+                  React.createElement('h2', { className: "text-3xl font-bold text-white mb-2" }, "完了！"),
+                  React.createElement('p', { className: "text-white text-lg" }, "お疲れさまでした！")
+                )
+              ),
+
+              // 説明
+              !isRunning && timeLeft === duration && showHeader && React.createElement('div', {
+                className: "absolute bottom-6 left-6 right-6 text-center"
+              },
+                React.createElement('p', {
+                  className: "text-white text-lg bg-black bg-opacity-30 backdrop-blur-sm p-4 rounded-lg max-w-2xl mx-auto"
+                },
+                  "画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！",
+                  React.createElement('br'),
+                  React.createElement('span', {
+                    className: "text-sm opacity-80"
+                  }, `現在の設定: ${pointSpeed}秒間隔でポイント出現`)
+                )
+              ),
+
+              // ヘッダー非表示時の簡易情報
+              !showHeader && React.createElement('div', {
+                className: "absolute top-16 right-4 z-10"
+              },
+                React.createElement('div', {
+                  className: "flex flex-col gap-2 items-end"
+                },
+                  React.createElement('div', {
+                    className: "text-xl font-mono text-white bg-black bg-opacity-50 px-3 py-1 rounded-lg backdrop-blur-sm"
+                  }, formatTime(timeLeft)),
+                  isRunning && React.createElement('button', {
+                    onClick: stopTimer,
+                    className: "flex items-center gap-1 px-3 py-1 bg-red-600 bg-opacity-80 hover:bg-opacity-100 rounded-lg transition-all text-white text-sm"
+                  },
+                    React.createElement('div', { className: "w-3 h-3 bg-white rounded-sm" }),
+                    "停止"
+                  )
+                )
+              )
+            )
+          );
+        };
+
+        ReactDOM.render(React.createElement(RandomSoccerApp), document.getElementById('root'));
+    </script>
+</body>
+</html>
