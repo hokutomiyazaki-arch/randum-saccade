@@ -1,822 +1,428 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ランダムサッカード</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden;
-        }
-        
-        .app-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a4b3a, #2d7a5f, #48cc6c);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header-toggle {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            z-index: 20;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-            font-size: 20px;
-        }
-        
-        .header-toggle:hover {
-            background: rgba(0, 0, 0, 0.7);
-        }
-        
-        .header {
-            position: relative;
-            z-index: 10;
-            padding: 24px;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
-            transition: all 0.3s;
-        }
-        
-        .header.hidden {
-            transform: translateY(-100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .header-content {
-            max-width: 1024px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        
-        .title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .header-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .timer-display {
-            font-size: 2rem;
-            font-family: monospace;
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 16px;
-            border-radius: 8px;
-        }
-        
-        .info-badge {
-            font-size: 0.875rem;
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 4px 12px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .color-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        
-        .btn {
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-        }
-        
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .controls {
-            max-width: 1024px;
-            margin: 16px auto 0;
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-        }
-        
-        .control-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-            font-weight: 500;
-        }
-        
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .control-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .settings-panel {
-            max-width: 640px;
-            margin: 24px auto 0;
-            padding: 24px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .settings-panel.show {
-            display: block;
-        }
-        
-        .settings-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 16px;
-        }
-        
-        .section {
-            margin-bottom: 24px;
-        }
-        
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 12px;
-        }
-        
-        .button-grid {
-            display: grid;
-            gap: 12px;
-        }
-        
-        .grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        
-        .grid-7 {
-            grid-template-columns: repeat(7, 1fr);
-        }
-        
-        .grid-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
-        .option-btn {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        
-        .option-btn.active {
-            background: white;
-            color: #1a4b3a;
-            font-weight: bold;
-        }
-        
-        .option-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .option-btn.active:hover {
-            background: white;
-        }
-        
-        .description {
-            color: white;
-            font-size: 0.875rem;
-            margin-top: 8px;
-            opacity: 0.8;
-        }
-        
-        .game-area {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            transition: all 0.3s;
-        }
-        
-        .game-area.header-visible {
-            top: 240px;
-        }
-        
-        .game-area.header-hidden {
-            top: 0;
-        }
-        
-        .field {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            right: 16px;
-            bottom: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-        }
-        
-        .field-line {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateX(-50%);
-        }
-        
-        .center-circle {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 80px;
-            height: 80px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
-        
-        .mode-indicator {
-            position: absolute;
-            top: 8px;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: white;
-        }
-        
-        .mode-left {
-            right: 8px;
-            background: rgba(59, 130, 246, 0.8);
-        }
-        
-        .mode-right {
-            left: 8px;
-            background: rgba(220, 38, 38, 0.8);
-        }
-        
-        .point {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            animation: pulse 2s infinite;
-        }
-        
-        .point-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .point-star {
-            font-size: 1.5rem;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
-        }
-        
-        .completion-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-        }
-        
-        .completion-message {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            padding: 32px;
-            border-radius: 16px;
-            text-align: center;
-        }
-        
-        .mini-controls {
-            position: absolute;
-            top: 64px;
-            right: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
-        
-        .mini-timer {
-            font-size: 1.25rem;
-            font-family: monospace;
-            color: white;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 4px 12px;
-            border-radius: 8px;
-            backdrop-filter: blur(8px);
-        }
-        
-        .mini-stop {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            background: rgba(239, 68, 68, 0.8);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            color: white;
-            font-size: 0.875rem;
-        }
-        
-        .instructions {
-            position: absolute;
-            bottom: 24px;
-            left: 24px;
-            right: 24px;
-            text-align: center;
-        }
-        
-        .instructions-text {
-            color: white;
-            font-size: 1.125rem;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            padding: 16px;
-            border-radius: 8px;
-            max-width: 512px;
-            margin: 0 auto;
-        }
-        
-        @media (max-width: 768px) {
-            .title {
-                font-size: 1.5rem;
-            }
-            
-            .timer-display {
-                font-size: 1.5rem;
-            }
-            
-            .grid-7 {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .grid-3 {
-                grid-template-columns: repeat(1, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <!-- ヘッダー表示切り替えボタン -->
-        <button class="header-toggle" id="headerToggle" title="ヘッダーを切り替え">
-            ▲
-        </button>
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Pause, RotateCcw, Settings } from 'lucide-react';
 
-        <!-- ヘッダー -->
-        <div class="header" id="header">
-            <div class="header-content">
-                <h1 class="title">⚽ ランダムサッカード</h1>
-                <div class="header-info">
-                    <div class="timer-display" id="timerDisplay">1:00</div>
-                    <div class="info-badge" id="speedBadge">1秒間隔</div>
-                    <div class="info-badge" id="colorBadge">
-                        <div class="color-dot" style="background-color: #fbbf24;"></div>
-                        固定
-                    </div>
-                    <button class="btn" id="settingsBtn">
-                        <i data-lucide="settings"></i>
+const RandomSoccerApp = () => {
+  const [isRunning, setIsRunning] = useState(false);
+  const [duration, setDuration] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(duration);
+  const [points, setPoints] = useState([]);
+  const [showSettings, setShowSettings] = useState(false);
+  const [brainMode, setBrainMode] = useState('normal');
+  const [pointSpeed, setPointSpeed] = useState(1);
+  const [colorMode, setColorMode] = useState('yellow');
+  const [showHeader, setShowHeader] = useState(true);
+  const intervalRef = useRef(null);
+  const pointIntervalRef = useRef(null);
+
+  // ランダムな位置を生成
+  const generateRandomPosition = () => {
+    let x, y;
+    
+    if (brainMode === 'left') {
+      if (Math.random() < 0.8) {
+        x = Math.random() * 45 + 50;
+      } else {
+        x = Math.random() * 45 + 5;
+      }
+    } else if (brainMode === 'right') {
+      if (Math.random() < 0.8) {
+        x = Math.random() * 45 + 5;
+      } else {
+        x = Math.random() * 45 + 50;
+      }
+    } else {
+      x = Math.random() * 90 + 5;
+    }
+    
+    const topMargin = showHeader ? 15 : 5;
+    const bottomMargin = showHeader ? 85 : 95;
+    y = Math.random() * (bottomMargin - topMargin) + topMargin;
+    
+    const colors = [
+      '#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
+      '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
+    ];
+    
+    const pointColor = colorMode === 'random' 
+      ? colors[Math.floor(Math.random() * colors.length)]
+      : '#fbbf24';
+    
+    return {
+      x,
+      y,
+      id: Date.now() + Math.random(),
+      isStar: Math.random() < 0.15,
+      color: pointColor
+    };
+  };
+
+  // タイマー開始
+  const startTimer = () => {
+    setIsRunning(true);
+    
+    intervalRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          setIsRunning(false);
+          setPoints([]);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    pointIntervalRef.current = setInterval(() => {
+      const newPoint = generateRandomPosition();
+      setPoints(prev => [...prev, newPoint]);
+      
+      setTimeout(() => {
+        setPoints(prev => prev.filter(point => point.id !== newPoint.id));
+      }, 2000);
+    }, pointSpeed * 1000);
+  };
+
+  // タイマー停止
+  const stopTimer = () => {
+    setIsRunning(false);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (pointIntervalRef.current) clearInterval(pointIntervalRef.current);
+  };
+
+  // リセット
+  const resetTimer = () => {
+    stopTimer();
+    setTimeLeft(duration);
+    setPoints([]);
+  };
+
+  // 時間設定
+  const handleDurationChange = (newDuration) => {
+    setDuration(newDuration);
+    if (!isRunning) {
+      setTimeLeft(newDuration);
+    }
+  };
+
+  // 時間フォーマット
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // クリーンアップ
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (pointIntervalRef.current) clearInterval(pointIntervalRef.current);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-700 to-green-500 relative overflow-hidden">
+      {/* ヘッダー表示切り替えボタン */}
+      <button
+        onClick={() => setShowHeader(!showHeader)}
+        className="fixed top-4 right-4 z-20 p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-lg transition-all"
+        title={showHeader ? "ヘッダーを非表示" : "ヘッダーを表示"}
+      >
+        {showHeader ? (
+          <div className="w-6 h-6 text-white">▲</div>
+        ) : (
+          <div className="w-6 h-6 text-white">▼</div>
+        )}
+      </button>
+
+      {/* ヘッダー */}
+      <div className={`relative z-10 transition-all duration-300 ${showHeader ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+        <div className="p-6 bg-black bg-opacity-20 backdrop-blur-sm">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-white">⚽ ランダムサッカード</h1>
+            <div className="flex items-center gap-4">
+              <div className="text-2xl font-mono text-white bg-black bg-opacity-30 px-4 py-2 rounded-lg">
+                {formatTime(timeLeft)}
+              </div>
+              <div className="text-sm text-white bg-black bg-opacity-30 px-3 py-1 rounded-lg">
+                {pointSpeed}秒間隔
+              </div>
+              <div className="flex items-center gap-1 text-sm text-white bg-black bg-opacity-30 px-3 py-1 rounded-lg">
+                {colorMode === 'random' ? (
+                  <>
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="ml-1">ランダム</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    <span className="ml-1">固定</span>
+                  </>
+                )}
+              </div>
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all"
+              >
+                <Settings className="w-6 h-6 text-white" />
+              </button>
+            </div>
+          </div>
+          
+          {/* コントロールボタン */}
+          <div className="max-w-4xl mx-auto mt-4 flex justify-center gap-4">
+            <button
+              onClick={isRunning ? stopTimer : startTimer}
+              disabled={timeLeft === 0}
+              className="flex items-center gap-2 px-6 py-3 bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all"
+            >
+              {isRunning ? (
+                <>
+                  <Pause className="w-5 h-5 text-white" />
+                  <span className="text-white font-medium">停止</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-5 h-5 text-white" />
+                  <span className="text-white font-medium">開始</span>
+                </>
+              )}
+            </button>
+            
+            <button
+              onClick={resetTimer}
+              className="flex items-center gap-2 px-6 py-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all"
+            >
+              <RotateCcw className="w-5 h-5 text-white" />
+              <span className="text-white font-medium">リセット</span>
+            </button>
+          </div>
+
+          {/* 設定パネル */}
+          {showSettings && (
+            <div className="max-w-2xl mx-auto mt-6 p-6 bg-black bg-opacity-30 backdrop-blur-sm rounded-lg">
+              <h3 className="text-xl font-bold text-white mb-4">設定</h3>
+              
+              {/* 脳トレーニングモード */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-white mb-3">脳トレーニングモード</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <button
+                    onClick={() => setBrainMode('normal')}
+                    className={`px-4 py-3 rounded-lg transition-all text-center ${
+                      brainMode === 'normal'
+                        ? 'bg-white text-green-900 font-bold'
+                        : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                    }`}
+                  >
+                    <div className="font-medium">通常</div>
+                    <div className="text-sm opacity-80">全体にランダム</div>
+                  </button>
+                  <button
+                    onClick={() => setBrainMode('left')}
+                    className={`px-4 py-3 rounded-lg transition-all text-center ${
+                      brainMode === 'left'
+                        ? 'bg-white text-green-900 font-bold'
+                        : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                    }`}
+                  >
+                    <div className="font-medium">左皮質</div>
+                    <div className="text-sm opacity-80">右側8割</div>
+                  </button>
+                  <button
+                    onClick={() => setBrainMode('right')}
+                    className={`px-4 py-3 rounded-lg transition-all text-center ${
+                      brainMode === 'right'
+                        ? 'bg-white text-green-900 font-bold'
+                        : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                    }`}
+                  >
+                    <div className="font-medium">右皮質</div>
+                    <div className="text-sm opacity-80">左側8割</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* 時間設定 */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-white mb-3">時間設定</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {[30, 60, 90, 120, 150, 180].map(seconds => (
+                    <button
+                      key={seconds}
+                      onClick={() => handleDurationChange(seconds)}
+                      className={`px-4 py-2 rounded-lg transition-all ${
+                        duration === seconds
+                          ? 'bg-white text-green-900 font-bold'
+                          : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                      }`}
+                    >
+                      {formatTime(seconds)}
                     </button>
+                  ))}
                 </div>
-            </div>
-            
-            <!-- コントロールボタン -->
-            <div class="controls">
-                <button class="control-btn" id="playBtn">
-                    <i data-lucide="play"></i>
-                    <span>開始</span>
-                </button>
-                <button class="control-btn" id="resetBtn">
-                    <i data-lucide="rotate-ccw"></i>
-                    <span>リセット</span>
-                </button>
-            </div>
+              </div>
 
-            <!-- 設定パネル -->
-            <div class="settings-panel" id="settingsPanel">
-                <h3 class="settings-title">設定</h3>
-                
-                <!-- 脳トレーニングモード -->
-                <div class="section">
-                    <h4 class="section-title">脳トレーニングモード</h4>
-                    <div class="button-grid grid-3">
-                        <button class="option-btn active" data-mode="normal">
-                            <div style="font-weight: 600;">通常</div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">全体にランダム</div>
-                        </button>
-                        <button class="option-btn" data-mode="left">
-                            <div style="font-weight: 600;">左皮質</div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">右側8割</div>
-                        </button>
-                        <button class="option-btn" data-mode="right">
-                            <div style="font-weight: 600;">右皮質</div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">左側8割</div>
-                        </button>
-                    </div>
+              {/* ポイントスピード設定 */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-white mb-3">ポイント出現間隔</h4>
+                <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+                  {[0.3, 0.5, 1, 2, 3, 4, 5].map(speed => (
+                    <button
+                      key={speed}
+                      onClick={() => setPointSpeed(speed)}
+                      className={`px-3 py-2 rounded-lg transition-all text-sm ${
+                        pointSpeed === speed
+                          ? 'bg-white text-green-900 font-bold'
+                          : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                      }`}
+                    >
+                      {speed}秒
+                    </button>
+                  ))}
                 </div>
-
-                <!-- 時間設定 -->
-                <div class="section">
-                    <h4 class="section-title">時間設定</h4>
-                    <div class="button-grid grid-3">
-                        <button class="option-btn" data-duration="30">0:30</button>
-                        <button class="option-btn active" data-duration="60">1:00</button>
-                        <button class="option-btn" data-duration="90">1:30</button>
-                        <button class="option-btn" data-duration="120">2:00</button>
-                        <button class="option-btn" data-duration="150">2:30</button>
-                        <button class="option-btn" data-duration="180">3:00</button>
-                    </div>
-                </div>
-
-                <!-- ポイントスピード設定 -->
-                <div class="section">
-                    <h4 class="section-title">ポイント出現間隔</h4>
-                    <div class="button-grid grid-7">
-                        <button class="option-btn" data-speed="0.3">0.3秒</button>
-                        <button class="option-btn" data-speed="0.5">0.5秒</button>
-                        <button class="option-btn active" data-speed="1">1秒</button>
-                        <button class="option-btn" data-speed="2">2秒</button>
-                        <button class="option-btn" data-speed="3">3秒</button>
-                        <button class="option-btn" data-speed="4">4秒</button>
-                        <button class="option-btn" data-speed="5">5秒</button>
-                    </div>
-                    <p class="description" id="speedDescription">
-                        1秒間隔で新しい点が出現します
-                    </p>
-                </div>
-
-                <!-- カラーモード設定 -->
-                <div class="section">
-                    <h4 class="section-title">点の色設定</h4>
-                    <div class="button-grid grid-2">
-                        <button class="option-btn active" data-color="yellow">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                <div style="width: 12px; height: 12px; background-color: #fbbf24; border-radius: 50%;"></div>
-                                <span style="font-weight: 600;">固定色</span>
-                            </div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">黄色のみ</div>
-                        </button>
-                        <button class="option-btn" data-color="random">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                <div style="width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%;"></div>
-                                <div style="width: 8px; height: 8px; background-color: #3b82f6; border-radius: 50%;"></div>
-                                <div style="width: 8px; height: 8px; background-color: #10b981; border-radius: 50%;"></div>
-                                <span style="font-weight: 600; margin-left: 4px;">ランダム</span>
-                            </div>
-                            <div style="font-size: 0.875rem; opacity: 0.8;">カラフル</div>
-                        </button>
-                    </div>
-                    <p class="description" id="colorDescription">
-                        統一された黄色で表示されます
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ゲームエリア -->
-        <div class="game-area header-visible" id="gameArea">
-            <!-- フィールド -->
-            <div class="field">
-                <div class="field-line"></div>
-                <div class="center-circle"></div>
-                <div class="mode-indicator mode-left" id="leftIndicator" style="display: none;">
-                    左皮質モード (右側重点)
-                </div>
-                <div class="mode-indicator mode-right" id="rightIndicator" style="display: none;">
-                    右皮質モード (左側重点)
-                </div>
-            </div>
-
-            <!-- ポイント表示エリア -->
-            <div id="pointsContainer"></div>
-
-            <!-- 完了メッセージ -->
-            <div class="completion-overlay" id="completionOverlay" style="display: none;">
-                <div class="completion-message">
-                    <div style="font-size: 4rem; margin-bottom: 16px;">🎉</div>
-                    <h2 style="font-size: 2rem; font-weight: bold; color: white; margin-bottom: 8px;">完了！</h2>
-                    <p style="color: white; font-size: 1.125rem;">お疲れさまでした！</p>
-                </div>
-            </div>
-
-            <!-- 説明 -->
-            <div class="instructions" id="instructions">
-                <p class="instructions-text">
-                    画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br />
-                    <span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
+                <p className="text-white text-sm mt-2 opacity-80">
+                  {pointSpeed}秒間隔で新しい点が出現します
+                  {pointSpeed < 1 && <span className="text-yellow-300"> (超高速モード)</span>}
                 </p>
-            </div>
+              </div>
 
-            <!-- ヘッダー非表示時の簡易コントロール -->
-            <div class="mini-controls" id="miniControls" style="display: none;">
-                <div class="mini-timer" id="miniTimer">1:00</div>
-                <button class="mini-stop" id="miniStop" style="display: none;">
-                    <div style="width: 12px; height: 12px; background: white; border-radius: 2px;"></div>
-                    停止
-                </button>
+              {/* カラーモード設定 */}
+              <div>
+                <h4 className="text-lg font-semibold text-white mb-3">点の色設定</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setColorMode('yellow')}
+                    className={`px-4 py-3 rounded-lg transition-all text-center ${
+                      colorMode === 'yellow'
+                        ? 'bg-white text-green-900 font-bold'
+                        : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                      <span className="font-medium">固定色</span>
+                    </div>
+                    <div className="text-sm opacity-80">黄色のみ</div>
+                  </button>
+                  <button
+                    onClick={() => setColorMode('random')}
+                    className={`px-4 py-3 rounded-lg transition-all text-center ${
+                      colorMode === 'random'
+                        ? 'bg-white text-green-900 font-bold'
+                        : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="font-medium ml-1">ランダム</span>
+                    </div>
+                    <div className="text-sm opacity-80">カラフル</div>
+                  </button>
+                </div>
+                <p className="text-white text-sm mt-2 opacity-80">
+                  {colorMode === 'random' 
+                    ? '10種類の色からランダムに選択されます' 
+                    : '統一された黄色で表示されます'
+                  }
+                </p>
+              </div>
             </div>
+          )}
         </div>
+      </div>
+
+      {/* ゲームエリア */}
+      <div className={`absolute transition-all duration-300 ${showHeader ? 'top-32' : 'top-0'} left-0 right-0 bottom-0`}>
+        {/* フィールド */}
+        <div className="absolute inset-4 border-2 border-white border-opacity-30 rounded-lg">
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-white bg-opacity-30"></div>
+          <div className="absolute left-1/2 top-1/2 w-20 h-20 border-2 border-white border-opacity-30 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          
+          {/* 脳トレーニングモード表示 */}
+          {brainMode !== 'normal' && (
+            <>
+              {brainMode === 'left' && (
+                <div className="absolute right-2 top-2 bg-blue-600 bg-opacity-80 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                  左皮質モード (右側重点)
+                </div>
+              )}
+              {brainMode === 'right' && (
+                <div className="absolute left-2 top-2 bg-red-600 bg-opacity-80 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                  右皮質モード (左側重点)
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* ランダムポイント */}
+        {points.map(point => (
+          <div
+            key={point.id}
+            className="absolute transform -translate-x-1/2 -translate-y-1/2 animate-pulse"
+            style={{ 
+              left: `${point.x}%`, 
+              top: `${point.y}%`,
+              animationDuration: '2s'
+            }}
+          >
+            {point.isStar ? (
+              <div className="text-3xl">⭐</div>
+            ) : (
+              <div 
+                className="w-4 h-4 rounded-full shadow-lg"
+                style={{ backgroundColor: point.color }}
+              ></div>
+            )}
+          </div>
+        ))}
+
+        {/* 完了メッセージ */}
+        {timeLeft === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-black bg-opacity-50 backdrop-blur-sm p-8 rounded-2xl text-center">
+              <div className="text-6xl mb-4">🎉</div>
+              <h2 className="text-3xl font-bold text-white mb-2">完了！</h2>
+              <p className="text-white text-lg">お疲れさまでした！</p>
+            </div>
+          </div>
+        )}
+
+        {/* 説明 */}
+        {!isRunning && timeLeft === duration && showHeader && (
+          <div className="absolute bottom-6 left-6 right-6 text-center">
+            <p className="text-white text-lg bg-black bg-opacity-30 backdrop-blur-sm p-4 rounded-lg max-w-2xl mx-auto">
+              画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br />
+              <span className="text-sm opacity-80">現在の設定: {pointSpeed}秒間隔でポイント出現</span>
+            </p>
+          </div>
+        )}
+
+        {/* ヘッダー非表示時の簡易情報 */}
+        {!showHeader && (
+          <div className="absolute top-16 right-4 z-10">
+            <div className="flex flex-col gap-2 items-end">
+              <div className="text-xl font-mono text-white bg-black bg-opacity-50 px-3 py-1 rounded-lg backdrop-blur-sm">
+                {formatTime(timeLeft)}
+              </div>
+              {isRunning && (
+                <button
+                  onClick={stopTimer}
+                  className="flex items-center gap-1 px-3 py-1 bg-red-600 bg-opacity-80 hover:bg-opacity-100 rounded-lg transition-all text-white text-sm"
+                >
+                  <div className="w-3 h-3 bg-white rounded-sm"></div>
+                  停止
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
+  );
+};
 
-    <script>
-        // アプリの状態
-        let isRunning = false;
-        let duration = 60;
-        let timeLeft = 60;
-        let brainMode = 'normal';
-        let pointSpeed = 1;
-        let colorMode = 'yellow';
-        let showHeader = true;
-        let points = [];
-        let timerInterval = null;
-        let pointInterval = null;
-
-        // DOM要素
-        const elements = {
-            headerToggle: document.getElementById('headerToggle'),
-            header: document.getElementById('header'),
-            gameArea: document.getElementById('gameArea'),
-            timerDisplay: document.getElementById('timerDisplay'),
-            miniTimer: document.getElementById('miniTimer'),
-            playBtn: document.getElementById('playBtn'),
-            resetBtn: document.getElementById('resetBtn'),
-            settingsBtn: document.getElementById('settingsBtn'),
-            settingsPanel: document.getElementById('settingsPanel'),
-            pointsContainer: document.getElementById('pointsContainer'),
-            completionOverlay: document.getElementById('completionOverlay'),
-            instructions: document.getElementById('instructions'),
-            miniControls: document.getElementById('miniControls'),
-            miniStop: document.getElementById('miniStop'),
-            leftIndicator: document.getElementById('leftIndicator'),
-            rightIndicator: document.getElementById('rightIndicator'),
-            speedBadge: document.getElementById('speedBadge'),
-            colorBadge: document.getElementById('colorBadge'),
-            speedDescription: document.getElementById('speedDescription'),
-            colorDescription: document.getElementById('colorDescription')
-        };
-
-        // Lucide icons初期化
-        lucide.createIcons();
-
-        // 時間フォーマット
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // タイマー表示更新
-        function updateTimerDisplay() {
-            const timeStr = formatTime(timeLeft);
-            elements.timerDisplay.textContent = timeStr;
-            elements.miniTimer.textContent = timeStr;
-        }
-
-        // ランダム位置生成
-        function generateRandomPosition() {
-            let x, y;
-            
-            if (brainMode === 'left') {
-                if (Math.random() < 0.8) {
-                    x = Math.random() * 45 + 50;
-                } else {
-                    x = Math.random() * 45 + 5;
-                }
-            } else if (brainMode === 'right') {
-                if (Math.random() < 0.8) {
-                    x = Math.random() * 45 + 5;
-                } else {
-                    x = Math.random() * 45 + 50;
-                }
-            } else {
-                x = Math.random() * 90 + 5;
-            }
-            
-            const topMargin = showHeader ? 15 : 5;
-            const bottomMargin = showHeader ? 85 : 95;
-            y = Math.random() * (bottomMargin - topMargin) + topMargin;
-            
-            const colors = [
-                '#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
-                '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
-            ];
-            
-            const pointColor = colorMode === 'random' 
-                ? colors[Math.floor(Math.random() * colors.length)]
-                : '#fbbf24';
-            
-            return {
-                x, y,
-                id: Date.now() + Math.random(),
-                isStar: Math.random() < 0.15,
-                color: pointColor
-            };
-        }
-
-        // ポイント表示
-        function showPoint(point) {
-            const pointElement = document.createElement('div');
-            pointElement.className = 'point';
-            pointElement.style.left = `${point.x}%`;
-            pointElement.style.top = `${point.y}%`;
-            pointElement.dataset.id = point.id;
-
-            if (point.isStar) {
-                pointElement.innerHTML = '<div class="point-star">⭐</div>';
-            } else {
-                const dot = document.createElement('div');
-                dot.className = 'point-dot';
-                dot.style.backgroundColor = point.color;
-                pointElement.appendChild(dot);
-            }
-
-            elements.pointsContainer.appendChild(pointElement);
-
-            setTimeout(() => {
-                const element = document.querySelector(`[data-id="${point.id}"]`);
-                if (element) element.remove();
-            }, 2000);
-        }
-
-        // タイマー開始
-        function startTimer() {
-            isRunning = true;
-            elements.playBtn.innerHTML = '<i data-lucide="pause"></i><span>停止</span>';
-            elements.instructions.style.display = 'none';
-            elements.miniStop.style.display = showHeader ? 'none' : 'flex';
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 0) {
-                    stopTimer();
-                    showCompletion();
-                }
-            }, 1000);
-
-            pointInterval = setInterval(() => {
-                showPoint(generateRandomPosition());
-            }, pointSpeed * 1000);
-
-            lucide.createIcons();
-        }
-
-        // タイマー停止
-        function stopTimer() {
-            isRunning = false;
-            elements.playBtn.innerHTML = '<i data-lucide="play"></i><span>開始</span>';
-            elements.miniStop.style.display = 'none';
-            
-            if (timerInterval) clearInterval(timerInterval);
-            if (pointInterval) clearInterval(pointInterval);
-            
-            lucide.createIcons();
-        }
-
-        // リセット
-        function resetTimer() {
-            stopTimer();
-            timeLeft = duration;
-            updateTimerDisplay();
-            elements.pointsContainer.innerHTML = '';
-            elements.completionOverlay.style.display = 'none';
-            elements.instructions.style.display = 'block';
-        }
-
-        // 完了表示
-        function showCompletion() {
-            elements.completionOverlay.style.display = 'flex';
-            elements.pointsContainer.innerHTML = '';
-        }
-
-        // ヘッダー切り替え
-        function toggleHeader() {
-            showHeader = !showHeader;
-            elements.headerToggle.textContent = showHeader ? '▲' : '▼';
-            elements.header.classList.toggle('hidden', !showHeader);
-            elements.gameArea.className = `game-area ${showHeader ? 'header-visible' : 'header-hidden'}`;
-            elements.miniControls.style.display = showHeader ? 'none' : 'flex';
-            elements.miniStop.style.display = (isRunning && !showHeader) ? 'flex' : 'none';
-        }
-
-        // 設定切り替え
-        function toggleSettings() {
-            elements.settingsPanel.classList.toggle('show');
-        }
-
-        // モード変更
-        function changeBrainMode(mode) {
-            brainMode = mode;
-            document.querySelectorAll('[data-mode]').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.mode === mode);
-            });
-            
-            elements.leftIndicator.style.display = mode === 'left' ? 'block' : 'none';
-            elements.rightIndicator.style.display = mode === 'right' ? 'block' : 'none';
-        }
-
-        // 時間変更
-        function changeDuration(newDuration) {
-            duration = parseInt(newDuration);
-            if (!isRunning) {
-                timeLeft = duration;
-                updateTimerDisplay();
-            }
-            
-            document.querySelectorAll('[data-duration]').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.duration) === duration);
-            });
-        }
-
-        // スピード変更
-        function changeSpeed(speed) {
-            pointSpeed = parseFloat(speed);
-            elements.speedBadge.textContent = `${pointSpeed}秒間隔`;
-            elements.speedDescription.innerHTML = `${pointSpeed}秒間隔で新しい点が出現します${pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
-            
-            document.querySelectorAll('[data-speed]').forEach(btn => {
-                btn.classList.toggle('active', parseFloat(btn.dataset.speed) === pointSpeed);
-            });
-
-            // 説明文更新
-            const instructionsText = elements.instructions.querySelector('.instructions-text');
-            if (instructionsText && !isRunning && timeLeft === duration) {
-                instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br /><span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: ${pointSpeed}秒間隔でポイント出現</span>`;
-            }
-        }
-
-        // カラー変更
-        function changeColor(color) {
-            colorMode = color;
-            const badge = elements.colorBadge;
-            
-            if (color === 'random') {
-                badge.innerHTML = `
-                    <div class="color-dot" style="background-color: #ef4444;"></div>
-                    <div class="color-dot" style="background-color: #3b82f6;"></div>
-                    <div class="color-dot" style="background-color: #10b981;"></div>
-                    ランダム
-                `;
-                elements.colorDescription.textContent = '10種類の色からランダムに選択されます';
-            } else {
-                badge.innerHTML = `
-                    <div class="color-dot" style="background-color: #fbbf24;"></div>
-                    固定
+export default RandomSoccerApp;
