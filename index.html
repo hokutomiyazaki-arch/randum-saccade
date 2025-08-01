@@ -182,27 +182,63 @@
         
         /* 設定パネル */
         .settings-panel {
-            max-width: 800px;
-            margin: 30px auto 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            height: 70vh;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
             border-radius: 16px;
-            padding: 30px;
+            padding: 0;
             display: none;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            max-height: calc(100vh - 350px);
-            overflow-y: auto;
-            overscroll-behavior: contain;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow: hidden;
         }
         
         .settings-panel.show {
             display: block;
-            animation: slideDown 0.3s ease;
+            animation: slideIn 0.3s ease;
         }
         
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.9); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+        }
+        
+        .settings-content {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 30px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .settings-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .settings-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        .settings-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        .settings-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
         
         .settings-title {
@@ -210,6 +246,13 @@
             font-weight: bold;
             margin-bottom: 25px;
             text-align: center;
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            margin: -30px -30px 25px -30px;
+            backdrop-filter: blur(10px);
+            border-radius: 16px 16px 0 0;
         }
         
         .setting-section {
@@ -473,10 +516,16 @@
             .controls-section { gap: 15px; }
             .control-btn { padding: 12px 24px; font-size: 16px; }
             .settings-panel { 
-                margin: 20px; 
+                width: 95%;
+                height: 80vh;
+            }
+            .settings-content {
                 padding: 20px;
-                max-height: calc(100vh - 200px);
-                overflow-y: auto;
+            }
+            .settings-title {
+                font-size: 20px;
+                margin: -20px -20px 20px -20px;
+                padding: 12px 0;
             }
             .game-area.header-visible { top: 320px; }
             .grid-6 { grid-template-columns: repeat(4, 1fr); }
@@ -490,11 +539,16 @@
             .info-section { flex-direction: column; gap: 10px; }
             .controls-section { flex-direction: column; align-items: center; }
             .settings-panel { 
-                margin: 15px; 
+                width: 95%;
+                height: 85vh;
+            }
+            .settings-content {
                 padding: 15px;
-                max-height: calc(100vh - 150px);
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+            }
+            .settings-title {
+                font-size: 18px;
+                margin: -15px -15px 15px -15px;
+                padding: 10px 0;
             }
             .game-area.header-visible { top: 360px; }
             .field { top: 15px; left: 15px; right: 15px; bottom: 15px; }
@@ -502,14 +556,19 @@
             .instructions-text { font-size: 16px; padding: 15px; }
             .option-btn { padding: 10px 8px; font-size: 13px; }
             .section-title { font-size: 16px; }
-            .settings-title { font-size: 20px; }
         }
         
         @media (max-width: 360px) {
             .settings-panel {
-                margin: 10px;
+                width: 98%;
+                height: 90vh;
+            }
+            .settings-content {
                 padding: 12px;
-                max-height: calc(100vh - 120px);
+            }
+            .settings-title {
+                font-size: 16px;
+                margin: -12px -12px 12px -12px;
             }
             .option-btn { padding: 8px 6px; font-size: 12px; }
             .grid-6 { grid-template-columns: repeat(3, 1fr); }
@@ -555,77 +614,79 @@
 
                 <!-- 設定パネル -->
                 <div class="settings-panel" id="settingsPanel">
-                    <h3 class="settings-title">設定</h3>
-                    
-                    <!-- 脳トレーニングモード -->
-                    <div class="setting-section">
-                        <h4 class="section-title">脳トレーニングモード</h4>
-                        <div class="option-grid grid-3">
-                            <button class="option-btn active" data-mode="normal">
-                                <div class="option-title">通常</div>
-                                <div class="option-desc">全体にランダム</div>
-                            </button>
-                            <button class="option-btn" data-mode="left">
-                                <div class="option-title">左皮質</div>
-                                <div class="option-desc">右側8割</div>
-                            </button>
-                            <button class="option-btn" data-mode="right">
-                                <div class="option-title">右皮質</div>
-                                <div class="option-desc">左側8割</div>
-                            </button>
+                    <div class="settings-content">
+                        <h3 class="settings-title">設定</h3>
+                        
+                        <!-- 脳トレーニングモード -->
+                        <div class="setting-section">
+                            <h4 class="section-title">脳トレーニングモード</h4>
+                            <div class="option-grid grid-3">
+                                <button class="option-btn active" data-mode="normal">
+                                    <div class="option-title">通常</div>
+                                    <div class="option-desc">全体にランダム</div>
+                                </button>
+                                <button class="option-btn" data-mode="left">
+                                    <div class="option-title">左皮質</div>
+                                    <div class="option-desc">右側8割</div>
+                                </button>
+                                <button class="option-btn" data-mode="right">
+                                    <div class="option-title">右皮質</div>
+                                    <div class="option-desc">左側8割</div>
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- 時間設定 -->
-                    <div class="setting-section">
-                        <h4 class="section-title">時間設定</h4>
-                        <div class="option-grid grid-3">
-                            <button class="option-btn" data-duration="30">0:30</button>
-                            <button class="option-btn active" data-duration="60">1:00</button>
-                            <button class="option-btn" data-duration="90">1:30</button>
-                            <button class="option-btn" data-duration="120">2:00</button>
-                            <button class="option-btn" data-duration="150">2:30</button>
-                            <button class="option-btn" data-duration="180">3:00</button>
+                        <!-- 時間設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">時間設定</h4>
+                            <div class="option-grid grid-3">
+                                <button class="option-btn" data-duration="30">0:30</button>
+                                <button class="option-btn active" data-duration="60">1:00</button>
+                                <button class="option-btn" data-duration="90">1:30</button>
+                                <button class="option-btn" data-duration="120">2:00</button>
+                                <button class="option-btn" data-duration="150">2:30</button>
+                                <button class="option-btn" data-duration="180">3:00</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- ポイントスピード設定 -->
-                    <div class="setting-section">
-                        <h4 class="section-title">ポイント出現間隔</h4>
-                        <div class="option-grid grid-6">
-                            <button class="option-btn" data-speed="0.3">0.3秒</button>
-                            <button class="option-btn" data-speed="0.5">0.5秒</button>
-                            <button class="option-btn active" data-speed="1">1秒</button>
-                            <button class="option-btn" data-speed="2">2秒</button>
-                            <button class="option-btn" data-speed="3">3秒</button>
-                            <button class="option-btn" data-speed="4">4秒</button>
-                            <button class="option-btn" data-speed="5">5秒</button>
+                        <!-- ポイントスピード設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">ポイント出現間隔</h4>
+                            <div class="option-grid grid-6">
+                                <button class="option-btn" data-speed="0.3">0.3秒</button>
+                                <button class="option-btn" data-speed="0.5">0.5秒</button>
+                                <button class="option-btn active" data-speed="1">1秒</button>
+                                <button class="option-btn" data-speed="2">2秒</button>
+                                <button class="option-btn" data-speed="3">3秒</button>
+                                <button class="option-btn" data-speed="4">4秒</button>
+                                <button class="option-btn" data-speed="5">5秒</button>
+                            </div>
+                            <p class="description" id="speedDescription">1秒間隔で新しい点が出現します</p>
                         </div>
-                        <p class="description" id="speedDescription">1秒間隔で新しい点が出現します</p>
-                    </div>
 
-                    <!-- カラーモード設定 -->
-                    <div class="setting-section">
-                        <h4 class="section-title">点の色設定</h4>
-                        <div class="option-grid grid-2">
-                            <button class="option-btn active" data-color="yellow">
-                                <div class="option-title">
-                                    <div class="color-dot" style="background-color: #fbbf24; display: inline-block; margin-right: 8px;"></div>
-                                    固定色
-                                </div>
-                                <div class="option-desc">黄色のみ</div>
-                            </button>
-                            <button class="option-btn" data-color="random">
-                                <div class="option-title">
-                                    <div class="color-dot" style="background-color: #ef4444; display: inline-block; margin-right: 4px;"></div>
-                                    <div class="color-dot" style="background-color: #3b82f6; display: inline-block; margin-right: 4px;"></div>
-                                    <div class="color-dot" style="background-color: #10b981; display: inline-block; margin-right: 8px;"></div>
-                                    ランダム
-                                </div>
-                                <div class="option-desc">カラフル</div>
-                            </button>
+                        <!-- カラーモード設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">点の色設定</h4>
+                            <div class="option-grid grid-2">
+                                <button class="option-btn active" data-color="yellow">
+                                    <div class="option-title">
+                                        <div class="color-dot" style="background-color: #fbbf24; display: inline-block; margin-right: 8px;"></div>
+                                        固定色
+                                    </div>
+                                    <div class="option-desc">黄色のみ</div>
+                                </button>
+                                <button class="option-btn" data-color="random">
+                                    <div class="option-title">
+                                        <div class="color-dot" style="background-color: #ef4444; display: inline-block; margin-right: 4px;"></div>
+                                        <div class="color-dot" style="background-color: #3b82f6; display: inline-block; margin-right: 4px;"></div>
+                                        <div class="color-dot" style="background-color: #10b981; display: inline-block; margin-right: 8px;"></div>
+                                        ランダム
+                                    </div>
+                                    <div class="option-desc">カラフル</div>
+                                </button>
+                            </div>
+                            <p class="description" id="colorDescription">統一された黄色で表示されます</p>
                         </div>
-                        <p class="description" id="colorDescription">統一された黄色で表示されます</p>
                     </div>
                 </div>
             </div>
