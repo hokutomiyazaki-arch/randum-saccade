@@ -5,261 +5,282 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ランダムサッカード</title>
     <style>
-        * {
+        /* リセットCSS */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow: hidden;
-            background: linear-gradient(135deg, #1a4b3a, #2d7a5f, #48cc6c);
-            min-height: 100vh;
+            background: linear-gradient(135deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%);
+            color: white;
         }
         
+        /* アプリコンテナ */
         .app-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a4b3a, #2d7a5f, #48cc6c);
             position: relative;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
         }
         
+        /* ヘッダー切り替えボタン */
         .header-toggle {
             position: fixed;
-            top: 16px;
-            right: 16px;
-            z-index: 20;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.5);
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border-radius: 50%;
             color: white;
             font-size: 20px;
-            width: 40px;
-            height: 40px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .header-toggle:hover {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
         }
         
+        /* ヘッダー */
         .header {
             position: relative;
-            z-index: 10;
-            padding: 24px;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
-            transition: all 0.3s ease;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            transition: all 0.5s ease;
+            width: 100%;
         }
         
         .header.hidden {
             transform: translateY(-100%);
             opacity: 0;
-            pointer-events: none;
         }
         
         .header-content {
-            max-width: 1024px;
+            max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
         }
         
-        .title {
-            font-size: 2rem;
+        .title-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .main-title {
+            font-size: 3rem;
             font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         
-        .header-info {
+        .info-section {
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 25px;
         }
         
         .timer-display {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-family: 'Courier New', monospace;
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         
         .info-badge {
-            font-size: 0.875rem;
-            color: white;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 4px 12px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .color-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
         }
         
-        .btn {
-            padding: 8px;
+        .settings-btn {
             background: rgba(255, 255, 255, 0.2);
             border: none;
-            border-radius: 8px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            color: white;
-            width: 40px;
-            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
         }
         
-        .btn:hover {
+        .settings-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: rotate(45deg);
         }
         
-        .controls {
-            max-width: 1024px;
-            margin: 16px auto 0;
+        .controls-section {
             display: flex;
             justify-content: center;
-            gap: 16px;
+            gap: 20px;
             flex-wrap: wrap;
         }
         
         .control-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            color: white;
-            font-weight: 500;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .control-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
         
         .control-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
         
+        /* 設定パネル */
         .settings-panel {
-            max-width: 640px;
-            margin: 24px auto 0;
-            padding: 24px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            border-radius: 8px;
+            max-width: 800px;
+            margin: 30px auto 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
             display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
         
         .settings-panel.show {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .settings-title {
-            font-size: 1.25rem;
+            font-size: 24px;
             font-weight: bold;
-            color: white;
-            margin-bottom: 16px;
+            margin-bottom: 25px;
+            text-align: center;
         }
         
-        .section {
-            margin-bottom: 24px;
+        .setting-section {
+            margin-bottom: 30px;
         }
         
         .section-title {
-            font-size: 1.125rem;
+            font-size: 18px;
             font-weight: 600;
-            color: white;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            color: #fff;
         }
         
-        .button-grid {
+        .option-grid {
             display: grid;
             gap: 12px;
+            margin-bottom: 10px;
         }
         
-        .grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        }
-        
-        .grid-7 {
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-        }
-        
-        .grid-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+        .grid-6 { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
         
         .option-btn {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px 10px;
+            color: white;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
             font-size: 14px;
         }
         
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
         .option-btn.active {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             color: #1a4b3a;
+            border-color: #48cc6c;
             font-weight: bold;
         }
         
-        .option-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .option-title {
+            font-weight: 600;
+            margin-bottom: 4px;
         }
         
-        .option-btn.active:hover {
-            background: white;
-        }
-        
-        .description {
-            color: white;
-            font-size: 0.875rem;
-            margin-top: 8px;
+        .option-desc {
+            font-size: 12px;
             opacity: 0.8;
         }
         
+        .description {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        /* ゲームエリア */
         .game-area {
-            position: fixed;
+            position: absolute;
             left: 0;
             right: 0;
             bottom: 0;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
         }
         
         .game-area.header-visible {
-            top: 240px;
+            top: 280px;
         }
         
         .game-area.header-hidden {
@@ -268,12 +289,13 @@
         
         .field {
             position: absolute;
-            top: 16px;
-            left: 16px;
-            right: 16px;
-            bottom: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
         }
         
         .field-line {
@@ -281,8 +303,8 @@
             left: 50%;
             top: 0;
             bottom: 0;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.3);
+            width: 3px;
+            background: rgba(255, 255, 255, 0.4);
             transform: translateX(-50%);
         }
         
@@ -290,308 +312,292 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            width: 80px;
-            height: 80px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
             transform: translate(-50%, -50%);
         }
         
         .mode-indicator {
             position: absolute;
-            top: 8px;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: white;
+            top: 15px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .mode-left {
-            right: 8px;
-            background: rgba(59, 130, 246, 0.8);
+            right: 15px;
+            background: rgba(59, 130, 246, 0.9);
         }
         
         .mode-right {
-            left: 8px;
-            background: rgba(220, 38, 38, 0.8);
+            left: 15px;
+            background: rgba(220, 38, 38, 0.9);
         }
         
+        /* ポイント */
         .point {
             position: absolute;
             transform: translate(-50%, -50%);
-            animation: pulse 2s infinite;
+            animation: pointPulse 2s infinite;
+            z-index: 10;
         }
         
         .point-dot {
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
         
         .point-star {
-            font-size: 1.5rem;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            font-size: 24px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
         }
         
-        @keyframes pulse {
+        @keyframes pointPulse {
             0%, 100% { 
                 opacity: 1; 
                 transform: translate(-50%, -50%) scale(1); 
             }
             50% { 
                 opacity: 0.7; 
-                transform: translate(-50%, -50%) scale(1.1); 
+                transform: translate(-50%, -50%) scale(1.2); 
             }
         }
         
+        /* 完了オーバーレイ */
         .completion-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            z-index: 50;
         }
         
         .completion-message {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            padding: 32px;
-            border-radius: 16px;
             text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
         
+        .completion-emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .completion-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .completion-text {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        /* ミニコントロール */
         .mini-controls {
             position: absolute;
-            top: 64px;
-            right: 16px;
+            top: 80px;
+            right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             align-items: flex-end;
         }
         
         .mini-timer {
-            font-size: 1.25rem;
+            font-size: 20px;
             font-family: 'Courier New', monospace;
-            color: white;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 4px 12px;
-            border-radius: 8px;
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
         }
         
         .mini-stop {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            background: rgba(239, 68, 68, 0.8);
+            background: rgba(239, 68, 68, 0.9);
             border: none;
             border-radius: 8px;
-            cursor: pointer;
+            padding: 8px 16px;
             color: white;
-            font-size: 0.875rem;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
+        /* 説明 */
         .instructions {
             position: absolute;
-            bottom: 24px;
-            left: 24px;
-            right: 24px;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
             text-align: center;
         }
         
         .instructions-text {
-            color: white;
-            font-size: 1.125rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
-            padding: 16px;
-            border-radius: 8px;
-            max-width: 512px;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 600px;
             margin: 0 auto;
-            line-height: 1.5;
         }
         
-        /* モバイル対応 */
+        /* レスポンシブ */
         @media (max-width: 768px) {
-            .title {
-                font-size: 1.5rem;
-            }
-            
-            .timer-display {
-                font-size: 1.5rem;
-            }
-            
-            .header-info {
-                justify-content: center;
-                width: 100%;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .grid-7 {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .grid-3 {
-                grid-template-columns: repeat(1, 1fr);
-            }
-            
-            .game-area.header-visible {
-                top: 300px;
-            }
+            .main-title { font-size: 2rem; }
+            .timer-display { font-size: 2rem; }
+            .info-section { gap: 15px; }
+            .controls-section { gap: 15px; }
+            .control-btn { padding: 12px 24px; font-size: 16px; }
+            .settings-panel { margin: 20px; padding: 20px; }
+            .game-area.header-visible { top: 320px; }
+            .grid-6 { grid-template-columns: repeat(4, 1fr); }
         }
         
         @media (max-width: 480px) {
-            .header {
-                padding: 16px;
-            }
-            
-            .title {
-                font-size: 1.25rem;
-            }
-            
-            .timer-display {
-                font-size: 1.25rem;
-                padding: 6px 12px;
-            }
-            
-            .control-btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .settings-panel {
-                padding: 16px;
-                margin: 16px;
-            }
-            
-            .game-area.header-visible {
-                top: 320px;
-            }
+            .header { padding: 20px 15px; }
+            .main-title { font-size: 1.5rem; }
+            .timer-display { font-size: 1.5rem; padding: 8px 16px; }
+            .control-btn { padding: 10px 20px; font-size: 14px; }
+            .info-section { flex-direction: column; gap: 10px; }
+            .controls-section { flex-direction: column; align-items: center; }
+            .game-area.header-visible { top: 360px; }
+            .field { top: 15px; left: 15px; right: 15px; bottom: 15px; }
+            .instructions { bottom: 20px; left: 20px; right: 20px; }
+            .instructions-text { font-size: 16px; padding: 15px; }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- ヘッダー表示切り替えボタン -->
-        <button class="header-toggle" id="headerToggle" title="ヘッダーを切り替え">
-            ▲
-        </button>
+        <!-- ヘッダー切り替えボタン -->
+        <button class="header-toggle" id="headerToggle" title="ヘッダーを切り替え">▲</button>
 
         <!-- ヘッダー -->
         <div class="header" id="header">
             <div class="header-content">
-                <h1 class="title">⚽ ランダムサッカード</h1>
-                <div class="header-info">
+                <!-- タイトルセクション -->
+                <div class="title-section">
+                    <h1 class="main-title">⚽ ランダムサッカード</h1>
+                </div>
+
+                <!-- 情報セクション -->
+                <div class="info-section">
                     <div class="timer-display" id="timerDisplay">1:00</div>
                     <div class="info-badge" id="speedBadge">1秒間隔</div>
                     <div class="info-badge" id="colorBadge">
                         <div class="color-dot" style="background-color: #fbbf24;"></div>
                         固定
                     </div>
-                    <button class="btn" id="settingsBtn">⚙️</button>
-                </div>
-            </div>
-            
-            <!-- コントロールボタン -->
-            <div class="controls">
-                <button class="control-btn" id="playBtn">
-                    ▶️ <span>開始</span>
-                </button>
-                <button class="control-btn" id="resetBtn">
-                    🔄 <span>リセット</span>
-                </button>
-            </div>
-
-            <!-- 設定パネル -->
-            <div class="settings-panel" id="settingsPanel">
-                <h3 class="settings-title">設定</h3>
-                
-                <!-- 脳トレーニングモード -->
-                <div class="section">
-                    <h4 class="section-title">脳トレーニングモード</h4>
-                    <div class="button-grid grid-3">
-                        <button class="option-btn active" data-mode="normal">
-                            <div style="font-weight: 600; margin-bottom: 4px;">通常</div>
-                            <div style="font-size: 0.75rem; opacity: 0.8;">全体にランダム</div>
-                        </button>
-                        <button class="option-btn" data-mode="left">
-                            <div style="font-weight: 600; margin-bottom: 4px;">左皮質</div>
-                            <div style="font-size: 0.75rem; opacity: 0.8;">右側8割</div>
-                        </button>
-                        <button class="option-btn" data-mode="right">
-                            <div style="font-weight: 600; margin-bottom: 4px;">右皮質</div>
-                            <div style="font-size: 0.75rem; opacity: 0.8;">左側8割</div>
-                        </button>
-                    </div>
+                    <button class="settings-btn" id="settingsBtn">⚙️</button>
                 </div>
 
-                <!-- 時間設定 -->
-                <div class="section">
-                    <h4 class="section-title">時間設定</h4>
-                    <div class="button-grid grid-3">
-                        <button class="option-btn" data-duration="30">0:30</button>
-                        <button class="option-btn active" data-duration="60">1:00</button>
-                        <button class="option-btn" data-duration="90">1:30</button>
-                        <button class="option-btn" data-duration="120">2:00</button>
-                        <button class="option-btn" data-duration="150">2:30</button>
-                        <button class="option-btn" data-duration="180">3:00</button>
-                    </div>
+                <!-- コントロールセクション -->
+                <div class="controls-section">
+                    <button class="control-btn" id="playBtn">
+                        <span>▶️</span>
+                        <span>開始</span>
+                    </button>
+                    <button class="control-btn" id="resetBtn">
+                        <span>🔄</span>
+                        <span>リセット</span>
+                    </button>
                 </div>
 
-                <!-- ポイントスピード設定 -->
-                <div class="section">
-                    <h4 class="section-title">ポイント出現間隔</h4>
-                    <div class="button-grid grid-7">
-                        <button class="option-btn" data-speed="0.3">0.3秒</button>
-                        <button class="option-btn" data-speed="0.5">0.5秒</button>
-                        <button class="option-btn active" data-speed="1">1秒</button>
-                        <button class="option-btn" data-speed="2">2秒</button>
-                        <button class="option-btn" data-speed="3">3秒</button>
-                        <button class="option-btn" data-speed="4">4秒</button>
-                        <button class="option-btn" data-speed="5">5秒</button>
+                <!-- 設定パネル -->
+                <div class="settings-panel" id="settingsPanel">
+                    <h3 class="settings-title">設定</h3>
+                    
+                    <!-- 脳トレーニングモード -->
+                    <div class="setting-section">
+                        <h4 class="section-title">脳トレーニングモード</h4>
+                        <div class="option-grid grid-3">
+                            <button class="option-btn active" data-mode="normal">
+                                <div class="option-title">通常</div>
+                                <div class="option-desc">全体にランダム</div>
+                            </button>
+                            <button class="option-btn" data-mode="left">
+                                <div class="option-title">左皮質</div>
+                                <div class="option-desc">右側8割</div>
+                            </button>
+                            <button class="option-btn" data-mode="right">
+                                <div class="option-title">右皮質</div>
+                                <div class="option-desc">左側8割</div>
+                            </button>
+                        </div>
                     </div>
-                    <p class="description" id="speedDescription">
-                        1秒間隔で新しい点が出現します
-                    </p>
-                </div>
 
-                <!-- カラーモード設定 -->
-                <div class="section">
-                    <h4 class="section-title">点の色設定</h4>
-                    <div class="button-grid grid-2">
-                        <button class="option-btn active" data-color="yellow">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
-                                <div style="width: 12px; height: 12px; background-color: #fbbf24; border-radius: 50%;"></div>
-                                <span style="font-weight: 600;">固定色</span>
-                            </div>
-                            <div style="font-size: 0.75rem; opacity: 0.8;">黄色のみ</div>
-                        </button>
-                        <button class="option-btn" data-color="random">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px;">
-                                <div style="width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%;"></div>
-                                <div style="width: 8px; height: 8px; background-color: #3b82f6; border-radius: 50%;"></div>
-                                <div style="width: 8px; height: 8px; background-color: #10b981; border-radius: 50%;"></div>
-                                <span style="font-weight: 600; margin-left: 4px;">ランダム</span>
-                            </div>
-                            <div style="font-size: 0.75rem; opacity: 0.8;">カラフル</div>
-                        </button>
+                    <!-- 時間設定 -->
+                    <div class="setting-section">
+                        <h4 class="section-title">時間設定</h4>
+                        <div class="option-grid grid-3">
+                            <button class="option-btn" data-duration="30">0:30</button>
+                            <button class="option-btn active" data-duration="60">1:00</button>
+                            <button class="option-btn" data-duration="90">1:30</button>
+                            <button class="option-btn" data-duration="120">2:00</button>
+                            <button class="option-btn" data-duration="150">2:30</button>
+                            <button class="option-btn" data-duration="180">3:00</button>
+                        </div>
                     </div>
-                    <p class="description" id="colorDescription">
-                        統一された黄色で表示されます
-                    </p>
+
+                    <!-- ポイントスピード設定 -->
+                    <div class="setting-section">
+                        <h4 class="section-title">ポイント出現間隔</h4>
+                        <div class="option-grid grid-6">
+                            <button class="option-btn" data-speed="0.3">0.3秒</button>
+                            <button class="option-btn" data-speed="0.5">0.5秒</button>
+                            <button class="option-btn active" data-speed="1">1秒</button>
+                            <button class="option-btn" data-speed="2">2秒</button>
+                            <button class="option-btn" data-speed="3">3秒</button>
+                            <button class="option-btn" data-speed="4">4秒</button>
+                            <button class="option-btn" data-speed="5">5秒</button>
+                        </div>
+                        <p class="description" id="speedDescription">1秒間隔で新しい点が出現します</p>
+                    </div>
+
+                    <!-- カラーモード設定 -->
+                    <div class="setting-section">
+                        <h4 class="section-title">点の色設定</h4>
+                        <div class="option-grid grid-2">
+                            <button class="option-btn active" data-color="yellow">
+                                <div class="option-title">
+                                    <div class="color-dot" style="background-color: #fbbf24; display: inline-block; margin-right: 8px;"></div>
+                                    固定色
+                                </div>
+                                <div class="option-desc">黄色のみ</div>
+                            </button>
+                            <button class="option-btn" data-color="random">
+                                <div class="option-title">
+                                    <div class="color-dot" style="background-color: #ef4444; display: inline-block; margin-right: 4px;"></div>
+                                    <div class="color-dot" style="background-color: #3b82f6; display: inline-block; margin-right: 4px;"></div>
+                                    <div class="color-dot" style="background-color: #10b981; display: inline-block; margin-right: 8px;"></div>
+                                    ランダム
+                                </div>
+                                <div class="option-desc">カラフル</div>
+                            </button>
+                        </div>
+                        <p class="description" id="colorDescription">統一された黄色で表示されます</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -610,27 +616,27 @@
                 </div>
             </div>
 
-            <!-- ポイント表示エリア -->
+            <!-- ポイントコンテナ -->
             <div id="pointsContainer"></div>
 
-            <!-- 完了メッセージ -->
+            <!-- 完了オーバーレイ -->
             <div class="completion-overlay" id="completionOverlay" style="display: none;">
                 <div class="completion-message">
-                    <div style="font-size: 4rem; margin-bottom: 16px;">🎉</div>
-                    <h2 style="font-size: 2rem; font-weight: bold; color: white; margin-bottom: 8px;">完了！</h2>
-                    <p style="color: white; font-size: 1.125rem;">お疲れさまでした！</p>
+                    <div class="completion-emoji">🎉</div>
+                    <h2 class="completion-title">完了！</h2>
+                    <p class="completion-text">お疲れさまでした！</p>
                 </div>
             </div>
 
             <!-- 説明 -->
             <div class="instructions" id="instructions">
-                <p class="instructions-text">
-                    画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br />
-                    <span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
-                </p>
+                <div class="instructions-text">
+                    画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br>
+                    <span style="font-size: 16px; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
+                </div>
             </div>
 
-            <!-- ヘッダー非表示時の簡易コントロール -->
+            <!-- ヘッダー非表示時のミニコントロール -->
             <div class="mini-controls" id="miniControls" style="display: none;">
                 <div class="mini-timer" id="miniTimer">1:00</div>
                 <button class="mini-stop" id="miniStop" style="display: none;">
@@ -641,8 +647,8 @@
     </div>
 
     <script>
-        // グローバル変数
-        let gameState = {
+        // ゲーム状態管理
+        const gameState = {
             isRunning: false,
             duration: 60,
             timeLeft: 60,
@@ -654,36 +660,28 @@
             pointInterval: null
         };
 
-        // DOM要素を取得
-        function getElement(id) {
-            const element = document.getElementById(id);
-            if (!element) {
-                console.warn(`Element with id "${id}" not found`);
-            }
-            return element;
-        }
-
+        // DOM要素
         const elements = {
-            headerToggle: getElement('headerToggle'),
-            header: getElement('header'),
-            gameArea: getElement('gameArea'),
-            timerDisplay: getElement('timerDisplay'),
-            miniTimer: getElement('miniTimer'),
-            playBtn: getElement('playBtn'),
-            resetBtn: getElement('resetBtn'),
-            settingsBtn: getElement('settingsBtn'),
-            settingsPanel: getElement('settingsPanel'),
-            pointsContainer: getElement('pointsContainer'),
-            completionOverlay: getElement('completionOverlay'),
-            instructions: getElement('instructions'),
-            miniControls: getElement('miniControls'),
-            miniStop: getElement('miniStop'),
-            leftIndicator: getElement('leftIndicator'),
-            rightIndicator: getElement('rightIndicator'),
-            speedBadge: getElement('speedBadge'),
-            colorBadge: getElement('colorBadge'),
-            speedDescription: getElement('speedDescription'),
-            colorDescription: getElement('colorDescription')
+            headerToggle: document.getElementById('headerToggle'),
+            header: document.getElementById('header'),
+            gameArea: document.getElementById('gameArea'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            miniTimer: document.getElementById('miniTimer'),
+            playBtn: document.getElementById('playBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsPanel: document.getElementById('settingsPanel'),
+            pointsContainer: document.getElementById('pointsContainer'),
+            completionOverlay: document.getElementById('completionOverlay'),
+            instructions: document.getElementById('instructions'),
+            miniControls: document.getElementById('miniControls'),
+            miniStop: document.getElementById('miniStop'),
+            leftIndicator: document.getElementById('leftIndicator'),
+            rightIndicator: document.getElementById('rightIndicator'),
+            speedBadge: document.getElementById('speedBadge'),
+            colorBadge: document.getElementById('colorBadge'),
+            speedDescription: document.getElementById('speedDescription'),
+            colorDescription: document.getElementById('colorDescription')
         };
 
         // 時間フォーマット
@@ -696,8 +694,8 @@
         // タイマー表示更新
         function updateTimerDisplay() {
             const timeStr = formatTime(gameState.timeLeft);
-            if (elements.timerDisplay) elements.timerDisplay.textContent = timeStr;
-            if (elements.miniTimer) elements.miniTimer.textContent = timeStr;
+            elements.timerDisplay.textContent = timeStr;
+            elements.miniTimer.textContent = timeStr;
         }
 
         // ランダム位置生成
@@ -706,14 +704,14 @@
             
             if (gameState.brainMode === 'left') {
                 x = Math.random() < 0.8 
-                    ? Math.random() * 45 + 50  // 右半分 80%
-                    : Math.random() * 45 + 5;  // 左半分 20%
+                    ? Math.random() * 45 + 50
+                    : Math.random() * 45 + 5;
             } else if (gameState.brainMode === 'right') {
                 x = Math.random() < 0.8 
-                    ? Math.random() * 45 + 5   // 左半分 80%
-                    : Math.random() * 45 + 50; // 右半分 20%
+                    ? Math.random() * 45 + 5
+                    : Math.random() * 45 + 50;
             } else {
-                x = Math.random() * 90 + 5; // 全体
+                x = Math.random() * 90 + 5;
             }
             
             const topMargin = gameState.showHeader ? 15 : 5;
@@ -739,8 +737,6 @@
 
         // ポイント表示
         function showPoint(point) {
-            if (!elements.pointsContainer) return;
-
             const pointElement = document.createElement('div');
             pointElement.className = 'point';
             pointElement.style.left = `${point.x}%`;
@@ -758,30 +754,19 @@
 
             elements.pointsContainer.appendChild(pointElement);
 
-            // 2秒後に削除
             setTimeout(() => {
-                if (elements.pointsContainer) {
-                    const element = elements.pointsContainer.querySelector(`[data-id="${point.id}"]`);
-                    if (element) element.remove();
-                }
+                const element = elements.pointsContainer.querySelector(`[data-id="${point.id}"]`);
+                if (element) element.remove();
             }, 2000);
         }
 
         // タイマー開始
         function startTimer() {
             gameState.isRunning = true;
+            elements.playBtn.innerHTML = '<span>⏸️</span><span>停止</span>';
+            elements.instructions.style.display = 'none';
+            elements.miniStop.style.display = gameState.showHeader ? 'none' : 'flex';
             
-            if (elements.playBtn) {
-                elements.playBtn.innerHTML = '⏸️ <span>停止</span>';
-            }
-            if (elements.instructions) {
-                elements.instructions.style.display = 'none';
-            }
-            if (elements.miniStop) {
-                elements.miniStop.style.display = gameState.showHeader ? 'none' : 'flex';
-            }
-            
-            // メインタイマー
             gameState.timerInterval = setInterval(() => {
                 gameState.timeLeft--;
                 updateTimerDisplay();
@@ -792,7 +777,6 @@
                 }
             }, 1000);
 
-            // ポイント生成タイマー
             gameState.pointInterval = setInterval(() => {
                 showPoint(generateRandomPosition());
             }, gameState.pointSpeed * 1000);
@@ -801,13 +785,8 @@
         // タイマー停止
         function stopTimer() {
             gameState.isRunning = false;
-            
-            if (elements.playBtn) {
-                elements.playBtn.innerHTML = '▶️ <span>開始</span>';
-            }
-            if (elements.miniStop) {
-                elements.miniStop.style.display = 'none';
-            }
+            elements.playBtn.innerHTML = '<span>▶️</span><span>開始</span>';
+            elements.miniStop.style.display = 'none';
             
             if (gameState.timerInterval) {
                 clearInterval(gameState.timerInterval);
@@ -824,70 +803,34 @@
             stopTimer();
             gameState.timeLeft = gameState.duration;
             updateTimerDisplay();
-            
-            if (elements.pointsContainer) {
-                elements.pointsContainer.innerHTML = '';
-            }
-            if (elements.completionOverlay) {
-                elements.completionOverlay.style.display = 'none';
-            }
-            if (elements.instructions) {
-                elements.instructions.style.display = 'block';
-            }
-        }
-
-        // 完了表示
-        function showCompletion() {
-            if (elements.completionOverlay) {
-                elements.completionOverlay.style.display = 'flex';
-            }
-            if (elements.pointsContainer) {
-                elements.pointsContainer.innerHTML = '';
-            }
+            elements.pointsContainer.innerHTML = '';
+            elements.completionOverlay.style.display = 'none';
+            elements.instructions.style.display = 'block';
         }
 
         // ヘッダー切り替え
         function toggleHeader() {
             gameState.showHeader = !gameState.showHeader;
-            
-            if (elements.headerToggle) {
-                elements.headerToggle.textContent = gameState.showHeader ? '▲' : '▼';
-            }
-            if (elements.header) {
-                elements.header.classList.toggle('hidden', !gameState.showHeader);
-            }
-            if (elements.gameArea) {
-                elements.gameArea.className = `game-area ${gameState.showHeader ? 'header-visible' : 'header-hidden'}`;
-            }
-            if (elements.miniControls) {
-                elements.miniControls.style.display = gameState.showHeader ? 'none' : 'flex';
-            }
-            if (elements.miniStop) {
-                elements.miniStop.style.display = (gameState.isRunning && !gameState.showHeader) ? 'flex' : 'none';
-            }
+            elements.headerToggle.textContent = gameState.showHeader ? '▲' : '▼';
+            elements.header.classList.toggle('hidden', !gameState.showHeader);
+            elements.gameArea.className = `game-area ${gameState.showHeader ? 'header-visible' : 'header-hidden'}`;
+            elements.miniControls.style.display = gameState.showHeader ? 'none' : 'flex';
+            elements.miniStop.style.display = (gameState.isRunning && !gameState.showHeader) ? 'flex' : 'none';
         }
 
         // 設定切り替え
         function toggleSettings() {
-            if (elements.settingsPanel) {
-                elements.settingsPanel.classList.toggle('show');
-            }
+            elements.settingsPanel.classList.toggle('show');
         }
 
         // モード変更
         function changeBrainMode(mode) {
             gameState.brainMode = mode;
-            
             document.querySelectorAll('[data-mode]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.mode === mode);
             });
-            
-            if (elements.leftIndicator) {
-                elements.leftIndicator.style.display = mode === 'left' ? 'block' : 'none';
-            }
-            if (elements.rightIndicator) {
-                elements.rightIndicator.style.display = mode === 'right' ? 'block' : 'none';
-            }
+            elements.leftIndicator.style.display = mode === 'left' ? 'block' : 'none';
+            elements.rightIndicator.style.display = mode === 'right' ? 'block' : 'none';
         }
 
         // 時間変更
@@ -897,7 +840,6 @@
                 gameState.timeLeft = gameState.duration;
                 updateTimerDisplay();
             }
-            
             document.querySelectorAll('[data-duration]').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.duration) === gameState.duration);
             });
@@ -906,47 +848,32 @@
         // スピード変更
         function changeSpeed(speed) {
             gameState.pointSpeed = parseFloat(speed);
-            
-            if (elements.speedBadge) {
-                elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
-            }
-            if (elements.speedDescription) {
-                elements.speedDescription.innerHTML = `${gameState.pointSpeed}秒間隔で新しい点が出現します${gameState.pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
-            }
-            
+            elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
+            elements.speedDescription.innerHTML = `${gameState.pointSpeed}秒間隔で新しい点が出現します${gameState.pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
             document.querySelectorAll('[data-speed]').forEach(btn => {
                 btn.classList.toggle('active', parseFloat(btn.dataset.speed) === gameState.pointSpeed);
             });
-
             updateInstructionsText();
         }
 
         // カラー変更
         function changeColor(color) {
             gameState.colorMode = color;
-            
-            if (elements.colorBadge) {
-                if (color === 'random') {
-                    elements.colorBadge.innerHTML = `
-                        <div class="color-dot" style="background-color: #ef4444;"></div>
-                        <div class="color-dot" style="background-color: #3b82f6;"></div>
-                        <div class="color-dot" style="background-color: #10b981;"></div>
-                        ランダム
-                    `;
-                } else {
-                    elements.colorBadge.innerHTML = `
-                        <div class="color-dot" style="background-color: #fbbf24;"></div>
-                        固定
-                    `;
-                }
+            if (color === 'random') {
+                elements.colorBadge.innerHTML = `
+                    <div class="color-dot" style="background-color: #ef4444;"></div>
+                    <div class="color-dot" style="background-color: #3b82f6;"></div>
+                    <div class="color-dot" style="background-color: #10b981;"></div>
+                    ランダム
+                `;
+                elements.colorDescription.textContent = '10種類の色からランダムに選択されます';
+            } else {
+                elements.colorBadge.innerHTML = `
+                    <div class="color-dot" style="background-color: #fbbf24;"></div>
+                    固定
+                `;
+                elements.colorDescription.textContent = '統一された黄色で表示されます';
             }
-            
-            if (elements.colorDescription) {
-                elements.colorDescription.textContent = color === 'random' 
-                    ? '10種類の色からランダムに選択されます' 
-                    : '統一された黄色で表示されます';
-            }
-            
             document.querySelectorAll('[data-color]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.color === gameState.colorMode);
             });
@@ -957,45 +884,27 @@
             if (elements.instructions && !gameState.isRunning && gameState.timeLeft === gameState.duration) {
                 const instructionsText = elements.instructions.querySelector('.instructions-text');
                 if (instructionsText) {
-                    instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br /><span style="font-size: 0.875rem; opacity: 0.8;">現在の設定: ${gameState.pointSpeed}秒間隔でポイント出現</span>`;
+                    instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${gameState.pointSpeed}秒間隔でポイント出現</span>`;
                 }
             }
         }
 
         // イベントリスナー設定
         function setupEventListeners() {
-            // ヘッダー切り替え
-            if (elements.headerToggle) {
-                elements.headerToggle.addEventListener('click', toggleHeader);
-            }
+            elements.headerToggle.addEventListener('click', toggleHeader);
+            elements.settingsBtn.addEventListener('click', toggleSettings);
+            
+            elements.playBtn.addEventListener('click', () => {
+                if (gameState.isRunning) {
+                    stopTimer();
+                } else if (gameState.timeLeft > 0) {
+                    startTimer();
+                }
+            });
 
-            // 設定切り替え
-            if (elements.settingsBtn) {
-                elements.settingsBtn.addEventListener('click', toggleSettings);
-            }
+            elements.resetBtn.addEventListener('click', resetTimer);
+            elements.miniStop.addEventListener('click', stopTimer);
 
-            // 再生/停止ボタン
-            if (elements.playBtn) {
-                elements.playBtn.addEventListener('click', () => {
-                    if (gameState.isRunning) {
-                        stopTimer();
-                    } else if (gameState.timeLeft > 0) {
-                        startTimer();
-                    }
-                });
-            }
-
-            // リセットボタン
-            if (elements.resetBtn) {
-                elements.resetBtn.addEventListener('click', resetTimer);
-            }
-
-            // ミニ停止ボタン
-            if (elements.miniStop) {
-                elements.miniStop.addEventListener('click', stopTimer);
-            }
-
-            // 設定ボタン群
             document.querySelectorAll('[data-mode]').forEach(btn => {
                 btn.addEventListener('click', () => changeBrainMode(btn.dataset.mode));
             });
@@ -1013,20 +922,15 @@
             });
         }
 
-        // 初期化関数
+        // 初期化
         function initialize() {
-            console.log('ランダムサッカード初期化中...');
-            
-            // タイマー表示を初期化
+            console.log('ランダムサッカード初期化開始');
             updateTimerDisplay();
-            
-            // イベントリスナーを設定
             setupEventListeners();
-            
             console.log('初期化完了！');
         }
 
-        // ページ読み込み完了後に初期化
+        // DOMContentLoaded後に初期化
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initialize);
         } else {
