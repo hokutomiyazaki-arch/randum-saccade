@@ -236,8 +236,11 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 20px 0;
+            padding: 30px 0;
             -webkit-overflow-scrolling: touch;
+            /* ブラウザー互換性のための追加 */
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
         
         .settings-content::-webkit-scrollbar {
@@ -277,11 +280,12 @@
         }
         
         .setting-section:first-child {
-            margin-top: 0;
+            margin-top: 10px;
+            padding-top: 10px;
         }
         
         .setting-section:last-child {
-            padding-bottom: 20px;
+            padding-bottom: 30px;
             margin-bottom: 0;
         }
         
@@ -546,7 +550,8 @@
                 height: 80vh;
             }
             .settings-content {
-                padding: 0;
+                padding: 25px 0;
+                overscroll-behavior: contain;
             }
             .settings-title {
                 font-size: 20px;
@@ -555,8 +560,12 @@
             .setting-section {
                 padding: 0 20px;
             }
+            .setting-section:first-child {
+                margin-top: 15px;
+                padding-top: 15px;
+            }
             .setting-section:last-child {
-                padding-bottom: 20px;
+                padding-bottom: 25px;
             }
             .game-area.header-visible { top: 320px; }
             .grid-6 { grid-template-columns: repeat(4, 1fr); }
@@ -574,7 +583,8 @@
                 height: 85vh;
             }
             .settings-content {
-                padding: 0;
+                padding: 20px 0;
+                overscroll-behavior: contain;
             }
             .settings-title {
                 font-size: 18px;
@@ -583,8 +593,12 @@
             .setting-section {
                 padding: 0 15px;
             }
+            .setting-section:first-child {
+                margin-top: 10px;
+                padding-top: 10px;
+            }
             .setting-section:last-child {
-                padding-bottom: 15px;
+                padding-bottom: 20px;
             }
             .game-area.header-visible { top: 360px; }
             .field { top: 15px; left: 15px; right: 15px; bottom: 15px; }
@@ -600,7 +614,8 @@
                 height: 90vh;
             }
             .settings-content {
-                padding: 0;
+                padding: 15px 0;
+                overscroll-behavior: contain;
             }
             .settings-title {
                 font-size: 16px;
@@ -609,8 +624,12 @@
             .setting-section {
                 padding: 0 12px;
             }
+            .setting-section:first-child {
+                margin-top: 8px;
+                padding-top: 8px;
+            }
             .setting-section:last-child {
-                padding-bottom: 12px;
+                padding-bottom: 15px;
             }
             .option-btn { padding: 8px 6px; font-size: 12px; }
             .grid-6 { grid-template-columns: repeat(3, 1fr); }
