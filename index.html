@@ -192,14 +192,14 @@
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(15px);
             border-radius: 16px;
-            display: none;
+            display: none !important;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow: hidden;
         }
         
         .settings-panel.show {
-            display: flex;
+            display: flex !important;
             flex-direction: column;
             animation: slideIn 0.3s ease;
         }
@@ -221,7 +221,6 @@
             backdrop-filter: blur(10px);
             border-radius: 16px 16px 0 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
         }
         
         .settings-title {
@@ -230,30 +229,6 @@
             text-align: center;
             padding: 20px 0;
             margin: 0;
-        }
-        
-        .close-btn {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-50%) scale(1.1);
         }
         
         .settings-content {
@@ -309,8 +284,50 @@
         }
         
         .setting-section:last-child {
-            padding-bottom: 40px;
+            padding-bottom: 20px;
             margin-bottom: 0;
+        }
+        
+        .settings-footer {
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 16px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+        
+        .back-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            /* 追加：タッチイベント対応 */
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            touch-action: manipulation;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .back-btn:active {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(0);
         }
         
         .section-title {
@@ -577,11 +594,12 @@
                 font-size: 20px;
                 padding: 15px 0;
             }
-            .close-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 18px;
-                right: 15px;
+            .settings-footer {
+                padding: 15px;
+            }
+            .back-btn {
+                padding: 12px 16px;
+                font-size: 16px;
             }
             .setting-section {
                 padding: 0 20px;
@@ -612,11 +630,12 @@
                 font-size: 18px;
                 padding: 12px 0;
             }
-            .close-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 16px;
-                right: 12px;
+            .settings-footer {
+                padding: 12px;
+            }
+            .back-btn {
+                padding: 10px 14px;
+                font-size: 14px;
             }
             .setting-section {
                 padding: 0 15px;
@@ -645,11 +664,12 @@
                 font-size: 16px;
                 padding: 10px 0;
             }
-            .close-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-                right: 10px;
+            .settings-footer {
+                padding: 10px;
+            }
+            .back-btn {
+                padding: 8px 12px;
+                font-size: 12px;
             }
             .setting-section {
                 padding: 0 12px;
@@ -706,7 +726,6 @@
                 <div class="settings-panel" id="settingsPanel">
                     <div class="settings-header">
                         <h3 class="settings-title">設定</h3>
-                        <button class="close-btn" id="closeSettingsBtn">×</button>
                     </div>
                     <div class="settings-content">
                         <!-- 脳トレーニングモード -->
@@ -779,6 +798,12 @@
                             </div>
                             <p class="description" id="colorDescription">統一された黄色で表示されます</p>
                         </div>
+                    </div>
+                    <div class="settings-footer">
+                        <button class="back-btn" id="backToMainBtn">
+                            <span>←</span>
+                            <span>メイン画面に戻る</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1073,20 +1098,69 @@
 
         // イベントリスナー設定
         function setupEventListeners() {
-            elements.headerToggle.addEventListener('click', toggleHeader);
-            elements.settingsBtn.addEventListener('click', toggleSettings);
+            // ヘッダー切り替え
+            const headerToggle = document.getElementById('headerToggle');
+            if (headerToggle) {
+                headerToggle.addEventListener('click', toggleHeader);
+                console.log('ヘッダー切り替えボタンのイベントリスナーを設定しました');
+            }
             
-            elements.playBtn.addEventListener('click', () => {
-                if (gameState.isRunning) {
-                    stopTimer();
-                } else if (gameState.timeLeft > 0) {
-                    startTimer();
-                }
-            });
+            // 設定切り替え
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', toggleSettings);
+                console.log('設定ボタンのイベントリスナーを設定しました');
+            }
+            
+            // 戻るボタン - 直接要素を取得
+            const backToMainBtn = document.getElementById('backToMainBtn');
+            console.log('戻るボタン要素の取得結果:', backToMainBtn);
+            if (backToMainBtn) {
+                backToMainBtn.addEventListener('click', function(event) {
+                    console.log('戻るボタンがクリックされました！');
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // 設定パネルを強制的に非表示にする
+                    const settingsPanel = document.getElementById('settingsPanel');
+                    if (settingsPanel) {
+                        settingsPanel.classList.remove('show');
+                        settingsPanel.style.display = 'none';
+                        console.log('設定パネルを強制的に非表示にしました');
+                    }
+                });
+                console.log('戻るボタンのイベントリスナーを設定しました');
+            } else {
+                console.error('戻るボタンが見つかりませんでした');
+            }
+            
+            // 再生/停止ボタン
+            const playBtn = document.getElementById('playBtn');
+            if (playBtn) {
+                playBtn.addEventListener('click', () => {
+                    if (gameState.isRunning) {
+                        stopTimer();
+                    } else if (gameState.timeLeft > 0) {
+                        startTimer();
+                    }
+                });
+                console.log('再生ボタンのイベントリスナーを設定しました');
+            }
 
-            elements.resetBtn.addEventListener('click', resetTimer);
-            elements.miniStop.addEventListener('click', stopTimer);
+            // リセットボタン
+            const resetBtn = document.getElementById('resetBtn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', resetTimer);
+                console.log('リセットボタンのイベントリスナーを設定しました');
+            }
+            
+            // ミニ停止ボタン
+            const miniStop = document.getElementById('miniStop');
+            if (miniStop) {
+                miniStop.addEventListener('click', stopTimer);
+            }
 
+            // 設定ボタン群
             document.querySelectorAll('[data-mode]').forEach(btn => {
                 btn.addEventListener('click', () => changeBrainMode(btn.dataset.mode));
             });
@@ -1107,9 +1181,36 @@
         // 初期化
         function initialize() {
             console.log('ランダムサッカード初期化開始');
+            
+            // タイマー表示を初期化
             updateTimerDisplay();
-            setupEventListeners();
-            console.log('初期化完了！');
+            
+            // 少し遅延してからイベントリスナーを設定
+            setTimeout(() => {
+                setupEventListeners();
+                
+                // DOM要素の存在確認
+                const backBtn = document.getElementById('backToMainBtn');
+                const settingsPanel = document.getElementById('settingsPanel');
+                console.log('戻るボタン要素:', backBtn);
+                console.log('設定パネル要素:', settingsPanel);
+                
+                // 手動でテスト用のイベントリスナーも追加
+                if (backBtn) {
+                    backBtn.onclick = function() {
+                        console.log('onclick イベントで戻るボタンがクリックされました');
+                        // 設定パネルを強制的に非表示
+                        const panel = document.getElementById('settingsPanel');
+                        if (panel) {
+                            panel.classList.remove('show');
+                            panel.style.display = 'none';
+                            console.log('onclick: 設定パネルを強制的に非表示にしました');
+                        }
+                    };
+                }
+                
+                console.log('初期化完了！');
+            }, 100);
         }
 
         // DOMContentLoaded後に初期化
