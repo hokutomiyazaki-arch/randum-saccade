@@ -124,6 +124,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
+            display: inline-block;
         }
         
         .settings-btn {
@@ -188,7 +189,7 @@
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 500px;
-            height: 70vh;
+            height: 75vh;
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(15px);
             border-radius: 16px;
@@ -196,12 +197,28 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow: hidden;
+            pointer-events: auto;
         }
         
         .settings-panel.show {
             display: flex !important;
             flex-direction: column;
             animation: slideIn 0.3s ease;
+        }
+        
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .settings-overlay.show {
+            display: block;
         }
         
         @keyframes slideIn {
@@ -237,7 +254,6 @@
             overflow-x: hidden;
             padding: 0;
             -webkit-overflow-scrolling: touch;
-            /* ブラウザー互換性のための追加 */
             overscroll-behavior: contain;
             scroll-behavior: smooth;
         }
@@ -258,19 +274,6 @@
         
         .settings-content::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
-        }
-        
-        .settings-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 25px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px 0;
-            margin: 0 0 25px 0;
-            backdrop-filter: blur(10px);
-            border-radius: 16px 16px 0 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .setting-section {
@@ -312,7 +315,6 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            /* 追加：タッチイベント対応 */
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             -webkit-user-select: none;
@@ -344,7 +346,7 @@
         }
         
         .grid-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-        .grid-6 { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); }
+        .grid-6 { grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         
         .option-btn {
@@ -436,6 +438,37 @@
             transform: translate(-50%, -50%);
         }
         
+        /* 中心点 */
+        .center-point {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
+            z-index: 5;
+            display: none;
+        }
+        
+        .center-point.show {
+            display: block;
+            animation: centerPulse 2s infinite;
+        }
+        
+        @keyframes centerPulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.2);
+                box-shadow: 0 0 40px rgba(255, 107, 107, 1);
+            }
+        }
+        
         .mode-indicator {
             position: absolute;
             top: 15px;
@@ -484,6 +517,52 @@
             50% { 
                 opacity: 0.7; 
                 transform: translate(-50%, -50%) scale(1.2); 
+            }
+        }
+        
+        /* カウントダウンオーバーレイ */
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .countdown-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .countdown-number {
+            font-size: 150px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 50px rgba(255, 255, 255, 0.5);
+            animation: countdownAnimation 1s ease-in-out;
+        }
+        
+        @keyframes countdownAnimation {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
             }
         }
         
@@ -579,6 +658,28 @@
             margin: 0 auto;
         }
         
+        /* 音量とサウンド設定の追加スタイル */
+        .sound-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .sound-toggle label {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .sound-toggle input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
         /* レスポンシブ */
         @media (max-width: 768px) {
             .main-title { font-size: 2rem; }
@@ -588,28 +689,9 @@
             .control-btn { padding: 12px 24px; font-size: 16px; }
             .settings-panel { 
                 width: 95%;
-                height: 75vh;
+                height: 80vh;
             }
-            .settings-title {
-                font-size: 20px;
-                padding: 15px 0;
-            }
-            .settings-footer {
-                padding: 15px;
-            }
-            .back-btn {
-                padding: 12px 16px;
-                font-size: 16px;
-            }
-            .setting-section {
-                padding: 0 20px;
-            }
-            .setting-section:first-child {
-                margin-top: 15px;
-            }
-            .setting-section:last-child {
-                padding-bottom: 30px;
-            }
+            .countdown-number { font-size: 100px; }
             .game-area.header-visible { top: 320px; }
             .grid-6 { grid-template-columns: repeat(4, 1fr); }
         }
@@ -619,32 +701,10 @@
             .main-title { font-size: 1.5rem; }
             .timer-display { font-size: 1.5rem; padding: 8px 16px; }
             .control-btn { padding: 10px 20px; font-size: 14px; }
-            .info-section { flex-direction: column; gap: 10px; }
-            .controls-section { flex-direction: column; align-items: center; }
+            .countdown-number { font-size: 80px; }
             .settings-panel { 
                 width: 95%;
-                height: 80vh;
-                max-height: 90vh;
-            }
-            .settings-title {
-                font-size: 18px;
-                padding: 12px 0;
-            }
-            .settings-footer {
-                padding: 12px;
-            }
-            .back-btn {
-                padding: 10px 14px;
-                font-size: 14px;
-            }
-            .setting-section {
-                padding: 0 15px;
-            }
-            .setting-section:first-child {
-                margin-top: 10px;
-            }
-            .setting-section:last-child {
-                padding-bottom: 25px;
+                height: 85vh;
             }
             .game-area.header-visible { top: 360px; }
             .field { top: 15px; left: 15px; right: 15px; bottom: 15px; }
@@ -652,37 +712,6 @@
             .instructions-text { font-size: 16px; padding: 15px; }
             .option-btn { padding: 10px 8px; font-size: 13px; }
             .section-title { font-size: 16px; }
-        }
-        
-        @media (max-width: 360px) and (orientation: portrait) {
-            .settings-panel {
-                width: 98%;
-                height: 85vh;
-                max-height: 95vh;
-            }
-            .settings-title {
-                font-size: 16px;
-                padding: 10px 0;
-            }
-            .settings-footer {
-                padding: 10px;
-            }
-            .back-btn {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            .setting-section {
-                padding: 0 12px;
-            }
-            .setting-section:first-child {
-                margin-top: 8px;
-            }
-            .setting-section:last-child {
-                padding-bottom: 20px;
-            }
-            .option-btn { padding: 8px 6px; font-size: 12px; }
-            .grid-6 { grid-template-columns: repeat(3, 1fr); }
-            .grid-3 { grid-template-columns: repeat(1, 1fr); }
         }
     </style>
 </head>
@@ -723,6 +752,7 @@
                 </div>
 
                 <!-- 設定パネル -->
+                <div class="settings-overlay" id="settingsOverlay"></div>
                 <div class="settings-panel" id="settingsPanel">
                     <div class="settings-header">
                         <h3 class="settings-title">設定</h3>
@@ -771,6 +801,7 @@
                                 <button class="option-btn" data-speed="3">3秒</button>
                                 <button class="option-btn" data-speed="4">4秒</button>
                                 <button class="option-btn" data-speed="5">5秒</button>
+                                <button class="option-btn" data-speed="random">ランダム</button>
                             </div>
                             <p class="description" id="speedDescription">1秒間隔で新しい点が出現します</p>
                         </div>
@@ -788,15 +819,46 @@
                                 </button>
                                 <button class="option-btn" data-color="random">
                                     <div class="option-title">
-                                        <div class="color-dot" style="background-color: #ef4444; display: inline-block; margin-right: 4px;"></div>
-                                        <div class="color-dot" style="background-color: #3b82f6; display: inline-block; margin-right: 4px;"></div>
-                                        <div class="color-dot" style="background-color: #10b981; display: inline-block; margin-right: 8px;"></div>
+                                        <span class="color-dot" style="background-color: #ef4444;"></span>
+                                        <span class="color-dot" style="background-color: #3b82f6;"></span>
+                                        <span class="color-dot" style="background-color: #10b981;"></span>
                                         ランダム
                                     </div>
                                     <div class="option-desc">カラフル</div>
                                 </button>
                             </div>
                             <p class="description" id="colorDescription">統一された黄色で表示されます</p>
+                        </div>
+
+                        <!-- 中心点設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">中心点表示</h4>
+                            <div class="option-grid grid-2">
+                                <button class="option-btn active" data-center="off">
+                                    <div class="option-title">非表示</div>
+                                    <div class="option-desc">中心点なし</div>
+                                </button>
+                                <button class="option-btn" data-center="on">
+                                    <div class="option-title">
+                                        <span class="color-dot" style="background-color: #ff6b6b;"></span>
+                                        表示
+                                    </div>
+                                    <div class="option-desc">常時表示</div>
+                                </button>
+                            </div>
+                            <p class="description" id="centerDescription">中心点は表示されません</p>
+                        </div>
+
+                        <!-- サウンド設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">サウンド設定</h4>
+                            <div class="sound-toggle">
+                                <label>
+                                    <input type="checkbox" id="soundEnabled" checked>
+                                    <span>🔊 効果音を有効にする</span>
+                                </label>
+                            </div>
+                            <p class="description">カウントダウンと点の出現時に音が鳴ります</p>
                         </div>
                     </div>
                     <div class="settings-footer">
@@ -815,6 +877,7 @@
             <div class="field">
                 <div class="field-line"></div>
                 <div class="center-circle"></div>
+                <div class="center-point" id="centerPoint"></div>
                 <div class="mode-indicator mode-left" id="leftIndicator" style="display: none;">
                     左皮質モード (右側重点)
                 </div>
@@ -825,6 +888,11 @@
 
             <!-- ポイントコンテナ -->
             <div id="pointsContainer"></div>
+
+            <!-- カウントダウンオーバーレイ -->
+            <div class="countdown-overlay" id="countdownOverlay">
+                <div class="countdown-number" id="countdownNumber">3</div>
+            </div>
 
             <!-- 完了オーバーレイ -->
             <div class="completion-overlay" id="completionOverlay" style="display: none;">
@@ -854,6 +922,86 @@
     </div>
 
     <script>
+        // 音声管理クラス
+        class SoundManager {
+            constructor() {
+                this.audioContext = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playCountdownSound(number) {
+                if (!this.enabled) return;
+                this.init();
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                // カウントダウンの数字によって音程を変える
+                const frequencies = { 3: 523, 2: 587, 1: 659, 0: 784 }; // ド、レ、ミ、ファ
+                oscillator.frequency.setValueAtTime(frequencies[number] || 784, this.audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            }
+
+            playPointSound(isStar = false) {
+                if (!this.enabled) return;
+                this.init();
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                if (isStar) {
+                    // 星の場合は高い音とトレモロ効果
+                    oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
+                    oscillator.type = 'triangle';
+                    
+                    // トレモロ効果
+                    const lfo = this.audioContext.createOscillator();
+                    const lfoGain = this.audioContext.createGain();
+                    lfo.frequency.setValueAtTime(8, this.audioContext.currentTime);
+                    lfoGain.gain.setValueAtTime(50, this.audioContext.currentTime);
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(oscillator.frequency);
+                    lfo.start();
+                    lfo.stop(this.audioContext.currentTime + 0.2);
+                } else {
+                    // 通常の点の場合は柔らかい音
+                    oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+                    oscillator.type = 'sine';
+                }
+                
+                gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.15);
+            }
+
+            setEnabled(enabled) {
+                this.enabled = enabled;
+            }
+        }
+
+        // サウンドマネージャーのインスタンス
+        const soundManager = new SoundManager();
+
         // ゲーム状態管理
         const gameState = {
             isRunning: false,
@@ -862,9 +1010,11 @@
             brainMode: 'normal',
             pointSpeed: 1,
             colorMode: 'yellow',
+            centerPointEnabled: false,
             showHeader: true,
             timerInterval: null,
-            pointInterval: null
+            pointInterval: null,
+            countdownInterval: null
         };
 
         // DOM要素
@@ -878,8 +1028,11 @@
             resetBtn: document.getElementById('resetBtn'),
             settingsBtn: document.getElementById('settingsBtn'),
             settingsPanel: document.getElementById('settingsPanel'),
+            settingsOverlay: document.getElementById('settingsOverlay'),
             pointsContainer: document.getElementById('pointsContainer'),
             completionOverlay: document.getElementById('completionOverlay'),
+            countdownOverlay: document.getElementById('countdownOverlay'),
+            countdownNumber: document.getElementById('countdownNumber'),
             instructions: document.getElementById('instructions'),
             miniControls: document.getElementById('miniControls'),
             miniStop: document.getElementById('miniStop'),
@@ -888,7 +1041,10 @@
             speedBadge: document.getElementById('speedBadge'),
             colorBadge: document.getElementById('colorBadge'),
             speedDescription: document.getElementById('speedDescription'),
-            colorDescription: document.getElementById('colorDescription')
+            colorDescription: document.getElementById('colorDescription'),
+            centerDescription: document.getElementById('centerDescription'),
+            centerPoint: document.getElementById('centerPoint'),
+            soundEnabled: document.getElementById('soundEnabled')
         };
 
         // 時間フォーマット
@@ -952,11 +1108,13 @@
 
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
+                soundManager.playPointSound(true);
             } else {
                 const dot = document.createElement('div');
                 dot.className = 'point-dot';
                 dot.style.backgroundColor = point.color;
                 pointElement.appendChild(dot);
+                soundManager.playPointSound(false);
             }
 
             elements.pointsContainer.appendChild(pointElement);
@@ -967,26 +1125,79 @@
             }, 2000);
         }
 
-        // タイマー開始
-        function startTimer() {
-            gameState.isRunning = true;
-            elements.playBtn.innerHTML = '<span>⏸️</span><span>停止</span>';
-            elements.instructions.style.display = 'none';
-            elements.miniStop.style.display = gameState.showHeader ? 'none' : 'flex';
-            
-            gameState.timerInterval = setInterval(() => {
-                gameState.timeLeft--;
-                updateTimerDisplay();
-                
-                if (gameState.timeLeft <= 0) {
-                    stopTimer();
-                    showCompletion();
+        // カウントダウン開始
+        function startCountdown(callback) {
+            let count = 3;
+            elements.countdownOverlay.classList.add('show');
+            elements.countdownNumber.textContent = count;
+            soundManager.playCountdownSound(count);
+
+            gameState.countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    elements.countdownNumber.textContent = count;
+                    elements.countdownNumber.style.animation = 'none';
+                    setTimeout(() => {
+                        elements.countdownNumber.style.animation = 'countdownAnimation 1s ease-in-out';
+                    }, 10);
+                    soundManager.playCountdownSound(count);
+                } else if (count === 0) {
+                    elements.countdownNumber.textContent = 'GO!';
+                    elements.countdownNumber.style.animation = 'none';
+                    setTimeout(() => {
+                        elements.countdownNumber.style.animation = 'countdownAnimation 1s ease-in-out';
+                    }, 10);
+                    soundManager.playCountdownSound(0);
+                } else {
+                    clearInterval(gameState.countdownInterval);
+                    elements.countdownOverlay.classList.remove('show');
+                    callback();
                 }
             }, 1000);
+        }
 
-            gameState.pointInterval = setInterval(() => {
-                showPoint(generateRandomPosition());
-            }, gameState.pointSpeed * 1000);
+        // タイマー開始
+        function startTimer() {
+            elements.playBtn.disabled = true;
+            elements.instructions.style.display = 'none';
+            
+            // カウントダウンを開始
+            startCountdown(() => {
+                gameState.isRunning = true;
+                elements.playBtn.disabled = false;
+                elements.playBtn.innerHTML = '<span>⏸️</span><span>停止</span>';
+                elements.miniStop.style.display = gameState.showHeader ? 'none' : 'flex';
+                
+                gameState.timerInterval = setInterval(() => {
+                    gameState.timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (gameState.timeLeft <= 0) {
+                        stopTimer();
+                        showCompletion();
+                    }
+                }, 1000);
+
+                const showNextPoint = () => {
+                    if (gameState.isRunning) {
+                        showPoint(generateRandomPosition());
+                        
+                        // ランダム間隔の場合
+                        if (gameState.pointSpeed === 'random') {
+                            const nextInterval = (Math.random() * 4 + 0.5) * 1000;
+                            setTimeout(showNextPoint, nextInterval);
+                        }
+                    }
+                };
+
+                if (gameState.pointSpeed === 'random') {
+                    showNextPoint();
+                } else {
+                    gameState.pointInterval = setInterval(() => {
+                        showPoint(generateRandomPosition());
+                    }, gameState.pointSpeed * 1000);
+                }
+            });
         }
 
         // タイマー停止
@@ -1003,6 +1214,19 @@
                 clearInterval(gameState.pointInterval);
                 gameState.pointInterval = null;
             }
+            if (gameState.countdownInterval) {
+                clearInterval(gameState.countdownInterval);
+                gameState.countdownInterval = null;
+                elements.countdownOverlay.classList.remove('show');
+            }
+        }
+
+        // 完了表示
+        function showCompletion() {
+            elements.completionOverlay.style.display = 'flex';
+            setTimeout(() => {
+                elements.completionOverlay.style.display = 'none';
+            }, 3000);
         }
 
         // リセット
@@ -1027,7 +1251,14 @@
 
         // 設定切り替え
         function toggleSettings() {
-            elements.settingsPanel.classList.toggle('show');
+            const isShowing = elements.settingsPanel.classList.contains('show');
+            if (isShowing) {
+                elements.settingsPanel.classList.remove('show');
+                elements.settingsOverlay.classList.remove('show');
+            } else {
+                elements.settingsPanel.classList.add('show');
+                elements.settingsOverlay.classList.add('show');
+            }
         }
 
         // モード変更
@@ -1054,11 +1285,18 @@
 
         // スピード変更
         function changeSpeed(speed) {
-            gameState.pointSpeed = parseFloat(speed);
-            elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
-            elements.speedDescription.innerHTML = `${gameState.pointSpeed}秒間隔で新しい点が出現します${gameState.pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
+            if (speed === 'random') {
+                gameState.pointSpeed = 'random';
+                elements.speedBadge.textContent = 'ランダム間隔';
+                elements.speedDescription.innerHTML = 'ランダムな間隔で新しい点が出現します<span style="color: #fbbf24;"> (0.5～4.5秒)</span>';
+            } else {
+                gameState.pointSpeed = parseFloat(speed);
+                elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
+                elements.speedDescription.innerHTML = `${gameState.pointSpeed}秒間隔で新しい点が出現します${gameState.pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
+            }
             document.querySelectorAll('[data-speed]').forEach(btn => {
-                btn.classList.toggle('active', parseFloat(btn.dataset.speed) === gameState.pointSpeed);
+                const btnSpeed = btn.dataset.speed === 'random' ? 'random' : parseFloat(btn.dataset.speed);
+                btn.classList.toggle('active', btnSpeed === gameState.pointSpeed);
             });
             updateInstructionsText();
         }
@@ -1068,9 +1306,9 @@
             gameState.colorMode = color;
             if (color === 'random') {
                 elements.colorBadge.innerHTML = `
-                    <div class="color-dot" style="background-color: #ef4444;"></div>
-                    <div class="color-dot" style="background-color: #3b82f6;"></div>
-                    <div class="color-dot" style="background-color: #10b981;"></div>
+                    <span class="color-dot" style="background-color: #ef4444;"></span>
+                    <span class="color-dot" style="background-color: #3b82f6;"></span>
+                    <span class="color-dot" style="background-color: #10b981;"></span>
                     ランダム
                 `;
                 elements.colorDescription.textContent = '10種類の色からランダムに選択されます';
@@ -1086,12 +1324,25 @@
             });
         }
 
+        // 中心点設定変更
+        function changeCenterPoint(enabled) {
+            gameState.centerPointEnabled = enabled === 'on';
+            elements.centerPoint.classList.toggle('show', gameState.centerPointEnabled);
+            elements.centerDescription.textContent = gameState.centerPointEnabled 
+                ? '赤い中心点が常時表示されます' 
+                : '中心点は表示されません';
+            document.querySelectorAll('[data-center]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.center === enabled);
+            });
+        }
+
         // 説明文更新
         function updateInstructionsText() {
             if (elements.instructions && !gameState.isRunning && gameState.timeLeft === gameState.duration) {
                 const instructionsText = elements.instructions.querySelector('.instructions-text');
                 if (instructionsText) {
-                    instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${gameState.pointSpeed}秒間隔でポイント出現</span>`;
+                    const speedText = gameState.pointSpeed === 'random' ? 'ランダム間隔' : `${gameState.pointSpeed}秒間隔`;
+                    instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
                 }
             }
         }
@@ -1099,66 +1350,41 @@
         // イベントリスナー設定
         function setupEventListeners() {
             // ヘッダー切り替え
-            const headerToggle = document.getElementById('headerToggle');
-            if (headerToggle) {
-                headerToggle.addEventListener('click', toggleHeader);
-                console.log('ヘッダー切り替えボタンのイベントリスナーを設定しました');
-            }
+            elements.headerToggle.addEventListener('click', toggleHeader);
             
             // 設定切り替え
-            const settingsBtn = document.getElementById('settingsBtn');
-            if (settingsBtn) {
-                settingsBtn.addEventListener('click', toggleSettings);
-                console.log('設定ボタンのイベントリスナーを設定しました');
-            }
+            elements.settingsBtn.addEventListener('click', toggleSettings);
+            elements.settingsOverlay.addEventListener('click', toggleSettings);
             
-            // 戻るボタン - 直接要素を取得
+            // 戻るボタン
             const backToMainBtn = document.getElementById('backToMainBtn');
-            console.log('戻るボタン要素の取得結果:', backToMainBtn);
             if (backToMainBtn) {
                 backToMainBtn.addEventListener('click', function(event) {
-                    console.log('戻るボタンがクリックされました！');
                     event.preventDefault();
                     event.stopPropagation();
-                    
-                    // 設定パネルを強制的に非表示にする
-                    const settingsPanel = document.getElementById('settingsPanel');
-                    if (settingsPanel) {
-                        settingsPanel.classList.remove('show');
-                        settingsPanel.style.display = 'none';
-                        console.log('設定パネルを強制的に非表示にしました');
-                    }
+                    toggleSettings();
                 });
-                console.log('戻るボタンのイベントリスナーを設定しました');
-            } else {
-                console.error('戻るボタンが見つかりませんでした');
             }
             
             // 再生/停止ボタン
-            const playBtn = document.getElementById('playBtn');
-            if (playBtn) {
-                playBtn.addEventListener('click', () => {
-                    if (gameState.isRunning) {
-                        stopTimer();
-                    } else if (gameState.timeLeft > 0) {
-                        startTimer();
-                    }
-                });
-                console.log('再生ボタンのイベントリスナーを設定しました');
-            }
+            elements.playBtn.addEventListener('click', () => {
+                if (gameState.isRunning) {
+                    stopTimer();
+                } else if (gameState.timeLeft > 0 && !elements.playBtn.disabled) {
+                    startTimer();
+                }
+            });
 
             // リセットボタン
-            const resetBtn = document.getElementById('resetBtn');
-            if (resetBtn) {
-                resetBtn.addEventListener('click', resetTimer);
-                console.log('リセットボタンのイベントリスナーを設定しました');
-            }
+            elements.resetBtn.addEventListener('click', resetTimer);
             
             // ミニ停止ボタン
-            const miniStop = document.getElementById('miniStop');
-            if (miniStop) {
-                miniStop.addEventListener('click', stopTimer);
-            }
+            elements.miniStop.addEventListener('click', stopTimer);
+
+            // サウンド設定
+            elements.soundEnabled.addEventListener('change', (e) => {
+                soundManager.setEnabled(e.target.checked);
+            });
 
             // 設定ボタン群
             document.querySelectorAll('[data-mode]').forEach(btn => {
@@ -1176,41 +1402,21 @@
             document.querySelectorAll('[data-color]').forEach(btn => {
                 btn.addEventListener('click', () => changeColor(btn.dataset.color));
             });
+
+            document.querySelectorAll('[data-center]').forEach(btn => {
+                btn.addEventListener('click', () => changeCenterPoint(btn.dataset.center));
+            });
         }
 
         // 初期化
         function initialize() {
-            console.log('ランダムサッカード初期化開始');
-            
-            // タイマー表示を初期化
             updateTimerDisplay();
+            setupEventListeners();
             
-            // 少し遅延してからイベントリスナーを設定
-            setTimeout(() => {
-                setupEventListeners();
-                
-                // DOM要素の存在確認
-                const backBtn = document.getElementById('backToMainBtn');
-                const settingsPanel = document.getElementById('settingsPanel');
-                console.log('戻るボタン要素:', backBtn);
-                console.log('設定パネル要素:', settingsPanel);
-                
-                // 手動でテスト用のイベントリスナーも追加
-                if (backBtn) {
-                    backBtn.onclick = function() {
-                        console.log('onclick イベントで戻るボタンがクリックされました');
-                        // 設定パネルを強制的に非表示
-                        const panel = document.getElementById('settingsPanel');
-                        if (panel) {
-                            panel.classList.remove('show');
-                            panel.style.display = 'none';
-                            console.log('onclick: 設定パネルを強制的に非表示にしました');
-                        }
-                    };
-                }
-                
-                console.log('初期化完了！');
-            }, 100);
+            // 初回クリック時に音声コンテキストを初期化
+            document.addEventListener('click', () => {
+                soundManager.init();
+            }, { once: true });
         }
 
         // DOMContentLoaded後に初期化
@@ -1224,6 +1430,7 @@
         window.addEventListener('beforeunload', () => {
             if (gameState.timerInterval) clearInterval(gameState.timerInterval);
             if (gameState.pointInterval) clearInterval(gameState.pointInterval);
+            if (gameState.countdownInterval) clearInterval(gameState.countdownInterval);
         });
     </script>
 </body>
