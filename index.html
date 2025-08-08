@@ -32,6 +32,32 @@
             overflow: hidden;
         }
         
+        /* 全画面ボタン */
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .fullscreen-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+        
         /* ヘッダー切り替えボタン */
         .header-toggle {
             position: fixed;
@@ -184,67 +210,47 @@
         /* 設定パネル */
         .settings-panel {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 500px;
-            height: 75vh;
-            background: rgba(0, 0, 0, 0.9);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(15px);
-            border-radius: 16px;
             display: none !important;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow: hidden;
-            pointer-events: auto;
         }
         
         .settings-panel.show {
             display: flex !important;
             flex-direction: column;
-            animation: slideIn 0.3s ease;
         }
         
         .settings-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
             display: none;
-        }
-        
-        .settings-overlay.show {
-            display: block;
         }
         
         @keyframes slideIn {
             from { 
                 opacity: 0; 
-                transform: translate(-50%, -50%) scale(0.9); 
             }
             to { 
                 opacity: 1; 
-                transform: translate(-50%, -50%) scale(1); 
             }
         }
         
         .settings-header {
             flex-shrink: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
-            border-radius: 16px 16px 0 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
         }
         
         .settings-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             text-align: center;
-            padding: 20px 0;
             margin: 0;
         }
         
@@ -252,10 +258,11 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 0;
+            padding: 30px 20px;
             -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            scroll-behavior: smooth;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
         }
         
         .settings-content::-webkit-scrollbar {
@@ -278,30 +285,26 @@
         
         .setting-section {
             margin-bottom: 30px;
-            padding: 0 30px;
-        }
-        
-        .setting-section:first-child {
-            margin-top: 20px;
-            padding-top: 0;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
         }
         
         .setting-section:last-child {
-            padding-bottom: 20px;
-            margin-bottom: 0;
+            margin-bottom: 30px;
         }
         
         .settings-footer {
             flex-shrink: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
-            border-radius: 0 0 16px 16px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding: 20px;
         }
         
         .back-btn {
-            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 12px;
@@ -315,11 +318,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            touch-action: manipulation;
+            width: 100%;
         }
         
         .back-btn:hover {
@@ -687,10 +686,7 @@
             .info-section { gap: 15px; }
             .controls-section { gap: 15px; }
             .control-btn { padding: 12px 24px; font-size: 16px; }
-            .settings-panel { 
-                width: 95%;
-                height: 80vh;
-            }
+            .settings-content { padding: 20px 15px; }
             .countdown-number { font-size: 100px; }
             .game-area.header-visible { top: 320px; }
             .grid-6 { grid-template-columns: repeat(4, 1fr); }
@@ -702,10 +698,8 @@
             .timer-display { font-size: 1.5rem; padding: 8px 16px; }
             .control-btn { padding: 10px 20px; font-size: 14px; }
             .countdown-number { font-size: 80px; }
-            .settings-panel { 
-                width: 95%;
-                height: 85vh;
-            }
+            .settings-content { padding: 20px 10px; }
+            .settings-title { font-size: 24px; }
             .game-area.header-visible { top: 360px; }
             .field { top: 15px; left: 15px; right: 15px; bottom: 15px; }
             .instructions { bottom: 20px; left: 20px; right: 20px; }
@@ -717,6 +711,9 @@
 </head>
 <body>
     <div class="app-container">
+        <!-- 全画面ボタン -->
+        <button class="fullscreen-btn" id="fullscreenBtn" title="全画面表示">⛶</button>
+
         <!-- ヘッダー切り替えボタン -->
         <button class="header-toggle" id="headerToggle" title="ヘッダーを切り替え">▲</button>
 
@@ -1019,6 +1016,7 @@
 
         // DOM要素
         const elements = {
+            fullscreenBtn: document.getElementById('fullscreenBtn'),
             headerToggle: document.getElementById('headerToggle'),
             header: document.getElementById('header'),
             gameArea: document.getElementById('gameArea'),
@@ -1239,6 +1237,32 @@
             elements.instructions.style.display = 'block';
         }
 
+        // 全画面切り替え
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                // 全画面にする
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+                elements.fullscreenBtn.innerHTML = '⊡';
+            } else {
+                // 全画面を解除
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                elements.fullscreenBtn.innerHTML = '⛶';
+            }
+        }
+
         // ヘッダー切り替え
         function toggleHeader() {
             gameState.showHeader = !gameState.showHeader;
@@ -1254,10 +1278,10 @@
             const isShowing = elements.settingsPanel.classList.contains('show');
             if (isShowing) {
                 elements.settingsPanel.classList.remove('show');
-                elements.settingsOverlay.classList.remove('show');
             } else {
                 elements.settingsPanel.classList.add('show');
-                elements.settingsOverlay.classList.add('show');
+                // 設定パネルを開いた時、一番上にスクロール
+                elements.settingsPanel.querySelector('.settings-content').scrollTop = 0;
             }
         }
 
@@ -1349,12 +1373,19 @@
 
         // イベントリスナー設定
         function setupEventListeners() {
+            // 全画面切り替え
+            elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // 全画面変更イベント
+            document.addEventListener('fullscreenchange', () => {
+                elements.fullscreenBtn.innerHTML = document.fullscreenElement ? '⊡' : '⛶';
+            });
+            
             // ヘッダー切り替え
             elements.headerToggle.addEventListener('click', toggleHeader);
             
             // 設定切り替え
             elements.settingsBtn.addEventListener('click', toggleSettings);
-            elements.settingsOverlay.addEventListener('click', toggleSettings);
             
             // 戻るボタン
             const backToMainBtn = document.getElementById('backToMainBtn');
