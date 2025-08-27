@@ -948,7 +948,7 @@
                                 </button>
                                 <button class="option-btn" data-gonogo="true">
                                     <div class="option-title">変化音あり</div>
-                                    <div class="option-desc">20%で低音（赤点）</div>
+                                    <div class="option-desc">20%で低音</div>
                                 </button>
                             </div>
                             <p class="description" style="color: #ef4444;">
@@ -971,6 +971,27 @@
                                 </button>
                             </div>
                             <p class="description">カウントダウンとポイント出現時に効果音が鳴ります</p>
+                        </div>
+
+                        <!-- 脳トレーニングモード -->
+                        <div class="setting-section">
+                            <h4 class="section-title">視野トレーニングモード</h4>
+                            <div class="option-grid grid-3">
+                                <button class="option-btn active" data-mode="normal">
+                                    <div class="option-title">両側皮質</div>
+                                    <div class="option-desc">全体にランダム</div>
+                                </button>
+                                <button class="option-btn" data-mode="right">
+                                    <div class="option-title">右皮質</div>
+                                    <div class="option-desc">左側8割</div>
+                                </button>
+                                <button class="option-btn" data-mode="left">
+                                    <div class="option-title">左皮質</div>
+                                    <div class="option-desc">右側8割</div>
+                                </button>
+                            </div>
+                            <p class="description">右皮質モード：左視野（左側）に8割のターゲットが集中<br>
+                            左皮質モード：右視野（右側）に8割のターゲットが集中</p>
                         </div>
                     </div>
                     <div class="settings-footer">
@@ -1241,15 +1262,10 @@
             } else {
                 const dot = document.createElement('div');
                 dot.className = 'point-dot';
-                // No-Goの場合は赤系の色にする（Go/No-Goモードの時のみ）
-                if (isNoGo) {
-                    dot.style.backgroundColor = '#ef4444';
-                    dot.style.boxShadow = '0 0 25px rgba(239, 68, 68, 0.8)';
-                } else {
-                    dot.style.backgroundColor = point.color;
-                }
+                // 色は設定に従う（No-Goでも色は変えない）
+                dot.style.backgroundColor = point.color;
                 pointElement.appendChild(dot);
-                // 音を鳴らす
+                // 音を鳴らす（No-Goの場合は異なる音）
                 createPointSound(isNoGo);
             }
 
