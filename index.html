@@ -32,32 +32,6 @@
             overflow: hidden;
         }
         
-        /* 全画面ボタン */
-        .fullscreen-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 0, 0, 0.7);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        
-        .fullscreen-btn:hover {
-            background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.1);
-        }
-        
         /* ヘッダー切り替えボタン */
         .header-toggle {
             position: fixed;
@@ -115,6 +89,16 @@
             font-weight: bold;
             margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
         }
         
         .info-section {
@@ -150,7 +134,6 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            display: inline-block;
         }
         
         .settings-btn {
@@ -210,47 +193,67 @@
         /* 設定パネル */
         .settings-panel {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            height: 70vh;
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(15px);
+            border-radius: 16px;
             display: none !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow: hidden;
+            pointer-events: auto;
         }
         
         .settings-panel.show {
             display: flex !important;
             flex-direction: column;
+            animation: slideIn 0.3s ease;
         }
         
         .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
             display: none;
+        }
+        
+        .settings-overlay.show {
+            display: block;
         }
         
         @keyframes slideIn {
             from { 
                 opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.9); 
             }
             to { 
                 opacity: 1; 
+                transform: translate(-50%, -50%) scale(1); 
             }
         }
         
         .settings-header {
             flex-shrink: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
+            border-radius: 16px 16px 0 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
         }
         
         .settings-title {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             text-align: center;
+            padding: 20px 0;
             margin: 0;
         }
         
@@ -258,11 +261,10 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 30px 20px;
+            padding: 0;
             -webkit-overflow-scrolling: touch;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
         
         .settings-content::-webkit-scrollbar {
@@ -285,26 +287,30 @@
         
         .setting-section {
             margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 12px;
+            padding: 0 30px;
+        }
+        
+        .setting-section:first-child {
+            margin-top: 20px;
+            padding-top: 0;
         }
         
         .setting-section:last-child {
-            margin-bottom: 30px;
+            padding-bottom: 20px;
+            margin-bottom: 0;
         }
         
         .settings-footer {
             flex-shrink: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
+            border-radius: 0 0 16px 16px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding: 20px;
         }
         
         .back-btn {
-            max-width: 400px;
-            margin: 0 auto;
+            width: 100%;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 12px;
@@ -318,7 +324,11 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            touch-action: manipulation;
         }
         
         .back-btn:hover {
@@ -410,7 +420,7 @@
             top: 20px;
             left: 20px;
             right: 20px;
-            bottom: 20px;
+            bottom: 60px;
             border: 3px solid rgba(255, 255, 255, 0.4);
             border-radius: 15px;
             background: rgba(255, 255, 255, 0.05);
@@ -437,18 +447,15 @@
             transform: translate(-50%, -50%);
         }
         
-        /* 中心点 */
         .center-point {
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
-            width: 30px;
-            height: 30px;
-            background: #ff6b6b;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
-            box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
-            z-index: 5;
+            transform: translate(-50%, -50%);
             display: none;
         }
         
@@ -458,14 +465,8 @@
         }
         
         @keyframes centerPulse {
-            0%, 100% { 
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
-            }
-            50% { 
-                transform: translate(-50%, -50%) scale(1.2);
-                box-shadow: 0 0 40px rgba(255, 107, 107, 1);
-            }
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.2); }
         }
         
         .mode-indicator {
@@ -496,11 +497,11 @@
             z-index: 10;
         }
         
-        .point-dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        .point-img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
         }
         
         .point-star {
@@ -531,41 +532,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 60;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .countdown-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
+            z-index: 100;
         }
         
         .countdown-number {
-            font-size: 150px;
+            font-size: 120px;
             font-weight: bold;
             color: white;
-            text-shadow: 0 0 50px rgba(255, 255, 255, 0.5);
-            animation: countdownAnimation 1s ease-in-out;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            animation: countdownPulse 1s ease-in-out;
         }
         
-        @keyframes countdownAnimation {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
+        @keyframes countdownPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
-        /* 完了オーバーレイ */
         .completion-overlay {
             position: absolute;
             top: 0;
@@ -640,7 +623,7 @@
         /* 説明 */
         .instructions {
             position: absolute;
-            bottom: 30px;
+            bottom: 70px;
             left: 30px;
             right: 30px;
             text-align: center;
@@ -657,37 +640,50 @@
             margin: 0 auto;
         }
         
-        /* 音量とサウンド設定の追加スタイル */
-        .sound-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .sound-toggle label {
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        
-        .sound-toggle input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
+        /* コピーライト */
+        .copyright {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0 20px;
         }
         
         /* レスポンシブ */
         @media (max-width: 768px) {
             .main-title { font-size: 2rem; }
+            .logo-icon { width: 40px; height: 40px; }
             .timer-display { font-size: 2rem; }
             .info-section { gap: 15px; }
             .controls-section { gap: 15px; }
             .control-btn { padding: 12px 24px; font-size: 16px; }
-            .settings-content { padding: 20px 15px; }
-            .countdown-number { font-size: 100px; }
+            .settings-panel { 
+                width: 95%;
+                height: 75vh;
+            }
+            .settings-title {
+                font-size: 20px;
+                padding: 15px 0;
+            }
+            .settings-footer {
+                padding: 15px;
+            }
+            .back-btn {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+            .setting-section {
+                padding: 0 20px;
+            }
+            .setting-section:first-child {
+                margin-top: 15px;
+            }
+            .setting-section:last-child {
+                padding-bottom: 30px;
+            }
             .game-area.header-visible { top: 320px; }
             .grid-6 { grid-template-columns: repeat(4, 1fr); }
         }
@@ -695,25 +691,80 @@
         @media (max-width: 480px) and (orientation: portrait) {
             .header { padding: 20px 15px; }
             .main-title { font-size: 1.5rem; }
+            .logo-icon { width: 35px; height: 35px; }
             .timer-display { font-size: 1.5rem; padding: 8px 16px; }
             .control-btn { padding: 10px 20px; font-size: 14px; }
-            .countdown-number { font-size: 80px; }
-            .settings-content { padding: 20px 10px; }
-            .settings-title { font-size: 24px; }
+            .info-section { flex-direction: column; gap: 10px; }
+            .controls-section { flex-direction: column; align-items: center; }
+            .settings-panel { 
+                width: 95%;
+                height: 80vh;
+                max-height: 90vh;
+            }
+            .settings-title {
+                font-size: 18px;
+                padding: 12px 0;
+            }
+            .settings-footer {
+                padding: 12px;
+            }
+            .back-btn {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+            .setting-section {
+                padding: 0 15px;
+            }
+            .setting-section:first-child {
+                margin-top: 10px;
+            }
+            .setting-section:last-child {
+                padding-bottom: 25px;
+            }
             .game-area.header-visible { top: 360px; }
-            .field { top: 15px; left: 15px; right: 15px; bottom: 15px; }
-            .instructions { bottom: 20px; left: 20px; right: 20px; }
+            .field { top: 15px; left: 15px; right: 15px; bottom: 50px; }
+            .instructions { bottom: 55px; left: 20px; right: 20px; }
             .instructions-text { font-size: 16px; padding: 15px; }
             .option-btn { padding: 10px 8px; font-size: 13px; }
             .section-title { font-size: 16px; }
+            .copyright { font-size: 11px; bottom: 10px; }
+        }
+        
+        @media (max-width: 360px) and (orientation: portrait) {
+            .settings-panel {
+                width: 98%;
+                height: 85vh;
+                max-height: 95vh;
+            }
+            .settings-title {
+                font-size: 16px;
+                padding: 10px 0;
+            }
+            .settings-footer {
+                padding: 10px;
+            }
+            .back-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .setting-section {
+                padding: 0 12px;
+            }
+            .setting-section:first-child {
+                margin-top: 8px;
+            }
+            .setting-section:last-child {
+                padding-bottom: 20px;
+            }
+            .option-btn { padding: 8px 6px; font-size: 12px; }
+            .grid-6 { grid-template-columns: repeat(3, 1fr); }
+            .grid-3 { grid-template-columns: repeat(1, 1fr); }
+            .logo-icon { width: 30px; height: 30px; }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- 全画面ボタン -->
-        <button class="fullscreen-btn" id="fullscreenBtn" title="全画面表示">⛶</button>
-
         <!-- ヘッダー切り替えボタン -->
         <button class="header-toggle" id="headerToggle" title="ヘッダーを切り替え">▲</button>
 
@@ -722,7 +773,13 @@
             <div class="header-content">
                 <!-- タイトルセクション -->
                 <div class="title-section">
-                    <h1 class="main-title">⚽ ランダムサッカード</h1>
+                    <h1 class="main-title">
+                        <img src="https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png" alt="FNT Logo" class="logo-icon">
+                        ランダムサッカード
+                    </h1>
+                    <p style="font-size: 16px; margin-top: 10px; opacity: 0.9; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                        ⭐星マークが出た時には視点移動を我慢することでアンチサッカードとなり、前頭葉を強く活性します。
+                    </p>
                 </div>
 
                 <!-- 情報セクション -->
@@ -730,8 +787,8 @@
                     <div class="timer-display" id="timerDisplay">1:00</div>
                     <div class="info-badge" id="speedBadge">1秒間隔</div>
                     <div class="info-badge" id="colorBadge">
-                        <div class="color-dot" style="background-color: #fbbf24;"></div>
-                        固定
+                        <img src="https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png" alt="FNT" style="width: 16px; height: 16px;">
+                        FNTロゴ
                     </div>
                     <button class="settings-btn" id="settingsBtn">⚙️</button>
                 </div>
@@ -803,59 +860,57 @@
                             <p class="description" id="speedDescription">1秒間隔で新しい点が出現します</p>
                         </div>
 
-                        <!-- カラーモード設定 -->
+                        <!-- ロゴ色設定 -->
                         <div class="setting-section">
-                            <h4 class="section-title">点の色設定</h4>
+                            <h4 class="section-title">点のスタイル設定</h4>
                             <div class="option-grid grid-2">
-                                <button class="option-btn active" data-color="yellow">
+                                <button class="option-btn active" data-color="fnt">
                                     <div class="option-title">
-                                        <div class="color-dot" style="background-color: #fbbf24; display: inline-block; margin-right: 8px;"></div>
-                                        固定色
+                                        <img src="https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png" alt="FNT" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
+                                        FNTロゴ
                                     </div>
-                                    <div class="option-desc">黄色のみ</div>
+                                    <div class="option-desc">ブランドロゴ表示</div>
                                 </button>
                                 <button class="option-btn" data-color="random">
                                     <div class="option-title">
-                                        <span class="color-dot" style="background-color: #ef4444;"></span>
-                                        <span class="color-dot" style="background-color: #3b82f6;"></span>
-                                        <span class="color-dot" style="background-color: #10b981;"></span>
-                                        ランダム
+                                        ⭐ 星マーク
                                     </div>
-                                    <div class="option-desc">カラフル</div>
+                                    <div class="option-desc">星とロゴをランダム</div>
                                 </button>
                             </div>
-                            <p class="description" id="colorDescription">統一された黄色で表示されます</p>
+                            <p class="description" id="colorDescription">FNTロゴで統一表示されます</p>
                         </div>
 
-                        <!-- 中心点設定 -->
+                        <!-- 中心点表示設定 -->
                         <div class="setting-section">
                             <h4 class="section-title">中心点表示</h4>
                             <div class="option-grid grid-2">
-                                <button class="option-btn active" data-center="off">
+                                <button class="option-btn active" data-center="false">
                                     <div class="option-title">非表示</div>
                                     <div class="option-desc">中心点なし</div>
                                 </button>
-                                <button class="option-btn" data-center="on">
-                                    <div class="option-title">
-                                        <span class="color-dot" style="background-color: #ff6b6b;"></span>
-                                        表示
-                                    </div>
-                                    <div class="option-desc">常時表示</div>
+                                <button class="option-btn" data-center="true">
+                                    <div class="option-title">表示</div>
+                                    <div class="option-desc">中心に固定点</div>
                                 </button>
                             </div>
-                            <p class="description" id="centerDescription">中心点は表示されません</p>
+                            <p class="description">中心に小さな点を表示して視線の基準点にできます</p>
                         </div>
 
-                        <!-- サウンド設定 -->
+                        <!-- 音設定 -->
                         <div class="setting-section">
-                            <h4 class="section-title">サウンド設定</h4>
-                            <div class="sound-toggle">
-                                <label>
-                                    <input type="checkbox" id="soundEnabled" checked>
-                                    <span>🔊 効果音を有効にする</span>
-                                </label>
+                            <h4 class="section-title">効果音</h4>
+                            <div class="option-grid grid-2">
+                                <button class="option-btn active" data-sound="true">
+                                    <div class="option-title">🔊 ON</div>
+                                    <div class="option-desc">音あり</div>
+                                </button>
+                                <button class="option-btn" data-sound="false">
+                                    <div class="option-title">🔇 OFF</div>
+                                    <div class="option-desc">音なし</div>
+                                </button>
                             </div>
-                            <p class="description">カウントダウンと点の出現時に音が鳴ります</p>
+                            <p class="description">カウントダウンとポイント出現時に効果音が鳴ります</p>
                         </div>
                     </div>
                     <div class="settings-footer">
@@ -886,11 +941,6 @@
             <!-- ポイントコンテナ -->
             <div id="pointsContainer"></div>
 
-            <!-- カウントダウンオーバーレイ -->
-            <div class="countdown-overlay" id="countdownOverlay">
-                <div class="countdown-number" id="countdownNumber">3</div>
-            </div>
-
             <!-- 完了オーバーレイ -->
             <div class="completion-overlay" id="completionOverlay" style="display: none;">
                 <div class="completion-message">
@@ -903,7 +953,7 @@
             <!-- 説明 -->
             <div class="instructions" id="instructions">
                 <div class="instructions-text">
-                    画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br>
+                    画面に現れるFNTロゴと⭐星を目で追いかけて集中力を鍛えましょう！<br>
                     <span style="font-size: 16px; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
                 </div>
             </div>
@@ -916,89 +966,17 @@
                 </button>
             </div>
         </div>
+
+        <!-- コピーライト -->
+        <div class="copyright">
+            © Functional Neuro Training - All Rights Reserved
+        </div>
     </div>
 
     <script>
-        // 音声管理クラス
-        class SoundManager {
-            constructor() {
-                this.audioContext = null;
-                this.enabled = true;
-            }
-
-            init() {
-                if (!this.audioContext) {
-                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                }
-            }
-
-            playCountdownSound(number) {
-                if (!this.enabled) return;
-                this.init();
-                
-                const oscillator = this.audioContext.createOscillator();
-                const gainNode = this.audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(this.audioContext.destination);
-                
-                // カウントダウンの数字によって音程を変える
-                const frequencies = { 3: 523, 2: 587, 1: 659, 0: 784 }; // ド、レ、ミ、ファ
-                oscillator.frequency.setValueAtTime(frequencies[number] || 784, this.audioContext.currentTime);
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
-                
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.3);
-            }
-
-            playPointSound(isStar = false) {
-                if (!this.enabled) return;
-                this.init();
-                
-                const oscillator = this.audioContext.createOscillator();
-                const gainNode = this.audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(this.audioContext.destination);
-                
-                if (isStar) {
-                    // 星の場合は高い音とトレモロ効果
-                    oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
-                    oscillator.type = 'triangle';
-                    
-                    // トレモロ効果
-                    const lfo = this.audioContext.createOscillator();
-                    const lfoGain = this.audioContext.createGain();
-                    lfo.frequency.setValueAtTime(8, this.audioContext.currentTime);
-                    lfoGain.gain.setValueAtTime(50, this.audioContext.currentTime);
-                    lfo.connect(lfoGain);
-                    lfoGain.connect(oscillator.frequency);
-                    lfo.start();
-                    lfo.stop(this.audioContext.currentTime + 0.2);
-                } else {
-                    // 通常の点の場合は柔らかい音
-                    oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
-                    oscillator.type = 'sine';
-                }
-                
-                gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
-                
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.15);
-            }
-
-            setEnabled(enabled) {
-                this.enabled = enabled;
-            }
-        }
-
-        // サウンドマネージャーのインスタンス
-        const soundManager = new SoundManager();
-
+        // FNTロゴのGitHub URL
+        const FNT_LOGO_URL = 'https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png';
+        
         // ゲーム状態管理
         const gameState = {
             isRunning: false,
@@ -1006,17 +984,16 @@
             timeLeft: 60,
             brainMode: 'normal',
             pointSpeed: 1,
-            colorMode: 'yellow',
-            centerPointEnabled: false,
+            colorMode: 'fnt',
             showHeader: true,
+            showCenterPoint: false,
+            soundEnabled: true,
             timerInterval: null,
-            pointInterval: null,
-            countdownInterval: null
+            pointInterval: null
         };
 
         // DOM要素
         const elements = {
-            fullscreenBtn: document.getElementById('fullscreenBtn'),
             headerToggle: document.getElementById('headerToggle'),
             header: document.getElementById('header'),
             gameArea: document.getElementById('gameArea'),
@@ -1026,11 +1003,8 @@
             resetBtn: document.getElementById('resetBtn'),
             settingsBtn: document.getElementById('settingsBtn'),
             settingsPanel: document.getElementById('settingsPanel'),
-            settingsOverlay: document.getElementById('settingsOverlay'),
             pointsContainer: document.getElementById('pointsContainer'),
             completionOverlay: document.getElementById('completionOverlay'),
-            countdownOverlay: document.getElementById('countdownOverlay'),
-            countdownNumber: document.getElementById('countdownNumber'),
             instructions: document.getElementById('instructions'),
             miniControls: document.getElementById('miniControls'),
             miniStop: document.getElementById('miniStop'),
@@ -1040,12 +1014,72 @@
             colorBadge: document.getElementById('colorBadge'),
             speedDescription: document.getElementById('speedDescription'),
             colorDescription: document.getElementById('colorDescription'),
-            centerDescription: document.getElementById('centerDescription'),
-            centerPoint: document.getElementById('centerPoint'),
-            soundEnabled: document.getElementById('soundEnabled')
+            centerPoint: document.getElementById('centerPoint')
         };
 
-        // 時間フォーマット
+        // 効果音生成
+        function createBeepSound(frequency = 800, duration = 200, type = 'sine') {
+            if (!gameState.soundEnabled) return;
+            
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration / 1000);
+            } catch (error) {
+                console.error('音声再生エラー:', error);
+            }
+        }
+        
+        // カウントダウン表示
+        function showCountdown() {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'countdown-overlay';
+                
+                const gameArea = document.getElementById('gameArea');
+                gameArea.appendChild(overlay);
+                
+                let count = 3;
+                
+                function displayCount() {
+                    if (count > 0) {
+                        overlay.innerHTML = `<div class="countdown-number">${count}</div>`;
+                        createBeepSound(600 + count * 200, 300);
+                        count--;
+                        setTimeout(displayCount, 1000);
+                    } else {
+                        overlay.innerHTML = '<div class="countdown-number" style="color: #48cc6c;">GO!</div>';
+                        createBeepSound(1000, 500);
+                        
+                        setTimeout(() => {
+                            overlay.remove();
+                            resolve();
+                        }, 800);
+                    }
+                }
+                
+                displayCount();
+            });
+        }
+
+        // 完了表示
+        function showCompletion() {
+            elements.completionOverlay.style.display = 'flex';
+            createBeepSound(1200, 800, 'sine');
+        }
+        
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
@@ -1076,23 +1110,15 @@
             }
             
             const topMargin = gameState.showHeader ? 15 : 5;
-            const bottomMargin = gameState.showHeader ? 85 : 95;
+            const bottomMargin = gameState.showHeader ? 85 : 90;
             y = Math.random() * (bottomMargin - topMargin) + topMargin;
             
-            const colors = [
-                '#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
-                '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
-            ];
-            
-            const pointColor = gameState.colorMode === 'random' 
-                ? colors[Math.floor(Math.random() * colors.length)]
-                : '#fbbf24';
+            const isStar = gameState.colorMode === 'random' ? Math.random() < 0.3 : false;
             
             return {
                 x, y,
                 id: Date.now() + Math.random(),
-                isStar: Math.random() < 0.15,
-                color: pointColor
+                isStar: isStar
             };
         }
 
@@ -1106,13 +1132,12 @@
 
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
-                soundManager.playPointSound(true);
             } else {
-                const dot = document.createElement('div');
-                dot.className = 'point-dot';
-                dot.style.backgroundColor = point.color;
-                pointElement.appendChild(dot);
-                soundManager.playPointSound(false);
+                const img = document.createElement('img');
+                img.className = 'point-img';
+                img.src = FNT_LOGO_URL;
+                img.alt = 'FNT';
+                pointElement.appendChild(img);
             }
 
             elements.pointsContainer.appendChild(pointElement);
@@ -1123,79 +1148,42 @@
             }, 2000);
         }
 
-        // カウントダウン開始
-        function startCountdown(callback) {
-            let count = 3;
-            elements.countdownOverlay.classList.add('show');
-            elements.countdownNumber.textContent = count;
-            soundManager.playCountdownSound(count);
-
-            gameState.countdownInterval = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    elements.countdownNumber.textContent = count;
-                    elements.countdownNumber.style.animation = 'none';
-                    setTimeout(() => {
-                        elements.countdownNumber.style.animation = 'countdownAnimation 1s ease-in-out';
-                    }, 10);
-                    soundManager.playCountdownSound(count);
-                } else if (count === 0) {
-                    elements.countdownNumber.textContent = 'GO!';
-                    elements.countdownNumber.style.animation = 'none';
-                    setTimeout(() => {
-                        elements.countdownNumber.style.animation = 'countdownAnimation 1s ease-in-out';
-                    }, 10);
-                    soundManager.playCountdownSound(0);
-                } else {
-                    clearInterval(gameState.countdownInterval);
-                    elements.countdownOverlay.classList.remove('show');
-                    callback();
+        // タイマー開始
+        async function startTimer() {
+            if (gameState.timeLeft === gameState.duration) {
+                await showCountdown();
+            }
+            
+            gameState.isRunning = true;
+            elements.playBtn.innerHTML = '<span>⏸️</span><span>停止</span>';
+            elements.instructions.style.display = 'none';
+            elements.miniStop.style.display = gameState.showHeader ? 'none' : 'flex';
+            
+            updateCenterPoint();
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                updateTimerDisplay();
+                
+                if (gameState.timeLeft <= 0) {
+                    stopTimer();
+                    showCompletion();
                 }
             }, 1000);
-        }
 
-        // タイマー開始
-        function startTimer() {
-            elements.playBtn.disabled = true;
-            elements.instructions.style.display = 'none';
+            const pointInterval = gameState.pointSpeed === 'random' 
+                ? () => Math.random() * 4000 + 500
+                : gameState.pointSpeed * 1000;
             
-            // カウントダウンを開始
-            startCountdown(() => {
-                gameState.isRunning = true;
-                elements.playBtn.disabled = false;
-                elements.playBtn.innerHTML = '<span>⏸️</span><span>停止</span>';
-                elements.miniStop.style.display = gameState.showHeader ? 'none' : 'flex';
-                
-                gameState.timerInterval = setInterval(() => {
-                    gameState.timeLeft--;
-                    updateTimerDisplay();
-                    
-                    if (gameState.timeLeft <= 0) {
-                        stopTimer();
-                        showCompletion();
-                    }
-                }, 1000);
-
-                const showNextPoint = () => {
-                    if (gameState.isRunning) {
-                        showPoint(generateRandomPosition());
-                        
-                        // ランダム間隔の場合
-                        if (gameState.pointSpeed === 'random') {
-                            const nextInterval = (Math.random() * 4 + 0.5) * 1000;
-                            setTimeout(showNextPoint, nextInterval);
-                        }
-                    }
-                };
-
-                if (gameState.pointSpeed === 'random') {
-                    showNextPoint();
-                } else {
-                    gameState.pointInterval = setInterval(() => {
-                        showPoint(generateRandomPosition());
-                    }, gameState.pointSpeed * 1000);
+            const showPointWithRandomInterval = () => {
+                if (gameState.isRunning) {
+                    showPoint(generateRandomPosition());
+                    const nextInterval = typeof pointInterval === 'function' ? pointInterval() : pointInterval;
+                    gameState.pointInterval = setTimeout(showPointWithRandomInterval, nextInterval);
                 }
-            });
+            };
+            
+            showPointWithRandomInterval();
         }
 
         // タイマー停止
@@ -1204,27 +1192,16 @@
             elements.playBtn.innerHTML = '<span>▶️</span><span>開始</span>';
             elements.miniStop.style.display = 'none';
             
+            updateCenterPoint();
+            
             if (gameState.timerInterval) {
                 clearInterval(gameState.timerInterval);
                 gameState.timerInterval = null;
             }
             if (gameState.pointInterval) {
-                clearInterval(gameState.pointInterval);
+                clearTimeout(gameState.pointInterval);
                 gameState.pointInterval = null;
             }
-            if (gameState.countdownInterval) {
-                clearInterval(gameState.countdownInterval);
-                gameState.countdownInterval = null;
-                elements.countdownOverlay.classList.remove('show');
-            }
-        }
-
-        // 完了表示
-        function showCompletion() {
-            elements.completionOverlay.style.display = 'flex';
-            setTimeout(() => {
-                elements.completionOverlay.style.display = 'none';
-            }, 3000);
         }
 
         // リセット
@@ -1235,32 +1212,6 @@
             elements.pointsContainer.innerHTML = '';
             elements.completionOverlay.style.display = 'none';
             elements.instructions.style.display = 'block';
-        }
-
-        // 全画面切り替え
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                // 全画面にする
-                const elem = document.documentElement;
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                }
-                elements.fullscreenBtn.innerHTML = '⊡';
-            } else {
-                // 全画面を解除
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-                elements.fullscreenBtn.innerHTML = '⛶';
-            }
         }
 
         // ヘッダー切り替え
@@ -1275,14 +1226,7 @@
 
         // 設定切り替え
         function toggleSettings() {
-            const isShowing = elements.settingsPanel.classList.contains('show');
-            if (isShowing) {
-                elements.settingsPanel.classList.remove('show');
-            } else {
-                elements.settingsPanel.classList.add('show');
-                // 設定パネルを開いた時、一番上にスクロール
-                elements.settingsPanel.querySelector('.settings-content').scrollTop = 0;
-            }
+            elements.settingsPanel.classList.toggle('show');
         }
 
         // モード変更
@@ -1312,15 +1256,14 @@
             if (speed === 'random') {
                 gameState.pointSpeed = 'random';
                 elements.speedBadge.textContent = 'ランダム間隔';
-                elements.speedDescription.innerHTML = 'ランダムな間隔で新しい点が出現します<span style="color: #fbbf24;"> (0.5～4.5秒)</span>';
+                elements.speedDescription.innerHTML = '0.5秒～4.5秒のランダム間隔で出現';
             } else {
                 gameState.pointSpeed = parseFloat(speed);
                 elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
                 elements.speedDescription.innerHTML = `${gameState.pointSpeed}秒間隔で新しい点が出現します${gameState.pointSpeed < 1 ? '<span style="color: #fbbf24;"> (超高速モード)</span>' : ''}`;
             }
             document.querySelectorAll('[data-speed]').forEach(btn => {
-                const btnSpeed = btn.dataset.speed === 'random' ? 'random' : parseFloat(btn.dataset.speed);
-                btn.classList.toggle('active', btnSpeed === gameState.pointSpeed);
+                btn.classList.toggle('active', btn.dataset.speed === speed);
             });
             updateInstructionsText();
         }
@@ -1330,138 +1273,143 @@
             gameState.colorMode = color;
             if (color === 'random') {
                 elements.colorBadge.innerHTML = `
-                    <span class="color-dot" style="background-color: #ef4444;"></span>
-                    <span class="color-dot" style="background-color: #3b82f6;"></span>
-                    <span class="color-dot" style="background-color: #10b981;"></span>
-                    ランダム
+                    ⭐ 星とロゴ
                 `;
-                elements.colorDescription.textContent = '10種類の色からランダムに選択されます';
+                elements.colorDescription.textContent = 'FNTロゴと星がランダムに表示されます';
             } else {
                 elements.colorBadge.innerHTML = `
-                    <div class="color-dot" style="background-color: #fbbf24;"></div>
-                    固定
+                    <img src="${FNT_LOGO_URL}" alt="FNT" style="width: 16px; height: 16px;">
+                    FNTロゴ
                 `;
-                elements.colorDescription.textContent = '統一された黄色で表示されます';
+                elements.colorDescription.textContent = 'FNTロゴで統一表示されます';
             }
             document.querySelectorAll('[data-color]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.color === gameState.colorMode);
             });
         }
 
-        // 中心点設定変更
-        function changeCenterPoint(enabled) {
-            gameState.centerPointEnabled = enabled === 'on';
-            elements.centerPoint.classList.toggle('show', gameState.centerPointEnabled);
-            elements.centerDescription.textContent = gameState.centerPointEnabled 
-                ? '赤い中心点が常時表示されます' 
-                : '中心点は表示されません';
+        // 中心点表示の更新
+        function updateCenterPoint() {
+            if (elements.centerPoint) {
+                if (gameState.showCenterPoint && gameState.isRunning) {
+                    elements.centerPoint.classList.add('show');
+                } else {
+                    elements.centerPoint.classList.remove('show');
+                }
+            }
+        }
+        
+        // 中心点表示設定変更
+        function changeCenterPoint(show) {
+            gameState.showCenterPoint = show;
+            updateCenterPoint();
+            
             document.querySelectorAll('[data-center]').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.center === enabled);
+                btn.classList.toggle('active', btn.dataset.center === show.toString());
             });
         }
-
-        // 説明文更新
+        
+        // 音設定変更
+        function changeSoundSetting(enabled) {
+            gameState.soundEnabled = enabled;
+            
+            document.querySelectorAll('[data-sound]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.sound === enabled.toString());
+            });
+            
+            if (enabled) {
+                createBeepSound(800, 200);
+            }
+        }
+        
         function updateInstructionsText() {
             if (elements.instructions && !gameState.isRunning && gameState.timeLeft === gameState.duration) {
                 const instructionsText = elements.instructions.querySelector('.instructions-text');
                 if (instructionsText) {
                     const speedText = gameState.pointSpeed === 'random' ? 'ランダム間隔' : `${gameState.pointSpeed}秒間隔`;
-                    instructionsText.innerHTML = `画面に現れる⚽点と⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
+                    instructionsText.innerHTML = `画面に現れるFNTロゴと⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
                 }
             }
         }
 
         // イベントリスナー設定
         function setupEventListeners() {
-            // 全画面切り替え
-            elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+            elements.headerToggle?.addEventListener('click', toggleHeader);
+            elements.settingsBtn?.addEventListener('click', toggleSettings);
             
-            // 全画面変更イベント
-            document.addEventListener('fullscreenchange', () => {
-                elements.fullscreenBtn.innerHTML = document.fullscreenElement ? '⊡' : '⛶';
-            });
-            
-            // ヘッダー切り替え
-            elements.headerToggle.addEventListener('click', toggleHeader);
-            
-            // 設定切り替え
-            elements.settingsBtn.addEventListener('click', toggleSettings);
-            
-            // 戻るボタン
             const backToMainBtn = document.getElementById('backToMainBtn');
             if (backToMainBtn) {
                 backToMainBtn.addEventListener('click', function(event) {
                     event.preventDefault();
                     event.stopPropagation();
-                    toggleSettings();
+                    const settingsPanel = document.getElementById('settingsPanel');
+                    if (settingsPanel) {
+                        settingsPanel.classList.remove('show');
+                    }
                 });
             }
             
-            // 再生/停止ボタン
-            elements.playBtn.addEventListener('click', () => {
+            elements.playBtn?.addEventListener('click', () => {
                 if (gameState.isRunning) {
                     stopTimer();
-                } else if (gameState.timeLeft > 0 && !elements.playBtn.disabled) {
+                } else if (gameState.timeLeft > 0) {
                     startTimer();
                 }
             });
 
-            // リセットボタン
-            elements.resetBtn.addEventListener('click', resetTimer);
-            
-            // ミニ停止ボタン
-            elements.miniStop.addEventListener('click', stopTimer);
+            elements.resetBtn?.addEventListener('click', resetTimer);
+            elements.miniStop?.addEventListener('click', stopTimer);
 
-            // サウンド設定
-            elements.soundEnabled.addEventListener('change', (e) => {
-                soundManager.setEnabled(e.target.checked);
-            });
+            setTimeout(() => {
+                document.querySelectorAll('[data-mode]').forEach(btn => {
+                    btn.addEventListener('click', () => changeBrainMode(btn.dataset.mode));
+                });
 
-            // 設定ボタン群
-            document.querySelectorAll('[data-mode]').forEach(btn => {
-                btn.addEventListener('click', () => changeBrainMode(btn.dataset.mode));
-            });
+                document.querySelectorAll('[data-duration]').forEach(btn => {
+                    btn.addEventListener('click', () => changeDuration(btn.dataset.duration));
+                });
 
-            document.querySelectorAll('[data-duration]').forEach(btn => {
-                btn.addEventListener('click', () => changeDuration(btn.dataset.duration));
-            });
+                document.querySelectorAll('[data-speed]').forEach(btn => {
+                    btn.addEventListener('click', () => changeSpeed(btn.dataset.speed));
+                });
 
-            document.querySelectorAll('[data-speed]').forEach(btn => {
-                btn.addEventListener('click', () => changeSpeed(btn.dataset.speed));
-            });
+                document.querySelectorAll('[data-color]').forEach(btn => {
+                    btn.addEventListener('click', () => changeColor(btn.dataset.color));
+                });
 
-            document.querySelectorAll('[data-color]').forEach(btn => {
-                btn.addEventListener('click', () => changeColor(btn.dataset.color));
-            });
+                document.querySelectorAll('[data-center]').forEach(btn => {
+                    btn.addEventListener('click', () => changeCenterPoint(btn.dataset.center === 'true'));
+                });
 
-            document.querySelectorAll('[data-center]').forEach(btn => {
-                btn.addEventListener('click', () => changeCenterPoint(btn.dataset.center));
-            });
+                document.querySelectorAll('[data-sound]').forEach(btn => {
+                    btn.addEventListener('click', () => changeSoundSetting(btn.dataset.sound === 'true'));
+                });
+            }, 200);
         }
 
         // 初期化
         function initialize() {
             updateTimerDisplay();
-            setupEventListeners();
             
-            // 初回クリック時に音声コンテキストを初期化
-            document.addEventListener('click', () => {
-                soundManager.init();
-            }, { once: true });
+            // ロゴのURLを正しく設定
+            document.querySelectorAll('img[src*="FNT_color2.png"]').forEach(img => {
+                img.src = FNT_LOGO_URL;
+            });
+            
+            setTimeout(() => {
+                setupEventListeners();
+            }, 100);
         }
 
-        // DOMContentLoaded後に初期化
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initialize);
         } else {
             initialize();
         }
 
-        // ページ離脱時のクリーンアップ
         window.addEventListener('beforeunload', () => {
             if (gameState.timerInterval) clearInterval(gameState.timerInterval);
-            if (gameState.pointInterval) clearInterval(gameState.pointInterval);
-            if (gameState.countdownInterval) clearInterval(gameState.countdownInterval);
+            if (gameState.pointInterval) clearTimeout(gameState.pointInterval);
         });
     </script>
 </body>
