@@ -87,7 +87,7 @@
         .main-title {
             font-size: 3rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
@@ -95,10 +95,28 @@
             gap: 15px;
         }
         
-        .logo-icon {
+        .title-logo {
             width: 50px;
             height: 50px;
             object-fit: contain;
+        }
+        
+        .subtitle {
+            font-size: 0.95rem;
+            color: #fbbf24;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .subtitle-highlight {
+            color: #ef4444;
+            font-weight: 600;
         }
         
         .info-section {
@@ -408,7 +426,7 @@
         }
         
         .game-area.header-visible {
-            top: 280px;
+            top: 320px;
         }
         
         .game-area.header-hidden {
@@ -497,11 +515,11 @@
             z-index: 10;
         }
         
-        .point-img {
-            width: 30px;
-            height: 30px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+        .point-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
         
         .point-star {
@@ -623,7 +641,7 @@
         /* 説明 */
         .instructions {
             position: absolute;
-            bottom: 70px;
+            bottom: 30px;
             left: 30px;
             right: 30px;
             text-align: center;
@@ -640,22 +658,23 @@
             margin: 0 auto;
         }
         
-        /* コピーライト */
+        /* 著作権表記 */
         .copyright {
             position: absolute;
-            bottom: 15px;
+            bottom: 10px;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 12px;
             color: rgba(255, 255, 255, 0.6);
-            padding: 0 20px;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
         }
         
         /* レスポンシブ */
         @media (max-width: 768px) {
             .main-title { font-size: 2rem; }
-            .logo-icon { width: 40px; height: 40px; }
+            .title-logo { width: 40px; height: 40px; }
             .timer-display { font-size: 2rem; }
             .info-section { gap: 15px; }
             .controls-section { gap: 15px; }
@@ -684,14 +703,14 @@
             .setting-section:last-child {
                 padding-bottom: 30px;
             }
-            .game-area.header-visible { top: 320px; }
+            .game-area.header-visible { top: 280px; }
             .grid-6 { grid-template-columns: repeat(4, 1fr); }
         }
         
         @media (max-width: 480px) and (orientation: portrait) {
             .header { padding: 20px 15px; }
             .main-title { font-size: 1.5rem; }
-            .logo-icon { width: 35px; height: 35px; }
+            .title-logo { width: 35px; height: 35px; }
             .timer-display { font-size: 1.5rem; padding: 8px 16px; }
             .control-btn { padding: 10px 20px; font-size: 14px; }
             .info-section { flex-direction: column; gap: 10px; }
@@ -721,16 +740,19 @@
             .setting-section:last-child {
                 padding-bottom: 25px;
             }
-            .game-area.header-visible { top: 360px; }
+            .game-area.header-visible { top: 380px; }
             .field { top: 15px; left: 15px; right: 15px; bottom: 50px; }
-            .instructions { bottom: 55px; left: 20px; right: 20px; }
+            .instructions { bottom: 20px; left: 20px; right: 20px; }
             .instructions-text { font-size: 16px; padding: 15px; }
             .option-btn { padding: 10px 8px; font-size: 13px; }
             .section-title { font-size: 16px; }
-            .copyright { font-size: 11px; bottom: 10px; }
+            .copyright { font-size: 11px; }
         }
         
         @media (max-width: 360px) and (orientation: portrait) {
+            .main-title { font-size: 1.3rem; }
+            .title-logo { width: 30px; height: 30px; }
+            .subtitle { font-size: 0.8rem; }
             .settings-panel {
                 width: 98%;
                 height: 85vh;
@@ -759,7 +781,7 @@
             .option-btn { padding: 8px 6px; font-size: 12px; }
             .grid-6 { grid-template-columns: repeat(3, 1fr); }
             .grid-3 { grid-template-columns: repeat(1, 1fr); }
-            .logo-icon { width: 30px; height: 30px; }
+            .copyright { font-size: 10px; }
         }
     </style>
 </head>
@@ -774,12 +796,9 @@
                 <!-- タイトルセクション -->
                 <div class="title-section">
                     <h1 class="main-title">
-                        <img src="https://raw.githubusercontent.com/hokutomiyazaki-arch/randum-saccade/main/FNT_color2.png" alt="FNT Logo" class="logo-icon">
+                        <img src="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT_color2.png" alt="FNT Logo" class="title-logo">
                         ランダムサッカード
                     </h1>
-                    <p style="font-size: 16px; margin-top: 10px; opacity: 0.9; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-                        ⭐星マークが出た時には視点移動を我慢することでアンチサッカードとなり、前頭葉を強く活性します。
-                    </p>
                 </div>
 
                 <!-- 情報セクション -->
@@ -788,7 +807,7 @@
                     <div class="info-badge" id="speedBadge">1秒間隔</div>
                     <div class="info-badge" id="colorBadge">
                         <div class="color-dot" style="background-color: #fbbf24;"></div>
-                        シンプル
+                        固定
                     </div>
                     <button class="settings-btn" id="settingsBtn">⚙️</button>
                 </div>
@@ -860,25 +879,28 @@
                             <p class="description" id="speedDescription">1秒間隔で新しい点が出現します</p>
                         </div>
 
-                        <!-- ロゴ色設定 -->
+                        <!-- カラーモード設定 -->
                         <div class="setting-section">
-                            <h4 class="section-title">点のスタイル設定</h4>
+                            <h4 class="section-title">点の色設定</h4>
                             <div class="option-grid grid-2">
-                                <button class="option-btn active" data-color="dot">
+                                <button class="option-btn active" data-color="yellow">
                                     <div class="option-title">
                                         <div class="color-dot" style="background-color: #fbbf24; display: inline-block; margin-right: 8px;"></div>
-                                        シンプル点
+                                        固定色
                                     </div>
-                                    <div class="option-desc">黄色の点で表示</div>
+                                    <div class="option-desc">黄色のみ</div>
                                 </button>
                                 <button class="option-btn" data-color="random">
                                     <div class="option-title">
-                                        ⭐ 星マーク混在
+                                        <div class="color-dot" style="background-color: #ef4444; display: inline-block; margin-right: 4px;"></div>
+                                        <div class="color-dot" style="background-color: #3b82f6; display: inline-block; margin-right: 4px;"></div>
+                                        <div class="color-dot" style="background-color: #10b981; display: inline-block; margin-right: 8px;"></div>
+                                        ランダム
                                     </div>
-                                    <div class="option-desc">点と星をランダム</div>
+                                    <div class="option-desc">カラフル</div>
                                 </button>
                             </div>
-                            <p class="description" id="colorDescription">黄色の点で統一表示されます</p>
+                            <p class="description" id="colorDescription">統一された黄色で表示されます</p>
                         </div>
 
                         <!-- 中心点表示設定 -->
@@ -895,6 +917,44 @@
                                 </button>
                             </div>
                             <p class="description">中心に小さな点を表示して視線の基準点にできます</p>
+                        </div>
+
+                        <!-- 星表示設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">星マーク表示（アンチサッカード）</h4>
+                            <div class="option-grid grid-2">
+                                <button class="option-btn active" data-stars="false">
+                                    <div class="option-title">非表示</div>
+                                    <div class="option-desc">点のみ表示</div>
+                                </button>
+                                <button class="option-btn" data-stars="true">
+                                    <div class="option-title">⭐ 表示</div>
+                                    <div class="option-desc">15%の確率で星</div>
+                                </button>
+                            </div>
+                            <p class="description" style="color: #fbbf24;">
+                                ⭐マークの時は視点移動をしないようにする事でアンチサッカードとなり、<br>
+                                強力に前頭葉を活性します。
+                            </p>
+                        </div>
+
+                        <!-- Go/No-Go音設定 -->
+                        <div class="setting-section">
+                            <h4 class="section-title">Go/No-Goタスク音</h4>
+                            <div class="option-grid grid-2">
+                                <button class="option-btn active" data-gonogo="false">
+                                    <div class="option-title">通常音のみ</div>
+                                    <div class="option-desc">同じ音で統一</div>
+                                </button>
+                                <button class="option-btn" data-gonogo="true">
+                                    <div class="option-title">変化音あり</div>
+                                    <div class="option-desc">20%で低音（赤点）</div>
+                                </button>
+                            </div>
+                            <p class="description" style="color: #ef4444;">
+                                🔊 異なる音（低音）が鳴った時も視点移動を我慢することで、<br>
+                                Go/No-Goタスク訓練になります。
+                            </p>
                         </div>
 
                         <!-- 音設定 -->
@@ -953,7 +1013,7 @@
             <!-- 説明 -->
             <div class="instructions" id="instructions">
                 <div class="instructions-text">
-                    画面に現れる黄色の点と⭐星を目で追いかけて集中力を鍛えましょう！<br>
+                    画面に現れるターゲットを目で追いかけて集中力を鍛えましょう！<br>
                     <span style="font-size: 16px; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
                 </div>
             </div>
@@ -965,18 +1025,15 @@
                     ⏹️ 停止
                 </button>
             </div>
-        </div>
 
-        <!-- コピーライト -->
-        <div class="copyright">
-            © Functional Neuro Training - All Rights Reserved
+            <!-- 著作権表記 -->
+            <div class="copyright">
+                © Functional Neuro Training. All rights reserved.
+            </div>
         </div>
     </div>
 
     <script>
-        // FNTロゴのGitHub URL
-        const FNT_LOGO_URL = 'https://raw.githubusercontent.com/hokutomiyazaki-arch/randum-saccade/main/FNT_color2.png';
-        
         // ゲーム状態管理
         const gameState = {
             isRunning: false,
@@ -984,10 +1041,12 @@
             timeLeft: 60,
             brainMode: 'normal',
             pointSpeed: 1,
-            colorMode: 'dot',
+            colorMode: 'yellow',
             showHeader: true,
             showCenterPoint: false,
             soundEnabled: true,
+            showStars: false,  // 星表示設定（デフォルトOFF）
+            goNoGoMode: false,  // Go/No-Go音設定（デフォルトOFF）
             timerInterval: null,
             pointInterval: null
         };
@@ -1018,8 +1077,10 @@
         };
 
         // 効果音生成
-        function createBeepSound(frequency = 800, duration = 200, type = 'sine') {
-            if (!gameState.soundEnabled) return;
+        function createBeepSound(frequency = 800, duration = 200, type = 'sine', volume = 0.3) {
+            if (!gameState.soundEnabled) {
+                return;
+            }
             
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1032,7 +1093,7 @@
                 oscillator.frequency.value = frequency;
                 oscillator.type = type;
                 
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
                 
                 oscillator.start(audioContext.currentTime);
@@ -1042,18 +1103,44 @@
             }
         }
         
+        // ポイント出現音を生成（通常音または異なる音）
+        function createPointSound(isNoGo = false) {
+            if (!gameState.soundEnabled) {
+                return;
+            }
+            
+            if (isNoGo) {
+                // No-Go音（低音、異なるパターン）
+                createBeepSound(300, 150, 'sine', 0.4);
+                setTimeout(() => createBeepSound(250, 150, 'sine', 0.3), 100);
+            } else {
+                // 通常音（高音、短い）
+                createBeepSound(900, 100, 'sine', 0.2);
+            }
+        }
+        
         // カウントダウン表示
         function showCountdown() {
+            console.log('カウントダウンを開始します');
             return new Promise((resolve) => {
                 const overlay = document.createElement('div');
                 overlay.className = 'countdown-overlay';
                 
                 const gameArea = document.getElementById('gameArea');
+                if (!gameArea) {
+                    console.error('ゲームエリアが見つかりません');
+                    resolve();
+                    return;
+                }
+                
                 gameArea.appendChild(overlay);
+                console.log('カウントダウンオーバーレイを追加しました');
                 
                 let count = 3;
                 
                 function displayCount() {
+                    console.log(`カウント: ${count}`);
+                    
                     if (count > 0) {
                         overlay.innerHTML = `<div class="countdown-number">${count}</div>`;
                         createBeepSound(600 + count * 200, 300);
@@ -1062,9 +1149,11 @@
                     } else {
                         overlay.innerHTML = '<div class="countdown-number" style="color: #48cc6c;">GO!</div>';
                         createBeepSound(1000, 500);
+                        console.log('GO!を表示しました');
                         
                         setTimeout(() => {
                             overlay.remove();
+                            console.log('カウントダウン完了');
                             resolve();
                         }, 800);
                     }
@@ -1077,9 +1166,13 @@
         // 完了表示
         function showCompletion() {
             elements.completionOverlay.style.display = 'flex';
-            createBeepSound(1200, 800, 'sine');
+            createBeepSound(1200, 600);
+            setTimeout(() => {
+                elements.completionOverlay.style.display = 'none';
+                resetTimer();
+            }, 3000);
         }
-        
+
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
@@ -1113,12 +1206,20 @@
             const bottomMargin = gameState.showHeader ? 85 : 90;
             y = Math.random() * (bottomMargin - topMargin) + topMargin;
             
-            const isStar = gameState.colorMode === 'random' ? Math.random() < 0.3 : false;
+            const colors = [
+                '#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b',
+                '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316'
+            ];
+            
+            const pointColor = gameState.colorMode === 'random' 
+                ? colors[Math.floor(Math.random() * colors.length)]
+                : '#fbbf24';
             
             return {
                 x, y,
                 id: Date.now() + Math.random(),
-                isStar: isStar
+                isStar: gameState.showStars && Math.random() < 0.15,  // 星表示設定を確認
+                color: pointColor
             };
         }
 
@@ -1130,13 +1231,26 @@
             pointElement.style.top = `${point.y}%`;
             pointElement.dataset.id = point.id;
 
+            // No-Go判定（Go/No-Goモードがオンの場合のみ）
+            const isNoGo = gameState.goNoGoMode && !point.isStar && Math.random() < 0.2;
+            
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
+                // スターの場合は常に通常音
+                createPointSound(false);
             } else {
                 const dot = document.createElement('div');
                 dot.className = 'point-dot';
-                dot.style.backgroundColor = '#fbbf24';
+                // No-Goの場合は赤系の色にする（Go/No-Goモードの時のみ）
+                if (isNoGo) {
+                    dot.style.backgroundColor = '#ef4444';
+                    dot.style.boxShadow = '0 0 25px rgba(239, 68, 68, 0.8)';
+                } else {
+                    dot.style.backgroundColor = point.color;
+                }
                 pointElement.appendChild(dot);
+                // 音を鳴らす
+                createPointSound(isNoGo);
             }
 
             elements.pointsContainer.appendChild(pointElement);
@@ -1147,11 +1261,20 @@
             }, 2000);
         }
 
+        // 中心点表示の更新
+        function updateCenterPoint() {
+            if (elements.centerPoint) {
+                if (gameState.showCenterPoint) {
+                    elements.centerPoint.classList.add('show');
+                } else {
+                    elements.centerPoint.classList.remove('show');
+                }
+            }
+        }
+
         // タイマー開始
         async function startTimer() {
-            if (gameState.timeLeft === gameState.duration) {
-                await showCountdown();
-            }
+            await showCountdown();
             
             gameState.isRunning = true;
             elements.playBtn.innerHTML = '<span>⏸️</span><span>停止</span>';
@@ -1170,19 +1293,21 @@
                 }
             }, 1000);
 
-            const pointInterval = gameState.pointSpeed === 'random' 
-                ? () => Math.random() * 4000 + 500
-                : gameState.pointSpeed * 1000;
-            
-            const showPointWithRandomInterval = () => {
+            const getRandomInterval = () => {
+                if (gameState.pointSpeed === 'random') {
+                    return (Math.random() * 4.5 + 0.5) * 1000;
+                }
+                return gameState.pointSpeed * 1000;
+            };
+
+            const scheduleNextPoint = () => {
                 if (gameState.isRunning) {
                     showPoint(generateRandomPosition());
-                    const nextInterval = typeof pointInterval === 'function' ? pointInterval() : pointInterval;
-                    gameState.pointInterval = setTimeout(showPointWithRandomInterval, nextInterval);
+                    gameState.pointInterval = setTimeout(scheduleNextPoint, getRandomInterval());
                 }
             };
-            
-            showPointWithRandomInterval();
+
+            scheduleNextPoint();
         }
 
         // タイマー停止
@@ -1255,7 +1380,7 @@
             if (speed === 'random') {
                 gameState.pointSpeed = 'random';
                 elements.speedBadge.textContent = 'ランダム間隔';
-                elements.speedDescription.innerHTML = '0.5秒～4.5秒のランダム間隔で出現';
+                elements.speedDescription.innerHTML = 'ポイントがランダムな間隔（0.5〜5秒）で出現します';
             } else {
                 gameState.pointSpeed = parseFloat(speed);
                 elements.speedBadge.textContent = `${gameState.pointSpeed}秒間隔`;
@@ -1272,32 +1397,24 @@
             gameState.colorMode = color;
             if (color === 'random') {
                 elements.colorBadge.innerHTML = `
-                    ⭐ 点と星
+                    <div class="color-dot" style="background-color: #ef4444;"></div>
+                    <div class="color-dot" style="background-color: #3b82f6;"></div>
+                    <div class="color-dot" style="background-color: #10b981;"></div>
+                    ランダム
                 `;
-                elements.colorDescription.textContent = '黄色の点と星がランダムに表示されます';
+                elements.colorDescription.textContent = '10種類の色からランダムに選択されます';
             } else {
                 elements.colorBadge.innerHTML = `
                     <div class="color-dot" style="background-color: #fbbf24;"></div>
-                    シンプル
+                    固定
                 `;
-                elements.colorDescription.textContent = '黄色の点で統一表示されます';
+                elements.colorDescription.textContent = '統一された黄色で表示されます';
             }
             document.querySelectorAll('[data-color]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.color === gameState.colorMode);
             });
         }
 
-        // 中心点表示の更新
-        function updateCenterPoint() {
-            if (elements.centerPoint) {
-                if (gameState.showCenterPoint && gameState.isRunning) {
-                    elements.centerPoint.classList.add('show');
-                } else {
-                    elements.centerPoint.classList.remove('show');
-                }
-            }
-        }
-        
         // 中心点表示設定変更
         function changeCenterPoint(show) {
             gameState.showCenterPoint = show;
@@ -1305,6 +1422,24 @@
             
             document.querySelectorAll('[data-center]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.center === show.toString());
+            });
+        }
+        
+        // 星表示設定変更
+        function changeStarsSetting(show) {
+            gameState.showStars = show;
+            
+            document.querySelectorAll('[data-stars]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.stars === show.toString());
+            });
+        }
+        
+        // Go/No-Go設定変更
+        function changeGoNoGoSetting(enabled) {
+            gameState.goNoGoMode = enabled;
+            
+            document.querySelectorAll('[data-gonogo]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.gonogo === enabled.toString());
             });
         }
         
@@ -1320,35 +1455,37 @@
                 createBeepSound(800, 200);
             }
         }
-        
+
         function updateInstructionsText() {
             if (elements.instructions && !gameState.isRunning && gameState.timeLeft === gameState.duration) {
                 const instructionsText = elements.instructions.querySelector('.instructions-text');
                 if (instructionsText) {
                     const speedText = gameState.pointSpeed === 'random' ? 'ランダム間隔' : `${gameState.pointSpeed}秒間隔`;
-                    instructionsText.innerHTML = `画面に現れる黄色の点と⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
+                    instructionsText.innerHTML = `画面に現れるターゲットを目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
                 }
             }
         }
 
         // イベントリスナー設定
         function setupEventListeners() {
-            elements.headerToggle?.addEventListener('click', toggleHeader);
-            elements.settingsBtn?.addEventListener('click', toggleSettings);
+            elements.headerToggle.addEventListener('click', toggleHeader);
+            elements.settingsBtn.addEventListener('click', toggleSettings);
             
             const backToMainBtn = document.getElementById('backToMainBtn');
             if (backToMainBtn) {
                 backToMainBtn.addEventListener('click', function(event) {
                     event.preventDefault();
                     event.stopPropagation();
+                    
                     const settingsPanel = document.getElementById('settingsPanel');
                     if (settingsPanel) {
                         settingsPanel.classList.remove('show');
+                        settingsPanel.style.display = 'none';
                     }
                 });
             }
             
-            elements.playBtn?.addEventListener('click', () => {
+            elements.playBtn.addEventListener('click', () => {
                 if (gameState.isRunning) {
                     stopTimer();
                 } else if (gameState.timeLeft > 0) {
@@ -1356,8 +1493,8 @@
                 }
             });
 
-            elements.resetBtn?.addEventListener('click', resetTimer);
-            elements.miniStop?.addEventListener('click', stopTimer);
+            elements.resetBtn.addEventListener('click', resetTimer);
+            elements.miniStop.addEventListener('click', stopTimer);
 
             setTimeout(() => {
                 document.querySelectorAll('[data-mode]').forEach(btn => {
@@ -1380,6 +1517,14 @@
                     btn.addEventListener('click', () => changeCenterPoint(btn.dataset.center === 'true'));
                 });
 
+                document.querySelectorAll('[data-stars]').forEach(btn => {
+                    btn.addEventListener('click', () => changeStarsSetting(btn.dataset.stars === 'true'));
+                });
+
+                document.querySelectorAll('[data-gonogo]').forEach(btn => {
+                    btn.addEventListener('click', () => changeGoNoGoSetting(btn.dataset.gonogo === 'true'));
+                });
+
                 document.querySelectorAll('[data-sound]').forEach(btn => {
                     btn.addEventListener('click', () => changeSoundSetting(btn.dataset.sound === 'true'));
                 });
@@ -1389,23 +1534,30 @@
         // 初期化
         function initialize() {
             updateTimerDisplay();
-            
-            // ロゴのURLを正しく設定
-            document.querySelectorAll('img[src*="FNT_color2.png"]').forEach(img => {
-                img.src = FNT_LOGO_URL;
-            });
-            
             setTimeout(() => {
                 setupEventListeners();
+                
+                const backBtn = document.getElementById('backToMainBtn');
+                if (backBtn) {
+                    backBtn.onclick = function() {
+                        const panel = document.getElementById('settingsPanel');
+                        if (panel) {
+                            panel.classList.remove('show');
+                            panel.style.display = 'none';
+                        }
+                    };
+                }
             }, 100);
         }
 
+        // DOMContentLoaded後に初期化
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initialize);
         } else {
             initialize();
         }
 
+        // ページ離脱時のクリーンアップ
         window.addEventListener('beforeunload', () => {
             if (gameState.timerInterval) clearInterval(gameState.timerInterval);
             if (gameState.pointInterval) clearTimeout(gameState.pointInterval);
