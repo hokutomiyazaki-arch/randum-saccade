@@ -774,7 +774,7 @@
                 <!-- タイトルセクション -->
                 <div class="title-section">
                     <h1 class="main-title">
-                        <img src="https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png" alt="FNT Logo" class="logo-icon">
+                        <img src="https://raw.githubusercontent.com/hokutomiyazaki-arch/randum-saccade/main/FNT_color2.png" alt="FNT Logo" class="logo-icon">
                         ランダムサッカード
                     </h1>
                     <p style="font-size: 16px; margin-top: 10px; opacity: 0.9; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.5;">
@@ -787,8 +787,8 @@
                     <div class="timer-display" id="timerDisplay">1:00</div>
                     <div class="info-badge" id="speedBadge">1秒間隔</div>
                     <div class="info-badge" id="colorBadge">
-                        <img src="https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png" alt="FNT" style="width: 16px; height: 16px;">
-                        FNTロゴ
+                        <div class="color-dot" style="background-color: #fbbf24;"></div>
+                        シンプル
                     </div>
                     <button class="settings-btn" id="settingsBtn">⚙️</button>
                 </div>
@@ -864,21 +864,21 @@
                         <div class="setting-section">
                             <h4 class="section-title">点のスタイル設定</h4>
                             <div class="option-grid grid-2">
-                                <button class="option-btn active" data-color="fnt">
+                                <button class="option-btn active" data-color="dot">
                                     <div class="option-title">
-                                        <img src="https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png" alt="FNT" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
-                                        FNTロゴ
+                                        <div class="color-dot" style="background-color: #fbbf24; display: inline-block; margin-right: 8px;"></div>
+                                        シンプル点
                                     </div>
-                                    <div class="option-desc">ブランドロゴ表示</div>
+                                    <div class="option-desc">黄色の点で表示</div>
                                 </button>
                                 <button class="option-btn" data-color="random">
                                     <div class="option-title">
-                                        ⭐ 星マーク
+                                        ⭐ 星マーク混在
                                     </div>
-                                    <div class="option-desc">星とロゴをランダム</div>
+                                    <div class="option-desc">点と星をランダム</div>
                                 </button>
                             </div>
-                            <p class="description" id="colorDescription">FNTロゴで統一表示されます</p>
+                            <p class="description" id="colorDescription">黄色の点で統一表示されます</p>
                         </div>
 
                         <!-- 中心点表示設定 -->
@@ -953,7 +953,7 @@
             <!-- 説明 -->
             <div class="instructions" id="instructions">
                 <div class="instructions-text">
-                    画面に現れるFNTロゴと⭐星を目で追いかけて集中力を鍛えましょう！<br>
+                    画面に現れる黄色の点と⭐星を目で追いかけて集中力を鍛えましょう！<br>
                     <span style="font-size: 16px; opacity: 0.8;">現在の設定: 1秒間隔でポイント出現</span>
                 </div>
             </div>
@@ -975,7 +975,7 @@
 
     <script>
         // FNTロゴのGitHub URL
-        const FNT_LOGO_URL = 'https://raw.githubusercontent.com/your-username/your-repo/main/FNT_color2.png';
+        const FNT_LOGO_URL = 'https://raw.githubusercontent.com/hokutomiyazaki-arch/randum-saccade/main/FNT_color2.png';
         
         // ゲーム状態管理
         const gameState = {
@@ -984,7 +984,7 @@
             timeLeft: 60,
             brainMode: 'normal',
             pointSpeed: 1,
-            colorMode: 'fnt',
+            colorMode: 'dot',
             showHeader: true,
             showCenterPoint: false,
             soundEnabled: true,
@@ -1133,11 +1133,10 @@
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
             } else {
-                const img = document.createElement('img');
-                img.className = 'point-img';
-                img.src = FNT_LOGO_URL;
-                img.alt = 'FNT';
-                pointElement.appendChild(img);
+                const dot = document.createElement('div');
+                dot.className = 'point-dot';
+                dot.style.backgroundColor = '#fbbf24';
+                pointElement.appendChild(dot);
             }
 
             elements.pointsContainer.appendChild(pointElement);
@@ -1273,15 +1272,15 @@
             gameState.colorMode = color;
             if (color === 'random') {
                 elements.colorBadge.innerHTML = `
-                    ⭐ 星とロゴ
+                    ⭐ 点と星
                 `;
-                elements.colorDescription.textContent = 'FNTロゴと星がランダムに表示されます';
+                elements.colorDescription.textContent = '黄色の点と星がランダムに表示されます';
             } else {
                 elements.colorBadge.innerHTML = `
-                    <img src="${FNT_LOGO_URL}" alt="FNT" style="width: 16px; height: 16px;">
-                    FNTロゴ
+                    <div class="color-dot" style="background-color: #fbbf24;"></div>
+                    シンプル
                 `;
-                elements.colorDescription.textContent = 'FNTロゴで統一表示されます';
+                elements.colorDescription.textContent = '黄色の点で統一表示されます';
             }
             document.querySelectorAll('[data-color]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.color === gameState.colorMode);
@@ -1327,7 +1326,7 @@
                 const instructionsText = elements.instructions.querySelector('.instructions-text');
                 if (instructionsText) {
                     const speedText = gameState.pointSpeed === 'random' ? 'ランダム間隔' : `${gameState.pointSpeed}秒間隔`;
-                    instructionsText.innerHTML = `画面に現れるFNTロゴと⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
+                    instructionsText.innerHTML = `画面に現れる黄色の点と⭐星を目で追いかけて集中力を鍛えましょう！<br><span style="font-size: 16px; opacity: 0.8;">現在の設定: ${speedText}でポイント出現</span>`;
                 }
             }
         }
