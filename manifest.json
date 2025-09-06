@@ -1,0 +1,90 @@
+{
+  "name": "ランダムサッカード認知トレーニング",
+  "short_name": "ランダムサッカード",
+  "description": "眼球運動トレーニングで前頭葉を活性化する認知トレーニングアプリ",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2d7a5f",
+  "background_color": "#1a4b3a",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "medical", "education"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "メイン画面"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "トレーニング開始",
+      "short_name": "開始",
+      "description": "すぐにトレーニングを開始",
+      "url": "./index.html?action=start",
+      "icons": [
+        {
+          "src": "https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
+}
