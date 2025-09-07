@@ -162,6 +162,7 @@
         .menu-content {
             max-width: 600px;
             margin: 60px auto 0;
+            padding-bottom: 100px;
         }
         
         .menu-header {
@@ -204,6 +205,13 @@
             font-weight: 600;
             margin-bottom: 12px;
             color: #fff;
+        }
+        
+        .section-description {
+            font-size: 0.75rem;
+            margin-top: 8px;
+            opacity: 0.8;
+            line-height: 1.4;
         }
         
         .option-grid {
@@ -516,8 +524,9 @@
                     <h1 class="menu-title">ランダムサッカード</h1>
                     <div class="menu-description">
                         眼球運動（サッカード）は脳幹と大脳皮質の連携により制御されます。
-                        ランダムな視標追跡により、前頭眼野・頭頂葉の活性化と集中力向上を促進。
-                        ⭐マーク時に視点固定でアンチサッカード課題となり前頭前野を強化します。
+                        ランダムな視標追跡により、前頭眼野・頭頂葉の活性化と集中力向上を促進。<br><br>
+                        <strong>⭐ 視覚的アンチサッカード:</strong> 星マーク時に視点固定で前頭前野を強化<br>
+                        <strong>🔊 聴覚的アンチサッカード:</strong> 異なる音の時に視点固定で聴覚-視覚統合を強化
                     </div>
                 </div>
                 
@@ -562,6 +571,39 @@
                     <div class="option-grid grid-2">
                         <button class="option-btn active" data-center="false">非表示</button>
                         <button class="option-btn" data-center="true">表示</button>
+                    </div>
+                </div>
+                
+                <!-- 星マーク設定 -->
+                <div class="setting-section">
+                    <h3 class="section-title">⭐ アンチサッカード (星マーク)</h3>
+                    <div class="option-grid grid-2">
+                        <button class="option-btn active" data-stars="true">表示</button>
+                        <button class="option-btn" data-stars="false">非表示</button>
+                    </div>
+                    <p class="section-description">
+                        星マーク出現時は視点を動かさず中心を見続けることで前頭前野を強化
+                    </p>
+                </div>
+                
+                <!-- 音によるアンチサッカード設定 -->
+                <div class="setting-section">
+                    <h3 class="section-title">🔊 音によるアンチサッカード</h3>
+                    <div class="option-grid grid-2">
+                        <button class="option-btn active" data-auditory="false">OFF</button>
+                        <button class="option-btn" data-auditory="true">ON</button>
+                    </div>
+                    <p class="section-description">
+                        異なる音（低音）が鳴った時は視点を動かさない訓練。聴覚と視覚の統合処理を強化
+                    </p>
+                </div>
+                
+                <!-- 星の音設定 -->
+                <div class="setting-section">
+                    <h3 class="section-title">星出現時の音</h3>
+                    <div class="option-grid grid-2">
+                        <button class="option-btn active" data-starsound="same">通常音</button>
+                        <button class="option-btn" data-starsound="different">特殊音</button>
                     </div>
                 </div>
                 
@@ -640,6 +682,9 @@
             pointSpeed: 1,
             colorMode: 'yellow',
             showCenterPoint: false,
+            showStars: true,
+            auditoryAntiSaccade: false,
+            starSoundDifferent: false,
             soundEnabled: true,
             timerInterval: null,
             pointInterval: null,
@@ -745,11 +790,14 @@
                 ? colors[Math.floor(Math.random() * colors.length)]
                 : '#fbbf24';
             
+            // 星表示の判定（設定がONの場合のみ）
+            const isStar = gameState.showStars && Math.random() < 0.15;
+            
             return {
                 x: (x / rect.width) * 100,
                 y: (y / rect.height) * 100,
                 id: Date.now() + Math.random(),
-                isStar: Math.random() < 0.15,
+                isStar: isStar,
                 color: color
             };
         }
@@ -763,18 +811,38 @@
             pointElement.style.top = `${point.y}%`;
             pointElement.dataset.id = point.id;
             
+            // 聴覚的アンチサッカード判定（星でない通常ポイントの20%で異なる音）
+            const isAuditoryAntiSaccade = gameState.auditoryAntiSaccade && 
+                                          !point.isStar && 
+                                          Math.random() < 0.2;
+            
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
+                // 星の音設定に応じて音を再生
+                if (gameState.starSoundDifferent) {
+                    playSound(1200, 200); // 特殊音（高音）
+                } else {
+                    playSound(800, 150); // 通常音
+                }
             } else {
                 const dot = document.createElement('div');
                 dot.className = 'point-dot';
+                
+                // 聴覚的アンチサッカードでも色は変えない（音だけで判断するトレーニング）
                 dot.style.backgroundColor = point.color;
                 dot.style.color = point.color;
+                
                 pointElement.appendChild(dot);
+                
+                // 音を再生
+                if (isAuditoryAntiSaccade) {
+                    playSound(400, 200); // 低音（アンチサッカード音）
+                } else {
+                    playSound(800, 150); // 通常音
+                }
             }
             
             field.appendChild(pointElement);
-            playSound(point.isStar ? 1200 : 800, 150);
             
             setTimeout(() => {
                 const element = field.querySelector(`[data-id="${point.id}"]`);
@@ -886,6 +954,20 @@
                         elements.centerPoint.classList.toggle('show', gameState.showCenterPoint);
                     }
                     break;
+                case 'stars':
+                    gameState.showStars = value === 'true';
+                    break;
+                case 'auditory':
+                    gameState.auditoryAntiSaccade = value === 'true';
+                    if (gameState.auditoryAntiSaccade) {
+                        // テスト音を再生
+                        playSound(400, 200); // 低音のテスト
+                        setTimeout(() => playSound(800, 150), 300); // 通常音のテスト
+                    }
+                    break;
+                case 'starsound':
+                    gameState.starSoundDifferent = value === 'different';
+                    break;
                 case 'sound':
                     gameState.soundEnabled = value === 'true';
                     if (gameState.soundEnabled) {
@@ -946,6 +1028,30 @@
                     document.querySelectorAll('[data-center]').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     handleSettingChange('center', btn.dataset.center);
+                });
+            });
+            
+            document.querySelectorAll('[data-stars]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-stars]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    handleSettingChange('stars', btn.dataset.stars);
+                });
+            });
+            
+            document.querySelectorAll('[data-auditory]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-auditory]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    handleSettingChange('auditory', btn.dataset.auditory);
+                });
+            });
+            
+            document.querySelectorAll('[data-starsound]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-starsound]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    handleSettingChange('starsound', btn.dataset.starsound);
                 });
             });
             
