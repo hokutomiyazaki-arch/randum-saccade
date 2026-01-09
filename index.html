@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,11 +12,11 @@
     <meta name="apple-mobile-web-app-title" content="ランダムサッカード">
     
     <!-- アイコン設定 -->
-    <link rel="icon" href="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png">
-    <link rel="apple-touch-icon" href="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png">
+    <link rel="icon" href="FNT512.png">
+    <link rel="apple-touch-icon" href="FNT512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="FNT512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="FNT512.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="FNT512.png">
     
     <!-- テーマカラー -->
     <meta name="theme-color" content="#2d7a5f">
@@ -42,17 +42,78 @@
             width: 100%;
             overflow: hidden;
             position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
         
         body {
             height: 100%;
             width: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             overflow: hidden;
             position: fixed;
-            background: linear-gradient(135deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             color: white;
             touch-action: manipulation;
+        }
+        
+        /* 背景レイヤー（iOS対応） */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            z-index: -1;
+            transition: background 0.5s ease;
+        }
+        
+        /* 背景テーマ */
+        .bg-green {
+            background: #1a4b3a !important;
+            background: -webkit-linear-gradient(315deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%) !important;
+            background: linear-gradient(135deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%) !important;
+        }
+        
+        .bg-blue {
+            background: #1a3b5c !important;
+            background: -webkit-linear-gradient(315deg, #1a3b5c 0%, #2d5a8f 50%, #4890d4 100%) !important;
+            background: linear-gradient(135deg, #1a3b5c 0%, #2d5a8f 50%, #4890d4 100%) !important;
+        }
+        
+        .bg-purple {
+            background: #3d1a5c !important;
+            background: -webkit-linear-gradient(315deg, #3d1a5c 0%, #6b2d8f 50%, #9b48d4 100%) !important;
+            background: linear-gradient(135deg, #3d1a5c 0%, #6b2d8f 50%, #9b48d4 100%) !important;
+        }
+        
+        .bg-dark {
+            background: #1a1a2e !important;
+            background: -webkit-linear-gradient(315deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+        }
+        
+        .bg-warm {
+            background: #5c3a1a !important;
+            background: -webkit-linear-gradient(315deg, #5c3a1a 0%, #8f5a2d 50%, #d49048 100%) !important;
+            background: linear-gradient(135deg, #5c3a1a 0%, #8f5a2d 50%, #d49048 100%) !important;
+        }
+        
+        .bg-black {
+            background: #000000 !important;
+            background: -webkit-linear-gradient(315deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%) !important;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%) !important;
         }
         
         /* スプラッシュスクリーン */
@@ -62,6 +123,8 @@
             left: 0;
             width: 100%;
             height: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             background: white;
             display: flex;
             flex-direction: column;
@@ -88,10 +151,12 @@
             margin-bottom: 20px;
             font-weight: 600;
             text-align: center;
+            white-space: nowrap;
         }
         
         .splash-subtitle {
             font-size: 2.2rem;
+            background: -webkit-linear-gradient(135deg, #2d7a5f 0%, #48cc6c 100%);
             background: linear-gradient(135deg, #2d7a5f 0%, #48cc6c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -106,18 +171,132 @@
             margin-top: 20px;
         }
         
+        /* インストールプロンプト */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            z-index: 2500;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        
+        .install-prompt.show {
+            transform: translateY(0);
+        }
+        
+        .install-prompt-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .install-prompt-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        
+        .install-prompt-text {
+            flex: 1;
+        }
+        
+        .install-prompt-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .install-prompt-desc {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+        
+        .install-prompt-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .install-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .install-btn-primary {
+            background: linear-gradient(135deg, #2d7a5f, #48cc6c);
+            color: white;
+        }
+        
+        .install-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .install-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* iOS用インストール手順 */
+        .ios-install-guide {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .ios-install-guide.show {
+            display: block;
+        }
+        
+        .ios-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .ios-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .ios-step-icon {
+            font-size: 1.2rem;
+        }
+        
         /* アプリコンテナ */
         .app-container {
             position: relative;
             width: 100vw;
             height: 100vh;
+            height: -webkit-fill-available;
             overflow: hidden;
         }
         
         /* メニュー切り替えボタン */
         .menu-toggle {
             position: fixed;
-            top: env(safe-area-inset-top, 20px);
+            top: calc(env(safe-area-inset-top, 20px) + 10px);
             right: 20px;
             z-index: 2001;
             width: 50px;
@@ -146,23 +325,34 @@
             left: 0;
             width: 100%;
             height: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             background: rgba(0, 0, 0, 0.95);
+            -webkit-backdrop-filter: blur(15px);
             backdrop-filter: blur(15px);
             transform: translateY(-100%);
             transition: transform 0.3s ease;
             z-index: 2000;
             overflow-y: auto;
-            padding: env(safe-area-inset-top, 20px) 20px 20px;
+            -webkit-overflow-scrolling: touch;
+            padding-top: calc(env(safe-area-inset-top, 20px) + 10px);
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 100px);
+            touch-action: auto !important;
         }
         
         .menu-panel.show {
             transform: translateY(0);
         }
         
+        .menu-panel * {
+            touch-action: auto !important;
+        }
+        
         .menu-content {
             max-width: 600px;
             margin: 60px auto 0;
-            padding-bottom: 100px;
         }
         
         .menu-header {
@@ -219,6 +409,7 @@
             gap: 10px;
         }
         
+        .grid-6 { grid-template-columns: repeat(6, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         
@@ -243,6 +434,24 @@
             color: #1a4b3a;
             border-color: #48cc6c;
             font-weight: bold;
+        }
+        
+        /* 背景プレビュー用のボタン */
+        .bg-option-btn {
+            height: 50px;
+            border-radius: 8px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .bg-option-btn.active {
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .bg-option-btn:active {
+            transform: scale(0.95);
         }
         
         /* コントロールボタン */
@@ -298,7 +507,7 @@
             top: calc(env(safe-area-inset-top, 0px) + 80px);
             left: 20px;
             right: 20px;
-            bottom: 60px;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 60px);
             border: 3px solid rgba(255, 255, 255, 0.4);
             border-radius: 15px;
             background: rgba(255, 255, 255, 0.05);
@@ -358,6 +567,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
+            pointer-events: none;
         }
         
         .timer-display {
@@ -366,6 +576,7 @@
             background: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
             border-radius: 12px;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
         
@@ -373,6 +584,7 @@
             background: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
             border-radius: 12px;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             font-size: 14px;
         }
@@ -416,6 +628,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
@@ -445,6 +658,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             display: none;
             align-items: center;
@@ -461,6 +675,7 @@
             padding: 40px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
         
@@ -495,6 +710,8 @@
             .timer-display { font-size: 1.5rem; }
             .option-btn { font-size: 12px; padding: 10px 6px; }
             .grid-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-6 { grid-template-columns: repeat(3, 1fr); }
+            .splash-title { font-size: 1.4rem; }
         }
         
         @media (max-height: 600px) {
@@ -504,12 +721,45 @@
     </style>
 </head>
 <body>
+    <!-- 背景レイヤー -->
+    <div class="background-layer bg-green" id="backgroundLayer"></div>
+    
     <!-- スプラッシュスクリーン -->
     <div class="splash-screen" id="splashScreen">
-        <img src="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512.png" alt="FNT Logo" class="splash-logo">
+        <img src="FNT512.png" alt="FNT Logo" class="splash-logo">
         <div class="splash-title">Functional Neuro Training</div>
         <div class="splash-subtitle">ランダムサッカード</div>
         <div class="splash-copyright">© Functional Neuro Training</div>
+    </div>
+    
+    <!-- インストールプロンプト -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <img src="FNT512.png" alt="FNT" class="install-prompt-icon">
+            <div class="install-prompt-text">
+                <div class="install-prompt-title">アプリをインストール</div>
+                <div class="install-prompt-desc">ホーム画面に追加すると、オフラインでも快適にトレーニングできます</div>
+            </div>
+        </div>
+        <div class="install-prompt-buttons">
+            <button class="install-btn install-btn-secondary" id="installLater">後で</button>
+            <button class="install-btn install-btn-primary" id="installNow">インストール</button>
+        </div>
+        <!-- iOS用ガイド -->
+        <div class="ios-install-guide" id="iosGuide">
+            <div class="ios-step">
+                <span class="ios-step-icon">1️⃣</span>
+                <span>画面下部の共有ボタン <strong>⬆︎</strong> をタップ</span>
+            </div>
+            <div class="ios-step">
+                <span class="ios-step-icon">2️⃣</span>
+                <span>「ホーム画面に追加」を選択</span>
+            </div>
+            <div class="ios-step">
+                <span class="ios-step-icon">3️⃣</span>
+                <span>右上の「追加」をタップ</span>
+            </div>
+        </div>
     </div>
     
     <div class="app-container">
@@ -520,7 +770,7 @@
         <div class="menu-panel" id="menuPanel">
             <div class="menu-content">
                 <div class="menu-header">
-                    <img src="https://hokutomiyazaki-arch.github.io/randum-saccade/FNT512-transparent.png" alt="FNT Logo" class="menu-logo">
+                    <img src="FNT512-transparent.png" alt="FNT Logo" class="menu-logo">
                     <h1 class="menu-title">ランダムサッカード</h1>
                     <div class="menu-description">
                         眼球運動（サッカード）は脳幹と大脳皮質の連携により制御されます。
@@ -530,9 +780,22 @@
                     </div>
                 </div>
                 
+                <!-- 背景設定 -->
+                <div class="setting-section">
+                    <h3 class="section-title">🎨 背景テーマ</h3>
+                    <div class="option-grid grid-6">
+                        <button class="bg-option-btn bg-green active" data-bg="green" title="グリーン"></button>
+                        <button class="bg-option-btn bg-blue" data-bg="blue" title="ブルー"></button>
+                        <button class="bg-option-btn bg-purple" data-bg="purple" title="パープル"></button>
+                        <button class="bg-option-btn bg-dark" data-bg="dark" title="ダーク"></button>
+                        <button class="bg-option-btn bg-warm" data-bg="warm" title="ウォーム"></button>
+                        <button class="bg-option-btn bg-black" data-bg="black" title="ブラック"></button>
+                    </div>
+                </div>
+                
                 <!-- 時間設定 -->
                 <div class="setting-section">
-                    <h3 class="section-title">時間設定</h3>
+                    <h3 class="section-title">⏱️ 時間設定</h3>
                     <div class="option-grid grid-3">
                         <button class="option-btn" data-duration="30">0:30</button>
                         <button class="option-btn active" data-duration="60">1:00</button>
@@ -545,7 +808,7 @@
                 
                 <!-- スピード設定 -->
                 <div class="setting-section">
-                    <h3 class="section-title">出現間隔</h3>
+                    <h3 class="section-title">⚡ 出現間隔</h3>
                     <div class="option-grid grid-3">
                         <button class="option-btn" data-speed="0.5">0.5秒</button>
                         <button class="option-btn active" data-speed="1">1秒</button>
@@ -558,7 +821,7 @@
                 
                 <!-- カラー設定 -->
                 <div class="setting-section">
-                    <h3 class="section-title">色設定</h3>
+                    <h3 class="section-title">🔵 ポイント色設定</h3>
                     <div class="option-grid grid-2">
                         <button class="option-btn active" data-color="yellow">黄色固定</button>
                         <button class="option-btn" data-color="random">ランダム</button>
@@ -567,7 +830,7 @@
                 
                 <!-- 中心点設定 -->
                 <div class="setting-section">
-                    <h3 class="section-title">中心点表示</h3>
+                    <h3 class="section-title">⊙ 中心点表示</h3>
                     <div class="option-grid grid-2">
                         <button class="option-btn active" data-center="false">非表示</button>
                         <button class="option-btn" data-center="true">表示</button>
@@ -600,7 +863,7 @@
                 
                 <!-- 星の音設定 -->
                 <div class="setting-section">
-                    <h3 class="section-title">星出現時の音</h3>
+                    <h3 class="section-title">🎵 星出現時の音</h3>
                     <div class="option-grid grid-2">
                         <button class="option-btn active" data-starsound="same">通常音</button>
                         <button class="option-btn" data-starsound="different">特殊音</button>
@@ -609,7 +872,7 @@
                 
                 <!-- 音設定 -->
                 <div class="setting-section">
-                    <h3 class="section-title">効果音</h3>
+                    <h3 class="section-title">🔈 効果音</h3>
                     <div class="option-grid grid-2">
                         <button class="option-btn active" data-sound="true">ON</button>
                         <button class="option-btn" data-sound="false">OFF</button>
@@ -668,10 +931,77 @@
         // PWA用Service Worker登録
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => {
-                    console.log('Service Worker registration failed:', err);
-                });
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
             });
+        }
+        
+        // インストールプロンプト管理
+        let deferredPrompt = null;
+        const installPrompt = document.getElementById('installPrompt');
+        const installNow = document.getElementById('installNow');
+        const installLater = document.getElementById('installLater');
+        const iosGuide = document.getElementById('iosGuide');
+        
+        // iOS判定
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+        const isAndroidStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        
+        // インストール済みかチェック
+        function isAppInstalled() {
+            return isInStandaloneMode || isAndroidStandalone || localStorage.getItem('pwaInstalled') === 'true';
+        }
+        
+        // インストールプロンプト表示
+        function showInstallPrompt() {
+            if (isAppInstalled() || localStorage.getItem('installDismissed') === 'true') return;
+            
+            setTimeout(() => {
+                installPrompt.classList.add('show');
+                if (isIOS) {
+                    iosGuide.classList.add('show');
+                    installNow.style.display = 'none';
+                }
+            }, 3000);
+        }
+        
+        // Android用beforeinstallpromptイベント
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallPrompt();
+        });
+        
+        // インストールボタンクリック（Android）
+        installNow.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    localStorage.setItem('pwaInstalled', 'true');
+                }
+                deferredPrompt = null;
+            }
+            installPrompt.classList.remove('show');
+        });
+        
+        // 後でボタン
+        installLater.addEventListener('click', () => {
+            installPrompt.classList.remove('show');
+            localStorage.setItem('installDismissed', 'true');
+        });
+        
+        // インストール完了検知
+        window.addEventListener('appinstalled', () => {
+            localStorage.setItem('pwaInstalled', 'true');
+            installPrompt.classList.remove('show');
+        });
+        
+        // iOS用：スプラッシュ後にプロンプト表示
+        if (isIOS && !isInStandaloneMode) {
+            showInstallPrompt();
         }
         
         // ゲーム状態管理
@@ -686,6 +1016,7 @@
             auditoryAntiSaccade: false,
             starSoundDifferent: false,
             soundEnabled: true,
+            backgroundTheme: 'green',
             timerInterval: null,
             pointInterval: null,
             audioContext: null
@@ -702,7 +1033,8 @@
             resetBtn: document.getElementById('resetBtn'),
             pointsContainer: document.getElementById('pointsContainer'),
             completionOverlay: document.getElementById('completionOverlay'),
-            centerPoint: document.getElementById('centerPoint')
+            centerPoint: document.getElementById('centerPoint'),
+            backgroundLayer: document.getElementById('backgroundLayer')
         };
         
         // オーディオコンテキスト初期化
@@ -710,6 +1042,20 @@
             if (!gameState.audioContext) {
                 gameState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
+            // iOS用：コンテキストをresumeしてダミー音を再生
+            if (gameState.audioContext.state === 'suspended') {
+                gameState.audioContext.resume();
+            }
+            // ダミー音でコンテキスト起動
+            try {
+                const osc = gameState.audioContext.createOscillator();
+                const gain = gameState.audioContext.createGain();
+                gain.gain.value = 0.001;
+                osc.connect(gain);
+                gain.connect(gameState.audioContext.destination);
+                osc.start();
+                osc.stop(gameState.audioContext.currentTime + 0.01);
+            } catch (e) {}
         }
         
         // 効果音生成
@@ -717,11 +1063,17 @@
             if (!gameState.soundEnabled || !gameState.audioContext) return;
             
             try {
+                if (gameState.audioContext.state === 'suspended') {
+                    gameState.audioContext.resume();
+                }
+                
                 const oscillator = gameState.audioContext.createOscillator();
                 const gainNode = gameState.audioContext.createGain();
+                const compressor = gameState.audioContext.createDynamicsCompressor();
                 
                 oscillator.connect(gainNode);
-                gainNode.connect(gameState.audioContext.destination);
+                gainNode.connect(compressor);
+                compressor.connect(gameState.audioContext.destination);
                 
                 oscillator.frequency.value = frequency;
                 oscillator.type = 'sine';
@@ -790,7 +1142,6 @@
                 ? colors[Math.floor(Math.random() * colors.length)]
                 : '#fbbf24';
             
-            // 星表示の判定（設定がONの場合のみ）
             const isStar = gameState.showStars && Math.random() < 0.15;
             
             return {
@@ -811,34 +1162,28 @@
             pointElement.style.top = `${point.y}%`;
             pointElement.dataset.id = point.id;
             
-            // 聴覚的アンチサッカード判定（星でない通常ポイントの20%で異なる音）
             const isAuditoryAntiSaccade = gameState.auditoryAntiSaccade && 
                                           !point.isStar && 
                                           Math.random() < 0.2;
             
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
-                // 星の音設定に応じて音を再生
                 if (gameState.starSoundDifferent) {
-                    playSound(1200, 200); // 特殊音（高音）
+                    playSound(1200, 200);
                 } else {
-                    playSound(800, 150); // 通常音
+                    playSound(800, 150);
                 }
             } else {
                 const dot = document.createElement('div');
                 dot.className = 'point-dot';
-                
-                // 聴覚的アンチサッカードでも色は変えない（音だけで判断するトレーニング）
                 dot.style.backgroundColor = point.color;
                 dot.style.color = point.color;
-                
                 pointElement.appendChild(dot);
                 
-                // 音を再生
                 if (isAuditoryAntiSaccade) {
-                    playSound(400, 200); // 低音（アンチサッカード音）
+                    playSound(400, 200);
                 } else {
-                    playSound(800, 150); // 通常音
+                    playSound(800, 150);
                 }
             }
             
@@ -852,7 +1197,6 @@
         
         // タイマー開始
         async function startTimer() {
-            // メニューを閉じる
             elements.menuPanel.classList.remove('show');
             
             await showCountdown();
@@ -860,12 +1204,10 @@
             gameState.isRunning = true;
             elements.playBtn.innerHTML = '<span>⏸️</span><span>一時停止</span>';
             
-            // 中心点表示更新
             if (gameState.showCenterPoint) {
                 elements.centerPoint.classList.add('show');
             }
             
-            // タイマー処理
             gameState.timerInterval = setInterval(() => {
                 gameState.timeLeft--;
                 updateTimerDisplay();
@@ -876,7 +1218,6 @@
                 }
             }, 1000);
             
-            // ポイント表示処理
             const getInterval = () => {
                 if (gameState.pointSpeed === 'random') {
                     return (Math.random() * 4.5 + 0.5) * 1000;
@@ -931,6 +1272,14 @@
             points.forEach(p => p.remove());
         }
         
+        // 背景変更
+        function changeBackground(theme) {
+            const bgLayer = elements.backgroundLayer;
+            bgLayer.className = 'background-layer bg-' + theme;
+            gameState.backgroundTheme = theme;
+            localStorage.setItem('backgroundTheme', theme);
+        }
+        
         // 設定変更ハンドラー
         function handleSettingChange(type, value) {
             switch(type) {
@@ -960,9 +1309,8 @@
                 case 'auditory':
                     gameState.auditoryAntiSaccade = value === 'true';
                     if (gameState.auditoryAntiSaccade) {
-                        // テスト音を再生
-                        playSound(400, 200); // 低音のテスト
-                        setTimeout(() => playSound(800, 150), 300); // 通常音のテスト
+                        playSound(400, 200);
+                        setTimeout(() => playSound(800, 150), 300);
                     }
                     break;
                 case 'starsound':
@@ -974,6 +1322,9 @@
                         initAudioContext();
                         playSound(800, 200);
                     }
+                    break;
+                case 'bg':
+                    changeBackground(value);
                     break;
             }
         }
@@ -998,74 +1349,49 @@
             // リセットボタン
             elements.resetBtn.addEventListener('click', resetTimer);
             
-            // 設定ボタン
-            document.querySelectorAll('[data-duration]').forEach(btn => {
+            // 背景設定
+            document.querySelectorAll('[data-bg]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-duration]').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('[data-bg]').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    handleSettingChange('duration', btn.dataset.duration);
+                    handleSettingChange('bg', btn.dataset.bg);
                 });
             });
             
-            document.querySelectorAll('[data-speed]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-speed]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('speed', btn.dataset.speed);
-                });
-            });
+            // 設定ボタン群
+            const settingConfigs = [
+                { attr: 'duration', selector: '[data-duration]' },
+                { attr: 'speed', selector: '[data-speed]' },
+                { attr: 'color', selector: '[data-color]' },
+                { attr: 'center', selector: '[data-center]' },
+                { attr: 'stars', selector: '[data-stars]' },
+                { attr: 'auditory', selector: '[data-auditory]' },
+                { attr: 'starsound', selector: '[data-starsound]' },
+                { attr: 'sound', selector: '[data-sound]' }
+            ];
             
-            document.querySelectorAll('[data-color]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-color]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('color', btn.dataset.color);
-                });
-            });
-            
-            document.querySelectorAll('[data-center]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-center]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('center', btn.dataset.center);
-                });
-            });
-            
-            document.querySelectorAll('[data-stars]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-stars]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('stars', btn.dataset.stars);
-                });
-            });
-            
-            document.querySelectorAll('[data-auditory]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-auditory]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('auditory', btn.dataset.auditory);
-                });
-            });
-            
-            document.querySelectorAll('[data-starsound]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-starsound]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('starsound', btn.dataset.starsound);
-                });
-            });
-            
-            document.querySelectorAll('[data-sound]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('[data-sound]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    handleSettingChange('sound', btn.dataset.sound);
+            settingConfigs.forEach(config => {
+                document.querySelectorAll(config.selector).forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll(config.selector).forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        handleSettingChange(config.attr, btn.dataset[config.attr]);
+                    });
                 });
             });
         }
         
         // 初期化
         function initialize() {
+            // 保存された背景テーマを復元
+            const savedTheme = localStorage.getItem('backgroundTheme');
+            if (savedTheme) {
+                changeBackground(savedTheme);
+                document.querySelectorAll('[data-bg]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.bg === savedTheme);
+                });
+            }
+            
             // スプラッシュスクリーン表示
             setTimeout(() => {
                 elements.splashScreen.classList.add('hide');
@@ -1074,7 +1400,7 @@
             updateTimerDisplay();
             setupEventListeners();
             
-            // iOS standalone mode でのステータスバー対応
+            // iOS standalone mode でのパディング対応
             if (window.navigator.standalone) {
                 document.body.style.paddingTop = '20px';
             }
@@ -1084,11 +1410,17 @@
                 screen.orientation.lock('portrait').catch(() => {});
             }
             
-            // スクロール防止
+            // スクロール防止（メニュー以外）
             document.addEventListener('touchmove', (e) => {
-                if (e.target.closest('.menu-content')) return;
+                if (e.target.closest('.menu-panel')) return;
+                if (e.target.closest('.install-prompt')) return;
                 e.preventDefault();
             }, { passive: false });
+            
+            // タッチ開始時にオーディオコンテキスト初期化（iOS対策）
+            document.addEventListener('touchstart', () => {
+                initAudioContext();
+            }, { once: true });
         }
         
         // アプリ起動
