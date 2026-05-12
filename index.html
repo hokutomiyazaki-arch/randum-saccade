@@ -179,7 +179,8 @@
             background: rgba(0, 0, 0, 0.95);
             padding: 20px;
             padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-            z-index: 2500;
+            z-index: 1900; /* ===== iPad修正⑥: メニュー(2000)より下に。開始ボタンを覆わないように ===== */
+            /* ===== iPad fix⑥: lowered below menu (2000) so it stops covering the Start button ===== */
             transform: translateY(100%);
             transition: transform 0.3s ease;
             border-top-left-radius: 20px;
