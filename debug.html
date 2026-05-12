@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="application-name" content="ランダムサッカード DEBUG">
+    <meta name="apple-mobile-web-app-title" content="ランダムサッカード DEBUG">
+
+    <link rel="icon" href="FNT512.png">
+    <link rel="apple-touch-icon" href="FNT512.png">
+
+    <meta name="theme-color" content="#ff0000">
+
+    <title>🔧 DEBUG版 ランダムサッカード</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            background: linear-gradient(135deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%);
+        }
+
+        button {
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        /* ===== DEBUG情報バー(画面上部) ===== */
+        .debug-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: red;
+            color: white;
+            padding: 8px 15px;
+            font-size: 13px;
+            font-family: monospace;
+            z-index: 9999;
+            text-align: center;
+            font-weight: bold;
+            line-height: 1.4;
+            padding-top: calc(env(safe-area-inset-top, 8px) + 8px);
+        }
+
+        .debug-bar .label {
+            opacity: 0.7;
+            font-size: 11px;
+        }
+
+        .debug-bar .value {
+            font-size: 14px;
+        }
+
+        /* メインコンテンツエリア */
+        .main {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* ===== でかいテストボタン群 ===== */
+        .test-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 15px;
+            padding: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .test-btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #2d7a5f, #48cc6c);
+        }
+
+        .btn-other {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+        }
+
+        /* ログ表示 */
+        .log {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: auto;
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .device-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- DEBUG情報バー -->
+    <div class="debug-bar">
+        <div class="label">🔧 DEBUG版 / 最後のタップ:</div>
+        <div class="value" id="lastTap">まだタップなし / No taps yet</div>
+    </div>
+
+    <div class="main">
+        <div class="title">🔧 DEBUG テスト</div>
+        <div class="subtitle">
+            下の各ボタンを1つずつタップしてください。<br>
+            タップする度に、画面上部の赤いバーに反応が出るはずです。<br>
+            <br>
+            Tap each button below one at a time.<br>
+            The red bar at the top should update with each tap.
+        </div>
+
+        <button class="test-btn btn-start" id="testStart">
+            ▶️ 開始ボタン (Start)
+        </button>
+
+        <button class="test-btn btn-other" id="testOther">
+            🔵 普通のボタン (Other)
+        </button>
+
+        <button class="test-btn btn-reset" id="testReset">
+            ⏹️ リセット (Reset Log)
+        </button>
+
+        <div class="log" id="log">
+            <div class="log-line">▶ DEBUG版 ロード完了 / Debug version loaded</div>
+        </div>
+
+        <div class="device-info" id="deviceInfo">
+            (デバイス情報を読み込み中...)
+        </div>
+    </div>
+
+    <script>
+        const lastTap = document.getElementById('lastTap');
+        const log = document.getElementById('log');
+        const deviceInfo = document.getElementById('deviceInfo');
+
+        function addLog(msg) {
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            const time = new Date().toLocaleTimeString('ja-JP');
+            line.textContent = `[${time}] ${msg}`;
+            log.insertBefore(line, log.firstChild);
+            console.log(msg);
+        }
+
+        function showTap(msg) {
+            lastTap.textContent = msg;
+            addLog(msg);
+        }
+
+        // デバイス情報を表示
+        function showDeviceInfo() {
+            const info = [
+                `userAgent: ${navigator.userAgent}`,
+                `platform: ${navigator.platform}`,
+                `maxTouchPoints: ${navigator.maxTouchPoints}`,
+                `screen: ${window.screen.width}x${window.screen.height}`,
+                `innerWindow: ${window.innerWidth}x${window.innerHeight}`,
+                `devicePixelRatio: ${window.devicePixelRatio}`,
+                `standalone: ${window.navigator.standalone || false}`
+            ];
+            deviceInfo.innerHTML = info.join('<br>');
+        }
+        showDeviceInfo();
+
+        // ===== 開始ボタン =====
+        document.getElementById('testStart').addEventListener('click', (e) => {
+            showTap('✅ 開始ボタン CLICK発火 / Start CLICK fired');
+        });
+
+        document.getElementById('testStart').addEventListener('touchstart', (e) => {
+            showTap('👆 開始ボタン TOUCHSTART / Start touchstart');
+        });
+
+        document.getElementById('testStart').addEventListener('touchend', (e) => {
+            addLog('👆 開始ボタン TOUCHEND / Start touchend');
+        });
+
+        // ===== 普通のボタン =====
+        document.getElementById('testOther').addEventListener('click', () => {
+            showTap('✅ 普通のボタン CLICK発火 / Other CLICK fired');
+        });
+
+        document.getElementById('testOther').addEventListener('touchstart', () => {
+            showTap('👆 普通のボタン TOUCHSTART / Other touchstart');
+        });
+
+        // ===== リセット =====
+        document.getElementById('testReset').addEventListener('click', () => {
+            log.innerHTML = '<div class="log-line">▶ ログクリア / Log cleared</div>';
+            lastTap.textContent = 'ログクリアしました / Log cleared';
+        });
+
+        // ===== 全画面のタッチをキャッチ(原因切り分け用) =====
+        document.addEventListener('touchstart', (e) => {
+            const target = e.target;
+            const desc = `${target.tagName}${target.id ? '#' + target.id : ''}${target.className ? '.' + target.className.replace(/ /g, '.') : ''}`;
+            addLog(`🌍 document touchstart → ${desc}`);
+        }, true); // capture phase
+
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            const desc = `${target.tagName}${target.id ? '#' + target.id : ''}`;
+            addLog(`🌍 document click → ${desc}`);
+        }, true);
+
+        addLog('セットアップ完了 / Setup complete');
+    </script>
+</body>
+</html>
