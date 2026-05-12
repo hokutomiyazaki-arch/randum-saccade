@@ -6,24 +6,24 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+
     <!-- PWA設定 -->
     <meta name="application-name" content="ランダムサッカード">
     <meta name="apple-mobile-web-app-title" content="ランダムサッカード">
-    
+
     <!-- アイコン設定 -->
     <link rel="icon" href="FNT512.png">
     <link rel="apple-touch-icon" href="FNT512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="FNT512.png">
     <link rel="icon" type="image/png" sizes="192x192" href="FNT512.png">
     <link rel="icon" type="image/png" sizes="512x512" href="FNT512.png">
-    
+
     <!-- テーマカラー -->
     <meta name="theme-color" content="#2d7a5f">
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    
+
     <title>ランダムサッカード認知トレーニング</title>
     <style>
         /* リセットCSS */
@@ -36,34 +36,33 @@
             -webkit-user-select: none;
             user-select: none;
         }
-        
-        html {
+
+        /* ===== iPad修正①: htmlとbodyからposition:fixedを削除 ===== */
+        /* ===== iPad fix①: removed position:fixed from html and body ===== */
+        html, body {
             height: 100%;
             width: 100%;
             overflow: hidden;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            margin: 0;
+            padding: 0;
         }
-        
+
         body {
-            height: 100%;
-            width: 100%;
             min-height: 100vh;
             min-height: -webkit-fill-available;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow: hidden;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
             color: white;
-            touch-action: manipulation;
+            /* iPad修正②: body全体への touch-action: manipulation を削除 */
+            /* iPad fix②: removed touch-action: manipulation from body */
         }
-        
+
+        /* ===== iPad修正③: ボタンにだけ touch-action と cursor を付与 ===== */
+        /* ===== iPad fix③: put touch-action and cursor on buttons only ===== */
+        button {
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
         /* 背景レイヤー（iOS対応） */
         .background-layer {
             position: fixed;
@@ -78,44 +77,44 @@
             z-index: -1;
             transition: background 0.5s ease;
         }
-        
+
         /* 背景テーマ */
         .bg-green {
             background: #1a4b3a !important;
             background: -webkit-linear-gradient(315deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%) !important;
             background: linear-gradient(135deg, #1a4b3a 0%, #2d7a5f 50%, #48cc6c 100%) !important;
         }
-        
+
         .bg-blue {
             background: #1a3b5c !important;
             background: -webkit-linear-gradient(315deg, #1a3b5c 0%, #2d5a8f 50%, #4890d4 100%) !important;
             background: linear-gradient(135deg, #1a3b5c 0%, #2d5a8f 50%, #4890d4 100%) !important;
         }
-        
+
         .bg-purple {
             background: #3d1a5c !important;
             background: -webkit-linear-gradient(315deg, #3d1a5c 0%, #6b2d8f 50%, #9b48d4 100%) !important;
             background: linear-gradient(135deg, #3d1a5c 0%, #6b2d8f 50%, #9b48d4 100%) !important;
         }
-        
+
         .bg-dark {
             background: #1a1a2e !important;
             background: -webkit-linear-gradient(315deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
         }
-        
+
         .bg-warm {
             background: #5c3a1a !important;
             background: -webkit-linear-gradient(315deg, #5c3a1a 0%, #8f5a2d 50%, #d49048 100%) !important;
             background: linear-gradient(135deg, #5c3a1a 0%, #8f5a2d 50%, #d49048 100%) !important;
         }
-        
+
         .bg-black {
             background: #000000 !important;
             background: -webkit-linear-gradient(315deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%) !important;
             background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%) !important;
         }
-        
+
         /* スプラッシュスクリーン */
         .splash-screen {
             position: fixed;
@@ -133,18 +132,18 @@
             z-index: 3000;
             transition: opacity 0.5s ease;
         }
-        
+
         .splash-screen.hide {
             opacity: 0;
             pointer-events: none;
         }
-        
+
         .splash-logo {
             width: 150px;
             height: 150px;
             margin-bottom: 30px;
         }
-        
+
         .splash-title {
             font-size: 1.8rem;
             color: #333;
@@ -153,7 +152,7 @@
             text-align: center;
             white-space: nowrap;
         }
-        
+
         .splash-subtitle {
             font-size: 2.2rem;
             background: -webkit-linear-gradient(135deg, #2d7a5f 0%, #48cc6c 100%);
@@ -164,13 +163,13 @@
             font-weight: bold;
             margin-bottom: 15px;
         }
-        
+
         .splash-copyright {
             font-size: 0.9rem;
             color: #666;
             margin-top: 20px;
         }
-        
+
         /* インストールプロンプト */
         .install-prompt {
             position: fixed;
@@ -186,11 +185,11 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
         }
-        
+
         .install-prompt.show {
             transform: translateY(0);
         }
-        
+
         .install-prompt-content {
             display: flex;
             align-items: center;
@@ -198,37 +197,37 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        
+
         .install-prompt-icon {
             width: 60px;
             height: 60px;
             border-radius: 12px;
             flex-shrink: 0;
         }
-        
+
         .install-prompt-text {
             flex: 1;
         }
-        
+
         .install-prompt-title {
             font-size: 1.1rem;
             font-weight: 600;
             color: white;
             margin-bottom: 5px;
         }
-        
+
         .install-prompt-desc {
             font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.7);
             line-height: 1.4;
         }
-        
+
         .install-prompt-buttons {
             display: flex;
             gap: 10px;
             margin-top: 15px;
         }
-        
+
         .install-btn {
             flex: 1;
             padding: 12px 20px;
@@ -239,21 +238,21 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .install-btn-primary {
             background: linear-gradient(135deg, #2d7a5f, #48cc6c);
             color: white;
         }
-        
+
         .install-btn-secondary {
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
-        
+
         .install-btn:active {
             transform: scale(0.95);
         }
-        
+
         /* iOS用インストール手順 */
         .ios-install-guide {
             margin-top: 15px;
@@ -262,11 +261,11 @@
             border-radius: 10px;
             display: none;
         }
-        
+
         .ios-install-guide.show {
             display: block;
         }
-        
+
         .ios-step {
             display: flex;
             align-items: center;
@@ -275,15 +274,15 @@
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.9);
         }
-        
+
         .ios-step:last-child {
             margin-bottom: 0;
         }
-        
+
         .ios-step-icon {
             font-size: 1.2rem;
         }
-        
+
         /* アプリコンテナ */
         .app-container {
             position: relative;
@@ -292,7 +291,7 @@
             height: -webkit-fill-available;
             overflow: hidden;
         }
-        
+
         /* メニュー切り替えボタン */
         .menu-toggle {
             position: fixed;
@@ -313,11 +312,11 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
-        
+
         .menu-toggle:active {
             transform: scale(0.95);
         }
-        
+
         /* メニューパネル */
         .menu-panel {
             position: fixed;
@@ -341,37 +340,37 @@
             padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 100px);
             touch-action: auto !important;
         }
-        
+
         .menu-panel.show {
             transform: translateY(0);
         }
-        
+
         .menu-panel * {
             touch-action: auto !important;
         }
-        
+
         .menu-content {
             max-width: 600px;
             margin: 60px auto 0;
         }
-        
+
         .menu-header {
             text-align: center;
             margin-bottom: 30px;
         }
-        
+
         .menu-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
         }
-        
+
         .menu-title {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 15px;
         }
-        
+
         .menu-description {
             font-size: 0.95rem;
             color: #fbbf24;
@@ -381,7 +380,7 @@
             border-radius: 10px;
             margin-bottom: 30px;
         }
-        
+
         /* 設定セクション */
         .setting-section {
             margin-bottom: 25px;
@@ -389,30 +388,30 @@
             padding: 15px;
             border-radius: 12px;
         }
-        
+
         .section-title {
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 12px;
             color: #fff;
         }
-        
+
         .section-description {
             font-size: 0.75rem;
             margin-top: 8px;
             opacity: 0.8;
             line-height: 1.4;
         }
-        
+
         .option-grid {
             display: grid;
             gap: 10px;
         }
-        
+
         .grid-6 { grid-template-columns: repeat(6, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
-        
+
         .option-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid transparent;
@@ -423,19 +422,20 @@
             transition: all 0.3s ease;
             text-align: center;
             font-size: 14px;
+            touch-action: manipulation;
         }
-        
+
         .option-btn:active {
             transform: scale(0.95);
         }
-        
+
         .option-btn.active {
             background: rgba(255, 255, 255, 0.9);
             color: #1a4b3a;
             border-color: #48cc6c;
             font-weight: bold;
         }
-        
+
         /* 背景プレビュー用のボタン */
         .bg-option-btn {
             height: 50px;
@@ -443,17 +443,18 @@
             border: 3px solid transparent;
             cursor: pointer;
             transition: all 0.3s ease;
+            touch-action: manipulation;
         }
-        
+
         .bg-option-btn.active {
             border-color: white;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
-        
+
         .bg-option-btn:active {
             transform: scale(0.95);
         }
-        
+
         /* コントロールボタン */
         .control-buttons {
             display: grid;
@@ -461,7 +462,7 @@
             gap: 15px;
             margin-top: 30px;
         }
-        
+
         .control-btn {
             background: linear-gradient(135deg, #2d7a5f, #48cc6c);
             border: none;
@@ -476,21 +477,22 @@
             justify-content: center;
             gap: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            touch-action: manipulation;
         }
-        
+
         .control-btn:active {
             transform: scale(0.95);
         }
-        
+
         .control-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .stop-btn {
             background: linear-gradient(135deg, #dc2626, #ef4444);
         }
-        
+
         /* ゲームエリア */
         .game-area {
             position: absolute;
@@ -501,7 +503,7 @@
             width: 100%;
             height: 100%;
         }
-        
+
         .field {
             position: absolute;
             top: calc(env(safe-area-inset-top, 0px) + 80px);
@@ -512,7 +514,7 @@
             border-radius: 15px;
             background: rgba(255, 255, 255, 0.05);
         }
-        
+
         .field-line {
             position: absolute;
             left: 50%;
@@ -522,7 +524,7 @@
             background: rgba(255, 255, 255, 0.4);
             transform: translateX(-50%);
         }
-        
+
         .center-circle {
             position: absolute;
             left: 50%;
@@ -533,7 +535,7 @@
             border-radius: 50%;
             transform: translate(-50%, -50%);
         }
-        
+
         .center-point {
             position: absolute;
             left: 50%;
@@ -546,17 +548,17 @@
             display: none;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
         }
-        
+
         .center-point.show {
             display: block;
             animation: centerPulse 2s infinite;
         }
-        
+
         @keyframes centerPulse {
             0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.3); }
         }
-        
+
         /* ステータス表示 */
         .status-bar {
             position: fixed;
@@ -569,7 +571,7 @@
             z-index: 100;
             pointer-events: none;
         }
-        
+
         .timer-display {
             font-size: 2rem;
             font-family: 'Courier New', monospace;
@@ -579,7 +581,7 @@
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
-        
+
         .speed-display {
             background: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
@@ -588,7 +590,7 @@
             backdrop-filter: blur(10px);
             font-size: 14px;
         }
-        
+
         /* ポイント */
         .point {
             position: absolute;
@@ -596,30 +598,30 @@
             animation: pointPulse 2s infinite;
             z-index: 10;
         }
-        
+
         .point-dot {
             width: 24px;
             height: 24px;
             border-radius: 50%;
             box-shadow: 0 0 25px currentColor;
         }
-        
+
         .point-star {
             font-size: 28px;
             filter: drop-shadow(0 0 12px rgba(255, 223, 0, 0.9));
         }
-        
+
         @keyframes pointPulse {
-            0%, 100% { 
-                opacity: 1; 
-                transform: translate(-50%, -50%) scale(1); 
+            0%, 100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
             }
-            50% { 
-                opacity: 0.8; 
-                transform: translate(-50%, -50%) scale(1.15); 
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.15);
             }
         }
-        
+
         /* カウントダウン */
         .countdown-overlay {
             position: fixed;
@@ -635,7 +637,7 @@
             justify-content: center;
             z-index: 1500;
         }
-        
+
         .countdown-number {
             font-size: 100px;
             font-weight: bold;
@@ -643,13 +645,13 @@
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
             animation: countdownPulse 1s ease-in-out;
         }
-        
+
         @keyframes countdownPulse {
             0% { transform: scale(0.5); opacity: 0; }
             50% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
-        
+
         /* 完了メッセージ */
         .completion-overlay {
             position: fixed;
@@ -665,11 +667,11 @@
             justify-content: center;
             z-index: 1500;
         }
-        
+
         .completion-overlay.show {
             display: flex;
         }
-        
+
         .completion-message {
             text-align: center;
             padding: 40px;
@@ -678,18 +680,18 @@
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
-        
+
         .completion-emoji {
             font-size: 80px;
             margin-bottom: 20px;
         }
-        
+
         .completion-title {
             font-size: 36px;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        
+
         /* 著作権表記 */
         .copyright {
             position: fixed;
@@ -703,7 +705,7 @@
             background: rgba(0, 0, 0, 0.3);
             z-index: 50;
         }
-        
+
         /* レスポンシブ対応 */
         @media (max-width: 380px) {
             .menu-title { font-size: 1.5rem; }
@@ -713,7 +715,7 @@
             .grid-6 { grid-template-columns: repeat(3, 1fr); }
             .splash-title { font-size: 1.4rem; }
         }
-        
+
         @media (max-height: 600px) {
             .field { top: calc(env(safe-area-inset-top, 0px) + 60px); }
             .status-bar { top: calc(env(safe-area-inset-top, 0px) + 60px); }
@@ -723,7 +725,7 @@
 <body>
     <!-- 背景レイヤー -->
     <div class="background-layer bg-green" id="backgroundLayer"></div>
-    
+
     <!-- スプラッシュスクリーン -->
     <div class="splash-screen" id="splashScreen">
         <img src="FNT512.png" alt="FNT Logo" class="splash-logo">
@@ -731,7 +733,7 @@
         <div class="splash-subtitle">ランダムサッカード</div>
         <div class="splash-copyright">© Functional Neuro Training</div>
     </div>
-    
+
     <!-- インストールプロンプト -->
     <div class="install-prompt" id="installPrompt">
         <div class="install-prompt-content">
@@ -761,11 +763,11 @@
             </div>
         </div>
     </div>
-    
+
     <div class="app-container">
         <!-- メニュー切り替えボタン -->
         <button class="menu-toggle" id="menuToggle">☰</button>
-        
+
         <!-- メニューパネル -->
         <div class="menu-panel" id="menuPanel">
             <div class="menu-content">
@@ -779,7 +781,7 @@
                         <strong>🔊 聴覚的アンチサッカード:</strong> 異なる音の時に視点固定で聴覚-視覚統合を強化
                     </div>
                 </div>
-                
+
                 <!-- 背景設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">🎨 背景テーマ</h3>
@@ -792,7 +794,7 @@
                         <button class="bg-option-btn bg-black" data-bg="black" title="ブラック"></button>
                     </div>
                 </div>
-                
+
                 <!-- 時間設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">⏱️ 時間設定</h3>
@@ -805,7 +807,7 @@
                         <button class="option-btn" data-duration="300">5:00</button>
                     </div>
                 </div>
-                
+
                 <!-- スピード設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">⚡ 出現間隔</h3>
@@ -818,7 +820,7 @@
                         <button class="option-btn" data-speed="random">ランダム</button>
                     </div>
                 </div>
-                
+
                 <!-- カラー設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">🔵 ポイント色設定</h3>
@@ -827,7 +829,7 @@
                         <button class="option-btn" data-color="random">ランダム</button>
                     </div>
                 </div>
-                
+
                 <!-- 中心点設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">⊙ 中心点表示</h3>
@@ -836,7 +838,7 @@
                         <button class="option-btn" data-center="true">表示</button>
                     </div>
                 </div>
-                
+
                 <!-- 星マーク設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">⭐ アンチサッカード (星マーク)</h3>
@@ -848,7 +850,7 @@
                         星マーク出現時は視点を動かさず中心を見続けることで前頭前野を強化
                     </p>
                 </div>
-                
+
                 <!-- 音によるアンチサッカード設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">🔊 音によるアンチサッカード</h3>
@@ -860,7 +862,7 @@
                         異なる音（低音）が鳴った時は視点を動かさない訓練。聴覚と視覚の統合処理を強化
                     </p>
                 </div>
-                
+
                 <!-- 星の音設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">🎵 星出現時の音</h3>
@@ -869,7 +871,7 @@
                         <button class="option-btn" data-starsound="different">特殊音</button>
                     </div>
                 </div>
-                
+
                 <!-- 音設定 -->
                 <div class="setting-section">
                     <h3 class="section-title">🔈 効果音</h3>
@@ -878,7 +880,7 @@
                         <button class="option-btn" data-sound="false">OFF</button>
                     </div>
                 </div>
-                
+
                 <!-- コントロール -->
                 <div class="control-buttons">
                     <button class="control-btn" id="playBtn">
@@ -892,7 +894,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- ゲームエリア -->
         <div class="game-area">
             <!-- ステータスバー -->
@@ -900,17 +902,17 @@
                 <div class="timer-display" id="timerDisplay">1:00</div>
                 <div class="speed-display" id="speedDisplay">1秒間隔</div>
             </div>
-            
+
             <!-- フィールド -->
             <div class="field">
                 <div class="field-line"></div>
                 <div class="center-circle"></div>
                 <div class="center-point" id="centerPoint"></div>
             </div>
-            
+
             <!-- ポイントコンテナ -->
             <div id="pointsContainer"></div>
-            
+
             <!-- 完了メッセージ -->
             <div class="completion-overlay" id="completionOverlay">
                 <div class="completion-message">
@@ -920,13 +922,13 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- 著作権表記 -->
         <div class="copyright">
             © Functional Neuro Training. All rights reserved.
         </div>
     </div>
-    
+
     <script>
         // PWA用Service Worker登録
         if ('serviceWorker' in navigator) {
@@ -936,28 +938,31 @@
                     .catch(err => console.log('SW registration failed:', err));
             });
         }
-        
+
         // インストールプロンプト管理
         let deferredPrompt = null;
         const installPrompt = document.getElementById('installPrompt');
         const installNow = document.getElementById('installNow');
         const installLater = document.getElementById('installLater');
         const iosGuide = document.getElementById('iosGuide');
-        
-        // iOS判定
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        // ===== iPad修正④: iPadOS 13+ はUserAgentがMacと報告するため、touchPointsで判定 =====
+        // ===== iPad fix④: iPadOS 13+ reports as Mac in UA, so detect via touchPoints =====
+        const isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+                       && !window.MSStream;
         const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
         const isAndroidStandalone = window.matchMedia('(display-mode: standalone)').matches;
-        
+
         // インストール済みかチェック
         function isAppInstalled() {
             return isInStandaloneMode || isAndroidStandalone || localStorage.getItem('pwaInstalled') === 'true';
         }
-        
+
         // インストールプロンプト表示
         function showInstallPrompt() {
             if (isAppInstalled() || localStorage.getItem('installDismissed') === 'true') return;
-            
+
             setTimeout(() => {
                 installPrompt.classList.add('show');
                 if (isIOS) {
@@ -966,14 +971,14 @@
                 }
             }, 3000);
         }
-        
+
         // Android用beforeinstallpromptイベント
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             showInstallPrompt();
         });
-        
+
         // インストールボタンクリック（Android）
         installNow.addEventListener('click', async () => {
             if (deferredPrompt) {
@@ -986,24 +991,24 @@
             }
             installPrompt.classList.remove('show');
         });
-        
+
         // 後でボタン
         installLater.addEventListener('click', () => {
             installPrompt.classList.remove('show');
             localStorage.setItem('installDismissed', 'true');
         });
-        
+
         // インストール完了検知
         window.addEventListener('appinstalled', () => {
             localStorage.setItem('pwaInstalled', 'true');
             installPrompt.classList.remove('show');
         });
-        
+
         // iOS用：スプラッシュ後にプロンプト表示
         if (isIOS && !isInStandaloneMode) {
             showInstallPrompt();
         }
-        
+
         // ゲーム状態管理
         const gameState = {
             isRunning: false,
@@ -1021,7 +1026,7 @@
             pointInterval: null,
             audioContext: null
         };
-        
+
         // DOM要素
         const elements = {
             splashScreen: document.getElementById('splashScreen'),
@@ -1036,7 +1041,7 @@
             centerPoint: document.getElementById('centerPoint'),
             backgroundLayer: document.getElementById('backgroundLayer')
         };
-        
+
         // オーディオコンテキスト初期化
         function initAudioContext() {
             if (!gameState.audioContext) {
@@ -1057,58 +1062,58 @@
                 osc.stop(gameState.audioContext.currentTime + 0.01);
             } catch (e) {}
         }
-        
+
         // 効果音生成
         function playSound(frequency = 800, duration = 200) {
             if (!gameState.soundEnabled || !gameState.audioContext) return;
-            
+
             try {
                 if (gameState.audioContext.state === 'suspended') {
                     gameState.audioContext.resume();
                 }
-                
+
                 const oscillator = gameState.audioContext.createOscillator();
                 const gainNode = gameState.audioContext.createGain();
                 const compressor = gameState.audioContext.createDynamicsCompressor();
-                
+
                 oscillator.connect(gainNode);
                 gainNode.connect(compressor);
                 compressor.connect(gameState.audioContext.destination);
-                
+
                 oscillator.frequency.value = frequency;
                 oscillator.type = 'sine';
-                
+
                 gainNode.gain.setValueAtTime(0.3, gameState.audioContext.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, gameState.audioContext.currentTime + duration / 1000);
-                
+
                 oscillator.start(gameState.audioContext.currentTime);
                 oscillator.stop(gameState.audioContext.currentTime + duration / 1000);
             } catch (error) {
                 console.error('Sound error:', error);
             }
         }
-        
+
         // 時間フォーマット
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
-        
+
         // タイマー更新
         function updateTimerDisplay() {
             elements.timerDisplay.textContent = formatTime(gameState.timeLeft);
         }
-        
+
         // カウントダウン表示
         function showCountdown() {
             return new Promise((resolve) => {
                 const overlay = document.createElement('div');
                 overlay.className = 'countdown-overlay';
                 document.body.appendChild(overlay);
-                
+
                 let count = 3;
-                
+
                 function displayCount() {
                     if (count > 0) {
                         overlay.innerHTML = `<div class="countdown-number">${count}</div>`;
@@ -1124,26 +1129,26 @@
                         }, 800);
                     }
                 }
-                
+
                 displayCount();
             });
         }
-        
+
         // ランダム位置生成
         function generateRandomPosition() {
             const field = document.querySelector('.field');
             const rect = field.getBoundingClientRect();
-            
+
             const x = Math.random() * (rect.width - 40) + 20;
             const y = Math.random() * (rect.height - 40) + 20;
-            
+
             const colors = ['#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-            const color = gameState.colorMode === 'random' 
+            const color = gameState.colorMode === 'random'
                 ? colors[Math.floor(Math.random() * colors.length)]
                 : '#fbbf24';
-            
+
             const isStar = gameState.showStars && Math.random() < 0.15;
-            
+
             return {
                 x: (x / rect.width) * 100,
                 y: (y / rect.height) * 100,
@@ -1152,7 +1157,7 @@
                 color: color
             };
         }
-        
+
         // ポイント表示
         function showPoint(point) {
             const field = document.querySelector('.field');
@@ -1161,11 +1166,11 @@
             pointElement.style.left = `${point.x}%`;
             pointElement.style.top = `${point.y}%`;
             pointElement.dataset.id = point.id;
-            
-            const isAuditoryAntiSaccade = gameState.auditoryAntiSaccade && 
-                                          !point.isStar && 
+
+            const isAuditoryAntiSaccade = gameState.auditoryAntiSaccade &&
+                                          !point.isStar &&
                                           Math.random() < 0.2;
-            
+
             if (point.isStar) {
                 pointElement.innerHTML = '<div class="point-star">⭐</div>';
                 if (gameState.starSoundDifferent) {
@@ -1179,68 +1184,68 @@
                 dot.style.backgroundColor = point.color;
                 dot.style.color = point.color;
                 pointElement.appendChild(dot);
-                
+
                 if (isAuditoryAntiSaccade) {
                     playSound(400, 200);
                 } else {
                     playSound(800, 150);
                 }
             }
-            
+
             field.appendChild(pointElement);
-            
+
             setTimeout(() => {
                 const element = field.querySelector(`[data-id="${point.id}"]`);
                 if (element) element.remove();
             }, 2000);
         }
-        
+
         // タイマー開始
         async function startTimer() {
             elements.menuPanel.classList.remove('show');
-            
+
             await showCountdown();
-            
+
             gameState.isRunning = true;
             elements.playBtn.innerHTML = '<span>⏸️</span><span>一時停止</span>';
-            
+
             if (gameState.showCenterPoint) {
                 elements.centerPoint.classList.add('show');
             }
-            
+
             gameState.timerInterval = setInterval(() => {
                 gameState.timeLeft--;
                 updateTimerDisplay();
-                
+
                 if (gameState.timeLeft <= 0) {
                     stopTimer();
                     showCompletion();
                 }
             }, 1000);
-            
+
             const getInterval = () => {
                 if (gameState.pointSpeed === 'random') {
                     return (Math.random() * 4.5 + 0.5) * 1000;
                 }
                 return gameState.pointSpeed * 1000;
             };
-            
+
             const scheduleNextPoint = () => {
                 if (gameState.isRunning) {
                     showPoint(generateRandomPosition());
                     gameState.pointInterval = setTimeout(scheduleNextPoint, getInterval());
                 }
             };
-            
+
             scheduleNextPoint();
         }
-        
+
         // タイマー停止
         function stopTimer() {
             gameState.isRunning = false;
             elements.playBtn.innerHTML = '<span>▶️</span><span>開始</span>';
             elements.centerPoint.classList.remove('show');
-            
+
             if (gameState.timerInterval) {
                 clearInterval(gameState.timerInterval);
                 gameState.timerInterval = null;
@@ -1250,7 +1255,7 @@
                 gameState.pointInterval = null;
             }
         }
-        
+
         // 完了表示
         function showCompletion() {
             elements.completionOverlay.classList.add('show');
@@ -1260,18 +1265,18 @@
                 resetTimer();
             }, 3000);
         }
-        
+
         // リセット
         function resetTimer() {
             stopTimer();
             gameState.timeLeft = gameState.duration;
             updateTimerDisplay();
-            
+
             const field = document.querySelector('.field');
             const points = field.querySelectorAll('.point');
             points.forEach(p => p.remove());
         }
-        
+
         // 背景変更
         function changeBackground(theme) {
             const bgLayer = elements.backgroundLayer;
@@ -1279,7 +1284,7 @@
             gameState.backgroundTheme = theme;
             localStorage.setItem('backgroundTheme', theme);
         }
-        
+
         // 設定変更ハンドラー
         function handleSettingChange(type, value) {
             switch(type) {
@@ -1328,14 +1333,14 @@
                     break;
             }
         }
-        
+
         // イベントリスナー設定
         function setupEventListeners() {
             // メニュー切り替え
             elements.menuToggle.addEventListener('click', () => {
                 elements.menuPanel.classList.toggle('show');
             });
-            
+
             // 再生ボタン
             elements.playBtn.addEventListener('click', () => {
                 if (gameState.isRunning) {
@@ -1345,10 +1350,10 @@
                     startTimer();
                 }
             });
-            
+
             // リセットボタン
             elements.resetBtn.addEventListener('click', resetTimer);
-            
+
             // 背景設定
             document.querySelectorAll('[data-bg]').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1357,7 +1362,7 @@
                     handleSettingChange('bg', btn.dataset.bg);
                 });
             });
-            
+
             // 設定ボタン群
             const settingConfigs = [
                 { attr: 'duration', selector: '[data-duration]' },
@@ -1369,7 +1374,7 @@
                 { attr: 'starsound', selector: '[data-starsound]' },
                 { attr: 'sound', selector: '[data-sound]' }
             ];
-            
+
             settingConfigs.forEach(config => {
                 document.querySelectorAll(config.selector).forEach(btn => {
                     btn.addEventListener('click', () => {
@@ -1380,7 +1385,7 @@
                 });
             });
         }
-        
+
         // 初期化
         function initialize() {
             // 保存された背景テーマを復元
@@ -1391,45 +1396,47 @@
                     btn.classList.toggle('active', btn.dataset.bg === savedTheme);
                 });
             }
-            
+
             // スプラッシュスクリーン表示
             setTimeout(() => {
                 elements.splashScreen.classList.add('hide');
             }, 2000);
-            
+
             updateTimerDisplay();
             setupEventListeners();
-            
+
             // iOS standalone mode でのパディング対応
             if (window.navigator.standalone) {
                 document.body.style.paddingTop = '20px';
             }
-            
+
             // 画面回転ロック（可能な場合）
             if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('portrait').catch(() => {});
             }
-            
-            // スクロール防止（メニュー以外）
-            document.addEventListener('touchmove', (e) => {
-                if (e.target.closest('.menu-panel')) return;
-                if (e.target.closest('.install-prompt')) return;
-                e.preventDefault();
-            }, { passive: false });
-            
+
+            // ===== iPad修正⑤: touchmove の preventDefault を game-area だけに限定 =====
+            // ===== iPad fix⑤: scope touchmove preventDefault to .game-area only =====
+            const gameAreaEl = document.querySelector('.game-area');
+            if (gameAreaEl) {
+                gameAreaEl.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                }, { passive: false });
+            }
+
             // タッチ開始時にオーディオコンテキスト初期化（iOS対策）
             document.addEventListener('touchstart', () => {
                 initAudioContext();
             }, { once: true });
         }
-        
+
         // アプリ起動
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initialize);
         } else {
             initialize();
         }
-        
+
         // ページ離脱時のクリーンアップ
         window.addEventListener('beforeunload', () => {
             if (gameState.timerInterval) clearInterval(gameState.timerInterval);
