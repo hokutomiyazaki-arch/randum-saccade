@@ -1,5 +1,5 @@
 // Service Worker for ランダムサッカード認知トレーニング
-const CACHE_NAME = 'random-saccade-v1.1.0';
+const CACHE_NAME = 'random-saccade-v1.1.1';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
